@@ -1,9 +1,14 @@
+# Django stuff:
+*.log
+logs/
+local_settings.py
+*.sqlite3
+db.sqlite3-journal
 *.env
-api_testing.py
-commands.txt
 media
 untracted_files
 static/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -59,14 +64,6 @@ cover/
 # Translations
 *.mo
 *.pot
-
-# Django stuff:
-*.log
-logs/
-local_settings.py
-db.sqlite3
-db.sqlite3-journal
-migrations
 
 # Flask stuff:
 instance/
@@ -160,7 +157,7 @@ dmypy.json
 cython_debug/
 db.sqlite3
 */migrations
-po_invoice/api/migrations/*
+migrations/*
 .idea
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
