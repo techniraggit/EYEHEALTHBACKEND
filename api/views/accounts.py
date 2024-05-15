@@ -22,12 +22,11 @@ class VerificationOTPView(APIView):
 
         OTPLog.objects.get_or_create(username=username)
         otp = generate_otp(username)
-        print("otp === ", otp)
         if phone_or_email(username) == "email":
             try:
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
-                return api_response(True, 200, f"OTP sent successfully - {username}")
+                return api_response(True, 200, f"OTP sent successfully - {username} - otp - {otp}")
 
             except Exception as e:
                 # raise e
@@ -38,7 +37,7 @@ class VerificationOTPView(APIView):
                 Hi, your OTP is {otp} to verify your phone number at Eye Exam.
                 """
             send_sms(username, message)
-            return api_response(False, 200, f"OTP sent successfully - {username}")
+            return api_response(False, 200, f"OTP sent successfully - {username} - otp - {otp}")
 
     def patch(self, request):
         username = request.data.get("username")
@@ -77,7 +76,6 @@ class SendLoginOTP(APIView):
             return api_response(False, 400, "username required")
 
         otp = generate_otp(username)
-        print("username == ", username, "\nOTP === ", otp)
         if phone_or_email(username) == "email":
             try:
                 try:
@@ -87,7 +85,7 @@ class SendLoginOTP(APIView):
 
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
-                return api_response(True, 200, f"OTP sent successfully - {username}")
+                return api_response(True, 200, f"OTP sent successfully - {username} otp - {otp}")
 
             except Exception as e:
                 # raise e
@@ -103,7 +101,7 @@ class SendLoginOTP(APIView):
                 Hi, your OTP is {otp} to verify your phone number at Eye Exam.
                 """
             send_sms(username, message)
-            return api_response(False, 200, f"OTP sent successfully - {username}")
+            return api_response(False, 200, f"OTP sent successfully - {username} otp - {otp}")
 
 
 class VerifyLoginOTPView(APIView):

@@ -1,3 +1,4 @@
+from uuid import uuid4
 from utilities.utils import (
     verify_otp,
     phone_or_email,
@@ -25,6 +26,8 @@ class UserSerializer(BaseSerializer):
             "last_name",
             "phone_number",
             "email",
+            "image",
+            "points",
             "referral_code",
             "latitude",
             "longitude",
@@ -33,6 +36,7 @@ class UserSerializer(BaseSerializer):
         extra_kwargs = {
             "password": {"write_only": True},
             "referral_code": {"validators": []},
+            "points": {"read_only": True},
         }
 
     def validate_phone_number(self, value):
@@ -74,18 +78,52 @@ class UserSerializer(BaseSerializer):
     def create(self, validated_data):
         device_info_data = validated_data.pop("device_info", None)
         referral_code = validated_data.pop("referral_code", None)
-        # del validated_data["referral_code"]
-        print("refer_code === ", referral_code)
-        print("validated_data === ", validated_data)
-        user = UserModel.objects.create(**validated_data)
+        user = UserModel.objects.create(
+            **validated_data, referral_code=str(uuid4()).split("-")[0]
+        )
         if referral_code:
             referred_by = UserModel.objects.get(referral_code=referral_code)
             ReferTrack.objects.create(user=user, referred_by=referred_by)
-            print(referred_by == "referred_by")
         if device_info_data:
             for info in device_info_data:
                 DeviceInfo.objects.create(user=user, **info)
         return user
+
+
+class ProfileSerializer(BaseSerializer):
+    class Meta:
+        model = UserModel
+        fields = [
+            "id",
+            "first_name",
+            "last_name",
+            "phone_number",
+            "points",
+            "email",
+            "image",
+        ]
+        extra_kwargs = {
+            "points": {"read_only": True},
+        }
+
+    def validate_phone_number(self, value):
+        if not value.isdigit():
+            raise serializers.ValidationError("Phone number must contain only digits.")
+        try:
+            if not OTPLog.objects.get(username=value).is_verify:
+                raise serializers.ValidationError("Phone number not verified.")
+        except:
+            raise serializers.ValidationError("Phone number not verified.")
+
+        return value
+
+    def validate_email(self, value):
+        try:
+            if not OTPLog.objects.get(username=value).is_verify:
+                raise serializers.ValidationError("Email not verified.")
+        except:
+            raise serializers.ValidationError("Email not verified.")
+        return value
 
 
 class LoginSerializer(serializers.Serializer):

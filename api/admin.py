@@ -1,8 +1,12 @@
 from django.contrib import admin
-from api.models.accounts import UserModel, OTPLog, DeviceInfo, ReferTrack
+from api.models.accounts import *
+from api.models.notifications import *
+from api.models.subscription import *
+from api.models.rewards import *
 
 
 # Register your models here.
+# ACCOUNT
 @admin.register(UserModel)
 class UserModelAdmin(admin.ModelAdmin):
     list_display = ["id", "first_name", "last_name", "email", "phone_number"]
@@ -22,3 +26,48 @@ class DeviceInfoAdmin(admin.ModelAdmin):
 @admin.register(ReferTrack)
 class ReferTrackAdmin(admin.ModelAdmin):
     list_display = ["user", "referred_by", "created_on", "updated_on"]
+
+
+# SUBSCRIPTION
+@admin.register(SubscriptionPlan)
+class SubscriptionPlanAdmin(admin.ModelAdmin):
+    list_display = [
+        "name",
+        "description",
+        "price",
+        "plan_type",
+        "created_on",
+        "updated_on",
+    ]
+
+
+@admin.register(UserSubscription)
+class UserSubscriptionAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "plan",
+        "start_date",
+        "end_date",
+        "is_active",
+        "created_on",
+        "updated_on",
+    ]
+
+
+# NOTIFICATION
+admin.register(PushNotification)
+
+@admin.register(UserPushNotification)
+class UserPushNotificationAdmin(admin.ModelAdmin):
+    list_display = ["user", "notification", "is_read", "created_on", "updated_on"]
+
+
+# REWARDS
+
+@admin.register(Offers)
+class OffersAdmin(admin.ModelAdmin):
+    list_display = ["title", "image", "description", "required_points", "created_on", "updated_on"]
+
+@admin.register(UserRedeemedOffers)
+class OffersAdmin(admin.ModelAdmin):
+    list_display = ["user", "offer", "created_on", "updated_on"]

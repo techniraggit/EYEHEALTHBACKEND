@@ -1,11 +1,27 @@
 from .base import UserMixin
 from core.utils import api_response
 from api.models.notifications import UserPushNotification
+from api.serializers.accounts import ProfileSerializer, UserModel
 
 
 class ProfileView(UserMixin):
     def get(self, request):
-        pass
+        user = ProfileSerializer(request.user).data
+        return api_response(True, 200, data=user)
+
+    def patch(self, request):
+        try:
+            user_obj = UserModel.objects.get(id=request.data.get("id"))
+        except:
+            return api_response(False, 404, "User does not exist")
+
+        serializer = ProfileSerializer(user_obj, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                True, 200, "Profile updated successfully.", data=serializer.data
+            )
+        return api_response(False, 400, serializer.errors)
 
 
 class NotificationView(UserMixin):

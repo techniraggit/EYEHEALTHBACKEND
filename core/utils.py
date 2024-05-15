@@ -12,10 +12,8 @@ def api_response(
     if message:
         response_payload["message"] = message
 
-    if data:
-        response_payload["data"] = data
+    # if data:
+    response_payload["data"] = data
     response_payload.update(kwargs)
-
-    print(response_payload)
 
     return Response(response_payload, status_code)

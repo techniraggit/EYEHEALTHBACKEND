@@ -33,21 +33,17 @@ class UserModel(AbstractUser, BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     phone_number = models.CharField(max_length=20, unique=True)
     email = models.EmailField("Email address", unique=True)
+    image = models.FileField(upload_to="profile_image", null=True, blank=True)
+    points = models.PositiveIntegerField(default=0)
     latitude = models.FloatField(null=True)
     longitude = models.FloatField(null=True)
-    referral_code = models.CharField(
-        max_length=50, default=str(uuid4()).split("-")[0], unique=True
-    )
+    referral_code = models.CharField(max_length=50, unique=True, null=True)
 
     username = None
     objects = CustomUserManager()
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name"]
 
-    # def save(self, *args, **kwargs):
-    #     if not self.id:
-    #         self.referral_code =
-    #     super().save(*args, **kwargs)
 
 
 class DeviceInfo(BaseModel):
