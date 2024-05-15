@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-PROJECT_DIR = os.path.join(BASE_DIR, "eye_health")
+PROJECT_DIR = os.path.join(BASE_DIR, "EYEHEALTHBACKEND")
 
 load_dotenv(f"{PROJECT_DIR}/secrets.env")
 
