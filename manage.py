@@ -11,7 +11,7 @@ load_dotenv("secrets.env")
 def main():
     """Run administrative tasks."""
     os.environ.setdefault(
-        "DJANGO_SETTINGS_MODULE", f'eye_health.settings.{os.getenv("ENV")}'
+        "DJANGO_SETTINGS_MODULE", f'config.settings.{os.getenv("ENV")}'
     )
     try:
         from django.core.management import execute_from_command_line

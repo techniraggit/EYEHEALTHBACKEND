@@ -13,6 +13,6 @@ load_dotenv(f"{PROJECT_DIR}/secrets.env")
 
 sys.path.append(PROJECT_DIR)
 os.environ.setdefault(
-    "DJANGO_SETTINGS_MODULE", f"eye_health.settings.{os.getenv('ENV')}"
+    "DJANGO_SETTINGS_MODULE", f"config.settings.{os.getenv('ENV')}"
 )
 django.setup()
