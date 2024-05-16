@@ -1,9 +1,11 @@
 from .base import BaseModel
 from django.db import models
 from .accounts import UserModel
+from uuid import uuid4
 
 
 class SubscriptionPlan(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     plan_type_choice = (
         ("basic", "basic"),
         ("monthly", "monthly"),
@@ -19,6 +21,7 @@ class SubscriptionPlan(BaseModel):
 
 
 class UserSubscription(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     payment_status_choices = (
         ("pending", "pending"),
         ("failed", "failed"),

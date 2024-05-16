@@ -34,6 +34,7 @@ class UserModel(AbstractUser, BaseModel):
     phone_number = models.CharField(max_length=20, unique=True)
     email = models.EmailField("Email address", unique=True)
     image = models.FileField(upload_to="profile_image", null=True, blank=True)
+    dob = models.DateField(null=True)
     points = models.PositiveIntegerField(default=0)
     latitude = models.FloatField(null=True)
     longitude = models.FloatField(null=True)
@@ -44,9 +45,14 @@ class UserModel(AbstractUser, BaseModel):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name"]
 
+    def increase_points(self, points:int):
+        self.points = (self.points + points)
+        self.save()
+
 
 
 class DeviceInfo(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="device_info"
     )
@@ -55,11 +61,13 @@ class DeviceInfo(BaseModel):
 
 
 class OTPLog(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     username = models.CharField(max_length=50, unique=True)
     is_verify = models.BooleanField(default=False)
 
 
 class ReferTrack(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
     referred_by = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="referred_by"

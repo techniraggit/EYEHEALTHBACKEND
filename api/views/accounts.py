@@ -55,7 +55,7 @@ class VerificationOTPView(APIView):
         except:
             return api_response(False, 404, "Username does'nt exist")
 
-
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 class RegisterView(APIView):
     def post(self, request):
         serializer = UserSerializer(data=request.data)

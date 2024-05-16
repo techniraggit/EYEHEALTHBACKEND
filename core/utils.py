@@ -2,7 +2,7 @@ from rest_framework.response import Response
 
 
 def api_response(
-    status: bool, status_code: int, message: str = None, data=None, **kwargs
+    status: bool, status_code: int, message: str = None, **kwargs
 ):
     response_payload = {
         "status": status,
@@ -12,8 +12,6 @@ def api_response(
     if message:
         response_payload["message"] = message
 
-    # if data:
-    response_payload["data"] = data
     response_payload.update(kwargs)
 
     return Response(response_payload, status_code)

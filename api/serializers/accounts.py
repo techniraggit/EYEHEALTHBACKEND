@@ -7,6 +7,7 @@ from utilities.utils import (
 from rest_framework import serializers
 from api.models.accounts import UserModel, OTPLog, DeviceInfo, ReferTrack
 from .base import BaseSerializer
+from datetime import datetime, timedelta
 
 
 class DeviceInfoSerializer(BaseSerializer):
@@ -26,6 +27,7 @@ class UserSerializer(BaseSerializer):
             "last_name",
             "phone_number",
             "email",
+            "dob",
             "image",
             "points",
             "referral_code",
@@ -57,11 +59,24 @@ class UserSerializer(BaseSerializer):
         except:
             raise serializers.ValidationError("Email not verified.")
         return value
+    
+    def validate_dob(self, value):
+        today = datetime.now().date()
+        if value >= today:
+            raise serializers.ValidationError("Date of birth cannot be in the future.")
+        if value < today - timedelta(days=365*150):
+            raise serializers.ValidationError("Date of birth cannot be more than 150 years ago.")
+        return value
+
 
     def validate(self, data):
         latitude = data.get("latitude")
         longitude = data.get("longitude")
         referral_code = data.get("referral_code")
+        dob = data.get("dob")
+        if not dob:
+            raise serializers.ValidationError("DOB required.")
+
         if referral_code:
             try:
                 UserModel.objects.get(referral_code=referral_code)
