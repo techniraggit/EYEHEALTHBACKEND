@@ -15,8 +15,7 @@ class SubscriptionPlan(BaseModel):
     name = models.CharField(max_length=100)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    plan_type = models.CharField(
-        max_length=30, choices=plan_type_choice)
+    plan_type = models.CharField(max_length=30, choices=plan_type_choice)
     is_active = models.BooleanField(default=True)
 
 
@@ -37,4 +36,6 @@ class UserSubscription(BaseModel):
     is_active = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=30)
     paid_amount = models.FloatField()
-    payment_status = models.CharField(max_length=50, choices=payment_status_choices, default="pending")
+    payment_status = models.CharField(
+        max_length=50, choices=payment_status_choices, default="pending"
+    )

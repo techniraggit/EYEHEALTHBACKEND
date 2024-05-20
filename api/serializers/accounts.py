@@ -5,7 +5,7 @@ from utilities.utils import (
     get_tokens_for_user,
 )
 from rest_framework import serializers
-from api.models.accounts import UserModel, OTPLog, DeviceInfo, ReferTrack
+from api.models.accounts import UserModel, OTPLog, DeviceInfo, ReferTrack, UserAddress
 from .base import BaseSerializer
 from datetime import datetime, timedelta
 
@@ -16,8 +16,32 @@ class DeviceInfoSerializer(BaseSerializer):
         fields = ["token", "device_type"]
 
 
-class UserSerializer(BaseSerializer):
+from api.views.strip_apis import CreateCustomer
+
+
+class UserAddressSerializer(BaseSerializer):
+    full_address = serializers.SerializerMethodField()
+
+    class Meta:
+        model = UserAddress
+        fields = [
+            "address_id",
+            "address",
+            "postal_code",
+            "city",
+            "state",
+            "country",
+            "full_address",
+        ]
+        extra_kwargs = {"address_id": {"read_only": True}}
+
+    def get_full_address(self, obj):
+        return obj.get_full_address()
+
+
+class UserSerializer(serializers.ModelSerializer):
     device_token = DeviceInfoSerializer(many=True, read_only=True)
+    addresses = UserAddressSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserModel
@@ -34,74 +58,84 @@ class UserSerializer(BaseSerializer):
             "latitude",
             "longitude",
             "device_token",
+            "addresses",
+            "customer_id",
         ]
         extra_kwargs = {
             "password": {"write_only": True},
             "referral_code": {"validators": []},
             "points": {"read_only": True},
+            "customer_id": {"read_only": True},
         }
 
     def validate_phone_number(self, value):
         if not value.isdigit():
             raise serializers.ValidationError("Phone number must contain only digits.")
         try:
-            if not OTPLog.objects.get(username=value).is_verify:
+            otp_log = OTPLog.objects.get(username=value)
+            if not otp_log.is_verify:
                 raise serializers.ValidationError("Phone number not verified.")
-        except:
+        except OTPLog.DoesNotExist:
             raise serializers.ValidationError("Phone number not verified.")
 
         return value
 
     def validate_email(self, value):
         try:
-            if not OTPLog.objects.get(username=value).is_verify:
+            otp_log = OTPLog.objects.get(username=value)
+            if not otp_log.is_verify:
                 raise serializers.ValidationError("Email not verified.")
-        except:
+        except OTPLog.DoesNotExist:
             raise serializers.ValidationError("Email not verified.")
         return value
-    
+
     def validate_dob(self, value):
         today = datetime.now().date()
         if value >= today:
             raise serializers.ValidationError("Date of birth cannot be in the future.")
-        if value < today - timedelta(days=365*150):
-            raise serializers.ValidationError("Date of birth cannot be more than 150 years ago.")
+        if value < today - timedelta(days=365 * 150):
+            raise serializers.ValidationError(
+                "Date of birth cannot be more than 150 years ago."
+            )
         return value
-
 
     def validate(self, data):
         latitude = data.get("latitude")
         longitude = data.get("longitude")
         referral_code = data.get("referral_code")
         dob = data.get("dob")
+
         if not dob:
             raise serializers.ValidationError("DOB required.")
 
         if referral_code:
-            try:
-                UserModel.objects.get(referral_code=referral_code)
-            except:
+            if not UserModel.objects.filter(referral_code=referral_code).exists():
                 raise serializers.ValidationError(
                     "Provided 'referral code' is not valid."
                 )
+
         if latitude is not None and longitude is None:
             raise serializers.ValidationError(
                 "If latitude is provided, longitude must also be provided."
             )
+
         return data
 
     def create(self, validated_data):
-        device_info_data = validated_data.pop("device_info", None)
+        device_token_data = validated_data.pop("device_token", None)
         referral_code = validated_data.pop("referral_code", None)
+
         user = UserModel.objects.create(
             **validated_data, referral_code=str(uuid4()).split("-")[0]
         )
+
         if referral_code:
             referred_by = UserModel.objects.get(referral_code=referral_code)
             ReferTrack.objects.create(user=user, referred_by=referred_by)
-        if device_info_data:
-            for info in device_info_data:
-                DeviceInfo.objects.create(user=user, **info)
+
+        if device_token_data:
+            DeviceInfo.objects.create(user=user, **device_token_data)
+
         return user
 
 
@@ -113,12 +147,15 @@ class ProfileSerializer(BaseSerializer):
             "first_name",
             "last_name",
             "phone_number",
+            "referral_code",
+            "customer_id",
             "points",
             "email",
             "image",
         ]
         extra_kwargs = {
             "points": {"read_only": True},
+            "customer_id": {"read_only": True},
         }
 
     def validate_phone_number(self, value):

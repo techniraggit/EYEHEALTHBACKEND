@@ -29,6 +29,7 @@ END_POINTS = {
 
 secure_headers = dict(Authorization=f"Bearer {settings.STATIC_TOKEN}")
 
+
 def add_customer(data):
     response = requests.post(END_POINTS.get("add_customer"), json=data)
     return response

@@ -1,7 +1,12 @@
 from .base import UserMixin, APIView
 from core.utils import api_response
 from api.models.notifications import UserPushNotification
-from api.serializers.accounts import ProfileSerializer, UserModel
+from api.serializers.accounts import (
+    ProfileSerializer,
+    UserModel,
+    UserAddressSerializer,
+    UserAddress,
+)
 from api.serializers.rewards import OffersSerializer, Offers
 
 
@@ -96,18 +101,13 @@ class OffersView(UserMixin):
         offers = Offers.objects.all()
         serialized_data = OffersSerializer(offers, many=True).data
         eye_health_score = 300
-        return api_response(True, 200, data=serialized_data, eye_health_score=eye_health_score)
+        return api_response(
+            True, 200, data=serialized_data, eye_health_score=eye_health_score
+        )
 
 
 from api.serializers.prescription import UserPrescriptions, UserPrescriptionsSerializer
-from django.http import Http404
-from core.utils import api_response
-
-class CustomHttp404(Http404):
-    def __init__(self, message=""):
-        if not message:
-            message = "Custom Not Found Message"
-        super().__init__(message)
+from core.utils import api_response, custom_404
 
 
 class UserPrescriptionsView(UserMixin):
@@ -115,15 +115,15 @@ class UserPrescriptionsView(UserMixin):
         try:
             return UserPrescriptions.objects.get(pk=pk)
         except UserPrescriptions.DoesNotExist:
-            raise CustomHttp404()
-    
+            raise custom_404("The prescription does not exist.")
+
     def get(self, request):
-        prescription_id = request.GET.get('prescription_id')
+        prescription_id = request.GET.get("prescription_id")
         if prescription_id:
             data = UserPrescriptionsSerializer(self.get_object(prescription_id)).data
             return api_response(True, 200, data=data)
 
-        prescriptions = UserPrescriptions.objects.all()
+        prescriptions = UserPrescriptions.objects.filter(user=request.user)
         serializer = UserPrescriptionsSerializer(prescriptions, many=True)
         return api_response(True, 200, data=serializer.data)
 
@@ -131,5 +131,26 @@ class UserPrescriptionsView(UserMixin):
         serializer = UserPrescriptionsSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save(user=request.user)
-            return api_response(True, 201, data=serializer.data, message="Prescription uploaded successfully, please wait for admin approval")
+            return api_response(
+                True,
+                201,
+                data=serializer.data,
+                message="Prescription uploaded successfully, please wait for admin approval",
+            )
+        return api_response(False, 400, data=serializer.errors)
+
+
+class UserAddressesView(UserMixin):
+    def get(self, request):
+        user_address = UserAddress.objects.filter(user=request.user)
+        serializer = UserAddressSerializer(user_address, many=True)
+        return api_response(True, 200, data=serializer.data)
+
+    def post(self, request):
+        serializer = UserAddressSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return api_response(
+                True, 201, data=serializer.data, message="Address added successfully"
+            )
         return api_response(False, 400, data=serializer.errors)

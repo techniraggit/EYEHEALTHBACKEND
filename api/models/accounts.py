@@ -28,7 +28,10 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_("Superuser must have is_superuser=True."))
         return self.create_user(email, password, **extra_fields)
 
+
 from datetime import date
+
+
 class UserModel(AbstractUser, BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     phone_number = models.CharField(max_length=20, unique=True)
@@ -39,21 +42,50 @@ class UserModel(AbstractUser, BaseModel):
     latitude = models.FloatField(null=True)
     longitude = models.FloatField(null=True)
     referral_code = models.CharField(max_length=50, unique=True, null=True)
+    customer_id = models.CharField(max_length=250, blank=True)
 
     username = None
     objects = CustomUserManager()
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name"]
 
-    def increase_points(self, points:int):
-        self.points = (self.points + points)
+    def increase_points(self, points: int):
+        self.points = self.points + points
         self.save()
 
     def age(self):
         today = date.today()
-        age = today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
+        age = (
+            today.year
+            - self.dob.year
+            - ((today.month, today.day) < (self.dob.month, self.dob.day))
+        )
         return age
 
+
+class UserAddress(BaseModel):
+    address_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.ForeignKey(
+        UserModel, on_delete=models.CASCADE, related_name="addresses"
+    )
+    address = models.TextField()
+    postal_code = models.CharField(max_length=50)
+    city = models.CharField(max_length=50)
+    state = models.CharField(max_length=50)
+    country = models.CharField(max_length=50, default="India")
+
+    def get_full_address(self):
+        return f"{self.user.get_full_name()}, {self.address}, {self.city}, {self.state}, {self.country}, {self.postal_code}"
+
+    def to_json(self):
+        return {
+            "full_name": self.user.get_full_name(),
+            "line1": self.address,
+            "postal_code": self.postal_code,
+            "city": self.city,
+            "state": self.state,
+            "country": self.country,
+        }
 
 
 class DeviceInfo(BaseModel):

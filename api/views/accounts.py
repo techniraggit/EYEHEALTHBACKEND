@@ -1,4 +1,10 @@
-from api.serializers.accounts import UserSerializer, UserModel, LoginSerializer
+from api.serializers.accounts import (
+    UserSerializer,
+    UserModel,
+    LoginSerializer,
+    UserAddress,
+    UserAddressSerializer,
+)
 from utilities.services.sms import send_sms
 from utilities.services.email import send_email
 from django.template.loader import render_to_string
@@ -12,6 +18,7 @@ from utilities.utils import (
     get_tokens_for_user,
     phone_or_email,
 )
+from api.views.strip_apis import CreateCustomer
 
 
 class VerificationOTPView(APIView):
@@ -26,7 +33,9 @@ class VerificationOTPView(APIView):
             try:
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
-                return api_response(True, 200, f"OTP sent successfully - {username} - otp - {otp}")
+                return api_response(
+                    True, 200, f"OTP sent successfully - {username} - otp - {otp}"
+                )
 
             except Exception as e:
                 # raise e
@@ -37,7 +46,9 @@ class VerificationOTPView(APIView):
                 Hi, your OTP is {otp} to verify your phone number at Eye Exam.
                 """
             send_sms(username, message)
-            return api_response(False, 200, f"OTP sent successfully - {username} - otp - {otp}")
+            return api_response(
+                False, 200, f"OTP sent successfully - {username} - otp - {otp}"
+            )
 
     def patch(self, request):
         username = request.data.get("username")
@@ -55,14 +66,35 @@ class VerificationOTPView(APIView):
         except:
             return api_response(False, 404, "Username does'nt exist")
 
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+
 class RegisterView(APIView):
     def post(self, request):
+        address_info = request.data.get("address_info")
+        address_serialized_data = UserAddressSerializer(data=address_info)
+
+        if not address_serialized_data.is_valid():
+            return api_response(False, 400, data=address_serialized_data.errors)
+
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             id = serializer.data.get("id")
             user_obj = UserModel.objects.get(id=id)
+
+            if address_info:
+                UserAddress.objects.create(user=user_obj, **address_info)
+                customer_id = CreateCustomer(
+                    name=user_obj.get_full_name(),
+                    email=user_obj.email,
+                    address=address_info["address"],
+                    postal_code=address_info["postal_code"],
+                    city=address_info["city"],
+                    country=address_info["country"],
+                    state=address_info["state"],
+                )
+
+                user_obj.customer_id = customer_id
+                user_obj.save()
             access_token, refresh_token = get_tokens_for_user(user_obj)
             tokens = dict(access_token=access_token, refresh_token=refresh_token)
             return api_response(True, 201, data=serializer.data, tokens=tokens)
@@ -85,7 +117,9 @@ class SendLoginOTP(APIView):
 
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
-                return api_response(True, 200, f"OTP sent successfully - {username} otp - {otp}")
+                return api_response(
+                    True, 200, f"OTP sent successfully - {username} otp - {otp}"
+                )
 
             except Exception as e:
                 # raise e
@@ -101,7 +135,9 @@ class SendLoginOTP(APIView):
                 Hi, your OTP is {otp} to verify your phone number at Eye Exam.
                 """
             send_sms(username, message)
-            return api_response(False, 200, f"OTP sent successfully - {username} otp - {otp}")
+            return api_response(
+                False, 200, f"OTP sent successfully - {username} otp - {otp}"
+            )
 
 
 class VerifyLoginOTPView(APIView):

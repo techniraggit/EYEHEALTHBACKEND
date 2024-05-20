@@ -13,6 +13,20 @@ class UserModelAdmin(admin.ModelAdmin):
     search_fields = ["email", "phone_number"]
 
 
+@admin.register(UserAddress)
+class UserAddressAdmin(admin.ModelAdmin):
+    list_display = [
+        "address_id",
+        "user",
+        "address",
+        "postal_code",
+        "city",
+        "state",
+        "country",
+    ]
+    search_fields = ["user__email", "user__phone_number"]
+
+
 @admin.register(OTPLog)
 class OTPLog(admin.ModelAdmin):
     list_display = ["username", "is_verify"]
@@ -57,6 +71,7 @@ class UserSubscriptionAdmin(admin.ModelAdmin):
 # NOTIFICATION
 admin.register(PushNotification)
 
+
 @admin.register(UserPushNotification)
 class UserPushNotificationAdmin(admin.ModelAdmin):
     list_display = ["user", "notification", "is_read", "created_on", "updated_on"]
@@ -64,9 +79,18 @@ class UserPushNotificationAdmin(admin.ModelAdmin):
 
 # REWARDS
 
+
 @admin.register(Offers)
 class OffersAdmin(admin.ModelAdmin):
-    list_display = ["title", "image", "description", "required_points", "created_on", "updated_on"]
+    list_display = [
+        "title",
+        "image",
+        "description",
+        "required_points",
+        "created_on",
+        "updated_on",
+    ]
+
 
 @admin.register(UserRedeemedOffers)
 class OffersAdmin(admin.ModelAdmin):
