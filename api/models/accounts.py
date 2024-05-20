@@ -28,7 +28,7 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_("Superuser must have is_superuser=True."))
         return self.create_user(email, password, **extra_fields)
 
-
+from datetime import date
 class UserModel(AbstractUser, BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     phone_number = models.CharField(max_length=20, unique=True)
@@ -48,6 +48,11 @@ class UserModel(AbstractUser, BaseModel):
     def increase_points(self, points:int):
         self.points = (self.points + points)
         self.save()
+
+    def age(self):
+        today = date.today()
+        age = today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
+        return age
 
 
 

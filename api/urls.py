@@ -28,7 +28,7 @@ eye_health_apis = [
     path("get-question-details", GetQuestionDetails.as_view()),
     path("select-questions", SelectQuestion.as_view()),
     path("select-eye", SelectEye.as_view()),
-    path("snellen-fraction", GetSnellenFraction.as_view()),
+    path("snellen-fraction/", GetSnellenFraction.as_view()),
     path("random-text", RandomText.as_view()),
     path("myopia-or-hyperopia-or-presbyopia-test", MyopiaOrHyperopiaOrPresbyopiaTest.as_view()),
     path("choose-astigmatism", ChooseAstigmatism.as_view()),
@@ -41,8 +41,9 @@ eye_health_apis = [
     path("random-word-test", RandomWordTest.as_view()),
     path("update-Reading-SnellenFraction-TestApi", UpdateReadingSnellenFractionTestApi.as_view()),
     path("generate-report", GetGeneratedReport.as_view()),
+    path("calculate-distance", CalculateDistance.as_view()),
 ]
 
 urlpatterns = accounts + subscriptions + users + [
-    path("eye", include(eye_health_apis))
+    path("eye/", include(eye_health_apis))
 ]
