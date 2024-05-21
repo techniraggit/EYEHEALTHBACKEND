@@ -73,7 +73,7 @@ class UserAddress(BaseModel):
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
     country = models.CharField(max_length=50, default="India")
-    is_default = models.BooleanField(default=False)
+    # is_default = models.BooleanField(default=False)
 
     def get_full_address(self):
         return f"{self.user.get_full_name()}, {self.address}, {self.city}, {self.state}, {self.country}, {self.postal_code}"

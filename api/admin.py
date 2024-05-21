@@ -3,6 +3,7 @@ from api.models.accounts import *
 from api.models.notifications import *
 from api.models.subscription import *
 from api.models.rewards import *
+from api.models.eye_health import *
 
 
 # Register your models here.
@@ -95,3 +96,11 @@ class OffersAdmin(admin.ModelAdmin):
 @admin.register(UserRedeemedOffers)
 class OffersAdmin(admin.ModelAdmin):
     list_display = ["user", "offer", "created_on", "updated_on"]
+
+@admin.register(EyeTestReport)
+class EyeTestReportAdmin(admin.ModelAdmin):
+    list_display = ["user_eye_test"]
+
+@admin.register(EyeFatigueReport)
+class EyeFatigueReportAdmin(admin.ModelAdmin):
+    list_display = ["user_eye_test"]
