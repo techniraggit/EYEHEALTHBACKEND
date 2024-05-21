@@ -18,7 +18,7 @@ from utilities.utils import (
     get_tokens_for_user,
     phone_or_email,
 )
-from api.views.strip_apis import CreateCustomer
+from core.constants import SMS_TEMPLATE
 
 
 class VerificationOTPView(APIView):
@@ -42,13 +42,9 @@ class VerificationOTPView(APIView):
                 return api_response(False, 500, "Something went wrong")
 
         else:
-            message = f"""
-                Hi, your OTP is {otp} to verify your phone number at Eye Exam.
-                """
+            message = SMS_TEMPLATE["send_otp"].format(otp=otp)
             send_sms(username, message)
-            return api_response(
-                False, 200, f"OTP sent successfully - {username} - otp - {otp}"
-            )
+            return api_response(False, 200, f"OTP sent successfully", sms=message)
 
     def patch(self, request):
         username = request.data.get("username")
@@ -69,11 +65,11 @@ class VerificationOTPView(APIView):
 
 class RegisterView(APIView):
     def post(self, request):
-        address_info = request.data.get("address_info")
-        address_serialized_data = UserAddressSerializer(data=address_info)
+        # address_info = request.data.get("address_info")
+        # address_serialized_data = UserAddressSerializer(data=address_info)
 
-        if not address_serialized_data.is_valid():
-            return api_response(False, 400, data=address_serialized_data.errors)
+        # if not address_serialized_data.is_valid():
+        #     return api_response(False, 400, data=address_serialized_data.errors)
 
         serializer = UserSerializer(data=request.data)
         if serializer.is_valid():
@@ -81,20 +77,20 @@ class RegisterView(APIView):
             id = serializer.data.get("id")
             user_obj = UserModel.objects.get(id=id)
 
-            if address_info:
-                UserAddress.objects.create(user=user_obj, **address_info)
-                customer_id = CreateCustomer(
-                    name=user_obj.get_full_name(),
-                    email=user_obj.email,
-                    address=address_info["address"],
-                    postal_code=address_info["postal_code"],
-                    city=address_info["city"],
-                    country=address_info["country"],
-                    state=address_info["state"],
-                )
+            # if address_info:
+            #     UserAddress.objects.create(user=user_obj, **address_info)
+            #     customer_id = CreateCustomer(
+            #         name=user_obj.get_full_name(),
+            #         email=user_obj.email,
+            #         address=address_info["address"],
+            #         postal_code=address_info["postal_code"],
+            #         city=address_info["city"],
+            #         country=address_info["country"],
+            #         state=address_info["state"],
+            #     )
 
-                user_obj.customer_id = customer_id
-                user_obj.save()
+            # user_obj.customer_id = customer_id
+            # user_obj.save()
             access_token, refresh_token = get_tokens_for_user(user_obj)
             tokens = dict(access_token=access_token, refresh_token=refresh_token)
             return api_response(True, 201, data=serializer.data, tokens=tokens)
@@ -131,13 +127,9 @@ class SendLoginOTP(APIView):
             except:
                 return api_response(False, 404, "User does not exists")
 
-            message = f"""
-                Hi, your OTP is {otp} to verify your phone number at Eye Exam.
-                """
+            message = SMS_TEMPLATE["send_otp"].format(otp=otp)
             send_sms(username, message)
-            return api_response(
-                False, 200, f"OTP sent successfully - {username} otp - {otp}"
-            )
+            return api_response(False, 200, f"OTP sent successfully", sms=message)
 
 
 class VerifyLoginOTPView(APIView):

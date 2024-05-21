@@ -41,7 +41,7 @@ class UserAddressSerializer(BaseSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     device_token = DeviceInfoSerializer(many=True, read_only=True)
-    addresses = UserAddressSerializer(many=True, read_only=True)
+    # addresses = UserAddressSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserModel
@@ -58,7 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
             "latitude",
             "longitude",
             "device_token",
-            "addresses",
+            # "addresses",
             "customer_id",
         ]
         extra_kwargs = {
