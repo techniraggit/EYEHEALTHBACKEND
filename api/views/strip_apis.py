@@ -1,3 +1,4 @@
+from rest_framework.response import Response
 from rest_framework.views import APIView
 import stripe
 from django.conf import settings
@@ -9,18 +10,18 @@ from .base import UserMixin
 class CheckoutSessionSerializer(serializers.Serializer):
     price = serializers.IntegerField(required=True)
     product_name = serializers.CharField(required=True, max_length=50)
+    customer_id = serializers.CharField(required=True, max_length=250)
     product_id = serializers.UUIDField(required=True)
 
 
 class CreateCheckoutSession(UserMixin):
     def post(self, request):
-        print("request.user.customer_id == ", request.user.customer_id)
         serialized_data = CheckoutSessionSerializer(data=request.data)
         if serialized_data.is_valid():
             price = serialized_data.data.get("price")
             product_name = serialized_data.data.get("product_name")
+            customer_id = serialized_data.data.get("customer_id")
             product_id = serialized_data.data.get("product_id")
-            email = request.user.email
             user_id = request.user.id
 
             try:
@@ -38,7 +39,7 @@ class CreateCheckoutSession(UserMixin):
                             "quantity": 1,
                         }
                     ],
-                    customer=request.user.customer_id,
+                    customer=customer_id,
                     mode="payment",
                     metadata={
                         "product_id": product_id,
@@ -54,9 +55,6 @@ class CreateCheckoutSession(UserMixin):
                 print(e)
                 return e
         return api_response(False, 400, serialized_data.errors)
-
-
-from rest_framework.response import Response
 
 
 class WebHook(APIView):
@@ -75,15 +73,19 @@ class WebHook(APIView):
         except stripe.error.SignatureVerificationError as err:
             raise err
 
+        # print("event === ", event)
+        print("event.type === ", event.type)
+
         if event.type == "payment_intent.succeeded":
             payment_intent = event.data.object
-            print("succeeded ============= \n\n", payment_intent)
+            # print("succeeded ============= \n\n", payment_intent)
         elif event.type == "payment_method.attached":
             payment_method = event.data.object
-            print("attached ============= \n\n", payment_method)
+            # print("attached ============= \n\n", payment_method)
 
         else:
-            print("Unhandled event type ============= \n\n{}".format(event.type))
+            # print("Unhandled event type ============= \n\n{}".format(event.type))
+            pass
 
         return Response({"success": True})
 
@@ -118,13 +120,5 @@ def CreateCustomer(name, email, address, postal_code, city, state, country="Indi
 
 class CreateCustomerView(APIView):
     def post(self, request):
-        id = CreateCustomer(
-            name="Jenny Rosen",
-            email="test@gmail.com",
-            line1="510 Twonder St",
-            postal_code="247342",
-            city="San Francisco",
-            state="CA",
-            country="india",
-        )
+        id = CreateCustomer(**request.data)
         return api_response(True, 201, "Customer created", customer_id=id)
