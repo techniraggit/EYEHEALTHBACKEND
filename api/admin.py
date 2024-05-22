@@ -97,10 +97,14 @@ class OffersAdmin(admin.ModelAdmin):
 class OffersAdmin(admin.ModelAdmin):
     list_display = ["user", "offer", "created_on", "updated_on"]
 
-@admin.register(EyeTestReport)
-class EyeTestReportAdmin(admin.ModelAdmin):
-    list_display = ["user_eye_test"]
 
-@admin.register(EyeFatigueReport)
-class EyeFatigueReportAdmin(admin.ModelAdmin):
-    list_display = ["user_eye_test"]
+admin.register(EyeTestReport)
+admin.register(EyeFatigueReport)
+@admin.register(UserTestProfile)
+class UserTestProfileAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "full_name",
+        "customer_id",
+        "age",
+    ]

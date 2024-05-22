@@ -25,10 +25,33 @@ END_POINTS = {
     "update_Reading_SnellenFraction_TestApi": f"{BASE_URL}/update-Reading-SnellenFraction-TestApi/",
     "get_generated_report": f"{BASE_URL}/genrate-report/",
     "calculate_distance": f"{BASE_URL}/calculate-distance/",
+    "get_eye_access_token": f"{BASE_URL}/get-eye-access-token/",
 }
 
-secure_headers = dict(Authorization=f"Bearer {settings.STATIC_TOKEN}")
+from utilities.redis_client import SessionManager
 
+
+def get_eye_access_token(user_id):
+    print("user_id == ", user_id)
+    response = requests.get(END_POINTS.get("get_eye_access_token"), params={'user_id': user_id})
+    try:
+        response.json()
+        return response
+    except:
+        return HttpResponse(response)
+
+def get_user_token(user_id):
+    session_manager = SessionManager()
+    access_token = session_manager.get_session_token(user_id=user_id)
+    if not access_token:
+        response = get_eye_access_token(user_id)
+        print("Access token=============================befoer")
+        access_token  = response.json()
+        print("access_token === ", access_token, "********************")
+        session_manager.store_session_token(user_id=user_id, session_token=access_token)
+    return access_token
+
+secure_headers = dict(Authorization=f"Bearer {settings.STATIC_TOKEN}")
 
 def add_customer(data):
     response = requests.post(END_POINTS.get("add_customer"), json=data)
@@ -164,23 +187,102 @@ def calculate_distance(data):
     )
     return response
 
+from api.models.eye_health import UserTestProfile
+from api.serializers.eye_health import UserTestProfileSerializer
+from utilities.utils import base64_encode
+from core.utils import custom_404
 
-class AddCustomer(UserMixin):
+class CustomerView(UserMixin):
+    def get_object(self, pk):
+        try:
+            return UserTestProfile.objects.get(pk=pk)
+        except UserTestProfile.DoesNotExist:
+            raise custom_404("Profile does not exist.")
+
+    def get(self, request):
+        query_set = UserTestProfile.objects.filter(user=request.user)
+        serialized_data = UserTestProfileSerializer(query_set, many=True).data
+        return Response(serialized_data, 200)
+
     def post(self, request):
         request_user = request.user
-        data = dict(
-            email=request_user.email,
-            name=request_user.get_full_name(),
-            domain_url=settings.EYE_TEST_DOMAIN_URL,
-            age=request_user.age(),
-            mobile_no=request_user.phone_number,
-        )
-        response = add_customer(data)
+
+
+        try:
+            data = dict(
+                email=request_user.email,
+                name=request_user.get_full_name(),
+                domain_url=settings.EYE_TEST_DOMAIN_URL,
+                age=request_user.age(),
+                mobile_no=request_user.phone_number,
+            )
+            response = add_customer(data)
+            return Response(response.json(), response.status_code)
+        except Exception:
+            return HttpResponse(response)
+
+
+        is_self = request.data.get('is_self', False)
+        if is_self:
+            data = dict(
+                email=request_user.email,
+                name=request_user.get_full_name(),
+                domain_url=settings.EYE_TEST_DOMAIN_URL,
+                age=request_user.age(),
+                mobile_no=request_user.phone_number,
+            )
+        else:
+            full_name = request.data.get('name')
+            age = request.data.get('age')
+            if not full_name or not age:
+                return Response({"status":False, "message":"Name and age must be specified"})
+
+            data = dict(
+                email=request_user.email,
+                name=full_name,
+                domain_url=settings.EYE_TEST_DOMAIN_URL,
+                age=age,
+                mobile_no=request.data.get('mobile_no'),
+            )
+        
+        try:
+            
+            profile_obj, created = UserTestProfile.objects.get_or_create(
+                user = request.user,
+                full_name = data.get('name'),
+                age = data.get('age'),
+                
+            )
+
+            if created:
+                try:
+                    response = add_customer(data)
+                    json_response = response.json()
+                    if response.status_code != 200:
+                        return Response(response, response.status_code)
+                    print("json_response === ", json_response)
+                except:
+                    return Response(response, response.status_code)
+                profile_obj.customer_id =  base64_encode(json_response["data"]["id"])
+                profile_obj.save()
+
+            print("profile_obj.customer_id == ", profile_obj.customer_id)
+
+            access_token = get_user_token(profile_obj.customer_id)
+            data = profile_obj.to_json()
+            data["access_token"] = access_token
+            return Response(data)
+        except Exception as e:
+            raise e
+            return HttpResponse(response)
+
+class AccessTokenView(UserMixin):
+    def get(self, request):
+        response = get_eye_access_token(request.GET.get("user_id"))
         try:
             return Response(response.json(), response.status_code)
         except:
             return HttpResponse(response)
-
 
 class GetQuestionDetails(UserMixin):
     def get(self, request):

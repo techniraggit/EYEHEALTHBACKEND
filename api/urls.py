@@ -2,7 +2,8 @@ from django.urls import path, include
 from api.views.accounts import *
 from api.views.user_apis import *
 from api.views.subscription import *
-from api.views.eye_health_apis import *
+from api.views.eye_test_apis import *
+from api.views import eye_fatigue_apis
 from api.views.strip_apis import *
 
 accounts = [
@@ -32,8 +33,9 @@ strip_urls = [
 ]
 
 eye_health_apis = [
-    path("add-customer", AddCustomer.as_view()),
+    path("add-customer", CustomerView.as_view()),
     path("get-question-details", GetQuestionDetails.as_view()),
+    path("get-eye-access-token", AccessTokenView.as_view()),
     path("select-questions", SelectQuestion.as_view()),
     path("select-eye", SelectEye.as_view()),
     path("snellen-fraction/", GetSnellenFraction.as_view()),
@@ -58,9 +60,19 @@ eye_health_apis = [
     path("calculate-distance", CalculateDistance.as_view()),
 ]
 
+fatigue_apis = [
+    path("add-customer", eye_fatigue_apis.AddCustomer.as_view()),
+    path("calculate-blink-rate", eye_fatigue_apis.CalculateBlinkRate.as_view()),
+    path("blinks-report-details", eye_fatigue_apis.BlinkReportDetails.as_view()),
+]
+
 urlpatterns = (
     accounts
     + subscriptions
     + users
-    + [path("eye/", include(eye_health_apis)), path("payment/", include(strip_urls))]
+    + [
+        path("eye/", include(eye_health_apis)),
+        path("payment/", include(strip_urls)),
+        path("fatigue/", include(fatigue_apis)),
+    ]
 )

@@ -39,3 +39,19 @@ def phone_or_email(username):
 def get_tokens_for_user(user):
     refresh = RefreshToken.for_user(user)
     return str(refresh.access_token), str(refresh)
+
+
+def base64_encode(data):
+    if isinstance(data, str):
+        data_bytes = data.encode('utf-8')
+    elif isinstance(data, int):
+        data_bytes = str(data).encode('utf-8')
+    else:
+        raise TypeError("Data must be a string or an integer")
+
+    return str(base64.b64encode(data_bytes)).split("'")[1]
+
+
+def base64_decode(encoded_data: bytes) -> str:
+    decoded_bytes = base64.b64decode(encoded_data)
+    return decoded_bytes.decode("utf-8")

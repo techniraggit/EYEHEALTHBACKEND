@@ -1,14 +1,8 @@
 from .base import BaseSerializer, serializers
-from api.models.eye_health import UserEyeTest, TestReport
+from api.models.eye_health import UserTestProfile
 
 
-class TestReportSerializer(BaseSerializer):
+class UserTestProfileSerializer(BaseSerializer):
     class Meta:
-        model = TestReport
-        fields = "__all__"
-
-class UserEyeTestSerializer(BaseSerializer):
-    test_reports = TestReportSerializer(many=True, read_only=True)
-    class Meta:
-        model = UserEyeTest
+        model = UserTestProfile
         fields = "__all__"

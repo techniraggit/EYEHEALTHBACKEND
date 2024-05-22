@@ -32,6 +32,12 @@ class UserAddressSerializer(BaseSerializer):
             "state",
             "country",
             "full_address",
+            "full_name",
+            "phone_number",
+            "email",
+            "locality",
+            "is_default",
+            "address_type",
         ]
         extra_kwargs = {"address_id": {"read_only": True}}
 
@@ -41,7 +47,6 @@ class UserAddressSerializer(BaseSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     device_token = DeviceInfoSerializer(many=True, read_only=True)
-    # addresses = UserAddressSerializer(many=True, read_only=True)
 
     class Meta:
         model = UserModel

@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import uuid4
 from .base import BaseModel
 from django.contrib.auth.models import AbstractUser
@@ -27,9 +28,6 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get("is_superuser") is not True:
             raise ValueError(_("Superuser must have is_superuser=True."))
         return self.create_user(email, password, **extra_fields)
-
-
-from datetime import date
 
 
 class UserModel(AbstractUser, BaseModel):
@@ -68,25 +66,35 @@ class UserAddress(BaseModel):
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="addresses"
     )
+    full_name = models.CharField(max_length=250)
+    phone_number = models.CharField(max_length=30)
+    email = models.EmailField()
     address = models.TextField()
+    locality = models.CharField(max_length=250)
     postal_code = models.CharField(max_length=50)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=50)
     country = models.CharField(max_length=50, default="India")
-    # is_default = models.BooleanField(default=False)
+    address_type = models.CharField(max_length=50)
+    is_default = models.BooleanField(default=False)
 
     def get_full_address(self):
-        return f"{self.user.get_full_name()}, {self.address}, {self.city}, {self.state}, {self.country}, {self.postal_code}"
+        return f"{self.full_name}, {self.phone_number}, {self.address}, {self.locality}, {self.city}, {self.state}, {self.country}, {self.postal_code}"
 
     def to_json(self):
-        return {
-            "full_name": self.user.get_full_name(),
-            "line1": self.address,
-            "postal_code": self.postal_code,
-            "city": self.city,
-            "state": self.state,
-            "country": self.country,
-        }
+        return dict(
+            full_name = self.full_name,
+            phone_number = self.phone_number,
+            email = self.email,
+            address = self.address,
+            locality = self.locality,
+            postal_code = self.postal_code,
+            city = self.city,
+            state = self.state,
+            country = self.country,
+            address_type = self.address_type,
+            is_default = self.is_default,
+        )
 
 
 class DeviceInfo(BaseModel):
