@@ -1,3 +1,5 @@
+from api.models.subscription import UserSubscription, SubscriptionPlan
+from django.utils import timezone
 from uuid import uuid4
 from utilities.utils import (
     verify_otp,
@@ -8,15 +10,13 @@ from rest_framework import serializers
 from api.models.accounts import UserModel, OTPLog, DeviceInfo, ReferTrack, UserAddress
 from .base import BaseSerializer
 from datetime import datetime, timedelta
+from api.views.strip_apis import CreateCustomer
 
 
 class DeviceInfoSerializer(BaseSerializer):
     class Meta:
         model = DeviceInfo
         fields = ["token", "device_type"]
-
-
-from api.views.strip_apis import CreateCustomer
 
 
 class UserAddressSerializer(BaseSerializer):
@@ -44,6 +44,34 @@ class UserAddressSerializer(BaseSerializer):
     def get_full_address(self, obj):
         return obj.get_full_address()
 
+    def create(self, validated_data):
+        user = validated_data.get("user")
+        is_default = validated_data.get("is_default", False)
+
+        if not UserAddress.objects.filter(user=user).exists():
+            stripe_customer_id = CreateCustomer(
+                name=user.get_full_name(),
+                email=user.email,
+                address=validated_data.get("address"),
+                postal_code=validated_data.get("postal_code"),
+                city=validated_data.get("city"),
+                state=validated_data.get("state"),
+                country=validated_data.get("country"),
+                locality=validated_data.get("locality"),
+            )
+            user.stripe_customer_id = stripe_customer_id
+            user.save()
+            validated_data["is_default"] = True
+        else:
+            if is_default:
+                # If setting a new default address, unset the previous default
+                UserAddress.objects.filter(user=user, is_default=True).update(
+                    is_default=False
+                )
+
+        address = UserAddress.objects.create(**validated_data)
+        return address
+
 
 class UserSerializer(serializers.ModelSerializer):
     device_token = DeviceInfoSerializer(many=True, read_only=True)
@@ -64,7 +92,7 @@ class UserSerializer(serializers.ModelSerializer):
             "longitude",
             "device_token",
             # "addresses",
-            "customer_id",
+            "stripe_customer_id",
         ]
         extra_kwargs = {
             "password": {"write_only": True},
@@ -141,6 +169,22 @@ class UserSerializer(serializers.ModelSerializer):
         if device_token_data:
             DeviceInfo.objects.create(user=user, **device_token_data)
 
+        """
+        plan = SubscriptionPlan.objects.get(plan_type="basic")
+        end_date = timezone.now() + timezone.timedelta(days=plan.duration)
+        payment_method = "free"
+        paid_amount = 0
+        UserSubscription.objects.create(
+            user = user,
+            plan = plan,
+            end_date = end_date,
+            is_active = True,
+            payment_method = payment_method,
+            paid_amount = paid_amount,
+            payment_status = "success"
+        )
+        """
+
         return user
 
 
@@ -153,14 +197,14 @@ class ProfileSerializer(BaseSerializer):
             "last_name",
             "phone_number",
             "referral_code",
-            "customer_id",
+            "stripe_customer_id",
             "points",
             "email",
             "image",
         ]
         extra_kwargs = {
             "points": {"read_only": True},
-            "customer_id": {"read_only": True},
+            "stripe_customer_id": {"read_only": True},
         }
 
     def validate_phone_number(self, value):

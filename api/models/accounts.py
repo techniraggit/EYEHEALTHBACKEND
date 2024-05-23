@@ -40,7 +40,7 @@ class UserModel(AbstractUser, BaseModel):
     latitude = models.FloatField(null=True)
     longitude = models.FloatField(null=True)
     referral_code = models.CharField(max_length=50, unique=True, null=True)
-    customer_id = models.CharField(max_length=250, blank=True)
+    stripe_customer_id = models.CharField(max_length=250, blank=True)
 
     username = None
     objects = CustomUserManager()

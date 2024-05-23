@@ -4,7 +4,7 @@ from api.models.subscription import UserSubscription
 
 
 class Command(BaseCommand):
-    help = "Updates the is_active field for expired subscriptions"
+    help = "Updates the is_active field for expired subscriptions. 0 0 * * *"
 
     def handle(self, *args, **kwargs):
         today = timezone.now().date()

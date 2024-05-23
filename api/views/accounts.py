@@ -21,6 +21,15 @@ from utilities.utils import (
 from core.constants import SMS_TEMPLATE
 
 
+class IsAlreadyVerified(APIView):
+    def get(self, request):
+        username = request.GET.get("username")
+        if not username:
+            return api_response(False, 400, "username required")
+        is_verified = OTPLog.objects.filter(username=username).exists()
+        return api_response(True, 200, is_verified=is_verified)
+
+
 class VerificationOTPView(APIView):
     def post(self, request):
         username = request.data.get("username")
@@ -74,6 +83,7 @@ class RegisterView(APIView):
             tokens = dict(access_token=access_token, refresh_token=refresh_token)
             return api_response(True, 201, data=serializer.data, tokens=tokens)
         return api_response(False, 400, data=serializer.errors)
+
 
 class SendLoginOTP(APIView):
     def post(self, request):

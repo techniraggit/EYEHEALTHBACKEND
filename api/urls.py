@@ -12,10 +12,12 @@ accounts = [
     path("send_login_otp", SendLoginOTP.as_view()),
     path("verify_login_otp", VerifyLoginOTPView.as_view()),
     path("validate_referral_code", ValidateReferralCode.as_view()),
+    path("is_already_verified", IsAlreadyVerified.as_view()),
 ]
 
 subscriptions = [
     path("subscription-plans", SubscriptionPlansView.as_view()),
+    path("is-active-plan", IsActivePlan.as_view()),
 ]
 
 users = [

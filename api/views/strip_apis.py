@@ -1,3 +1,5 @@
+from django.utils import timezone
+from api.models.subscription import SubscriptionPlan, UserSubscription, UserModel
 from rest_framework.response import Response
 from rest_framework.views import APIView
 import stripe
@@ -5,6 +7,7 @@ from django.conf import settings
 from rest_framework import serializers
 from core.utils import api_response
 from .base import UserMixin
+from django.http import HttpResponse
 
 
 class CheckoutSessionSerializer(serializers.Serializer):
@@ -51,9 +54,8 @@ class CreateCheckoutSession(UserMixin):
                 return api_response(
                     True, 303, checkout_session_url=checkout_session.url
                 )
-            except Exception as e:
-                print(e)
-                return e
+            except Exception:
+                return Exception
         return api_response(False, 400, serialized_data.errors)
 
 
@@ -62,32 +64,40 @@ class WebHook(APIView):
         event = None
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-        STRIPE_WEBHOOK_SECRET = settings.STRIPE_WEBHOOK_SECRET
 
         try:
             event = stripe.Webhook.construct_event(
-                payload, sig_header, STRIPE_WEBHOOK_SECRET
+                payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
             )
-        except ValueError as err:
-            raise err
-        except stripe.error.SignatureVerificationError as err:
-            raise err
+        except ValueError as e:
+            return HttpResponse(status=400)
+        except stripe.error.SignatureVerificationError as e:
+            return HttpResponse(status=400)
 
-        # print("event === ", event)
-        print("event.type === ", event.type)
+        payment_status_map = dict(
+            requires_payment_method="pending", succeeded="success"
+        )
 
-        if event.type == "payment_intent.succeeded":
-            payment_intent = event.data.object
-            # print("succeeded ============= \n\n", payment_intent)
-        elif event.type == "payment_method.attached":
-            payment_method = event.data.object
-            # print("attached ============= \n\n", payment_method)
-
-        else:
-            # print("Unhandled event type ============= \n\n{}".format(event.type))
+        if event["type"] == "payment_intent.succeeded":
+            session = event["data"]["object"]
+            user = UserModel.objects.get(id=session["metadata"]["user_id"])
+            plan = SubscriptionPlan.objects.get(id=session["metadata"]["plan_id"])
+            end_date = timezone.now() + timezone.timedelta(days=plan.duration)
+            payment_method = session["payment_method_types"][0]
+            paid_amount = session["amount"] / 100
+            UserSubscription.objects.create(
+                user=user,
+                plan=plan,
+                end_date=end_date,
+                is_active=True,
+                payment_method=payment_method,
+                paid_amount=paid_amount,
+                payment_status=payment_status_map.get(session["status"], "failed"),
+            )
+        elif event["type"] == "payment_intent.created":
             pass
 
-        return Response({"success": True})
+        return HttpResponse(status=200)
 
 
 def CreateCustomer(name, email, address, postal_code, city, state, country="India"):

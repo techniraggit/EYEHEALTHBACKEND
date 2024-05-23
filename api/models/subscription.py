@@ -2,6 +2,7 @@ from .base import BaseModel
 from django.db import models
 from .accounts import UserModel
 from uuid import uuid4
+from django.utils import timezone
 
 
 class SubscriptionPlan(BaseModel):
@@ -17,6 +18,7 @@ class SubscriptionPlan(BaseModel):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     plan_type = models.CharField(max_length=30, choices=plan_type_choice)
     is_active = models.BooleanField(default=True)
+    duration = models.IntegerField(help_text="Duration in days")
 
 
 class UserSubscription(BaseModel):
@@ -26,12 +28,11 @@ class UserSubscription(BaseModel):
         ("failed", "failed"),
         ("success", "success"),
     )
-    subscription_id = models.CharField(max_length=300)
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="subscription"
     )
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE)
-    start_date = models.DateField()
+    start_date = models.DateField(auto_now_add=True)
     end_date = models.DateField()
     is_active = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=30)
