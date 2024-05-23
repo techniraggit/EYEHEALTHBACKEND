@@ -51,8 +51,7 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
         "description",
         "price",
         "plan_type",
-        "created_on",
-        "updated_on",
+        "is_active",
     ]
 
 
@@ -100,6 +99,8 @@ class OffersAdmin(admin.ModelAdmin):
 
 admin.register(EyeTestReport)
 admin.register(EyeFatigueReport)
+
+
 @admin.register(UserTestProfile)
 class UserTestProfileAdmin(admin.ModelAdmin):
     list_display = [

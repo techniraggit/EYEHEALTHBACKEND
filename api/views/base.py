@@ -10,6 +10,12 @@ class IsAdminOnly(BasePermission):
             return True
         return False
 
+class IsValidHeaders(BasePermission):
+    def has_permission(self, request, view):
+        customer_id = request.headers.get('Customer-Id')
+        if customer_id:
+            return True
+        return False
 
 class UserMixin(APIView):
     authentication_classes = [JWTAuthentication]
@@ -19,3 +25,7 @@ class UserMixin(APIView):
 class AdminMixin(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated, IsAdminOnly]
+
+class SecureHeadersMixin(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated, IsValidHeaders]
