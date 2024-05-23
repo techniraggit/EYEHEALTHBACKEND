@@ -1,4 +1,4 @@
-from .base import UserMixin
+from .base import UserMixin, SecureHeadersMixin
 import requests
 from rest_framework.response import Response
 from django.http import HttpResponse
@@ -28,11 +28,10 @@ END_POINTS = {
     "get_eye_access_token": f"{BASE_URL}/get-eye-access-token/",
 }
 
-from utilities.redis_client import SessionManager
+from utilities.redis_client import store_token, get_token
 
 
 def get_eye_access_token(user_id):
-    print("user_id == ", user_id)
     response = requests.get(END_POINTS.get("get_eye_access_token"), params={'user_id': user_id})
     try:
         response.json()
@@ -41,40 +40,43 @@ def get_eye_access_token(user_id):
         return HttpResponse(response)
 
 def get_user_token(user_id):
-    session_manager = SessionManager()
-    access_token = session_manager.get_session_token(user_id=user_id)
+    access_token = get_token(user_id=user_id)
     if not access_token:
         response = get_eye_access_token(user_id)
-        print("Access token=============================befoer")
-        access_token  = response.json()
-        print("access_token === ", access_token, "********************")
-        session_manager.store_session_token(user_id=user_id, session_token=access_token)
+        access_token  = response.json()["access_token"]
+        store_token(user_id=user_id, token=access_token)
     return access_token
 
-secure_headers = dict(Authorization=f"Bearer {settings.STATIC_TOKEN}")
+
 
 def add_customer(data):
     response = requests.post(END_POINTS.get("add_customer"), json=data)
     return response
 
 
-def get_question_details():
+def get_question_details(customer_id):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.get(
-        END_POINTS.get("get_question_details"), headers=secure_headers
+        END_POINTS.get("get_question_details"), headers=headers
     )
     return response
 
 
-def select_question(data):
+def select_question(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.post(
-        END_POINTS.get("select_question"), json=data, headers=secure_headers
+        END_POINTS.get("select_question"), json=data, headers=headers
     )
     return response
 
 
-def select_eye(data):
+def select_eye(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.post(
-        END_POINTS.get("select_eye"), json=data, headers=secure_headers
+        END_POINTS.get("select_eye"), json=data, headers=headers
     )
     return response
 
@@ -88,102 +90,128 @@ def get_snellen_fraction(params):
     return response
 
 
-def random_text(data):
+def random_text(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.post(
-        END_POINTS.get("random_text"), json=data, headers=secure_headers
+        END_POINTS.get("random_text"), json=data, headers=headers
     )
     return response
 
 
-def myopia_or_hyperopia_or_presbyopia_test(data):
+def myopia_or_hyperopia_or_presbyopia_test(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.put(
         END_POINTS.get("myopia_or_hyperopia_or_presbyopia_test"),
         json=data,
-        headers=secure_headers,
+        headers=headers,
     )
     return response
 
 
-def choose_astigmatism(data):
+def choose_astigmatism(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.put(
-        END_POINTS.get("choose_astigmatism"), json=data, headers=secure_headers
+        END_POINTS.get("choose_astigmatism"), json=data, headers=headers
     )
     return response
 
 
-def get_degrees(params):
+def get_degrees(customer_id, params):
     # ?test_id={{eye_test_test_id}}
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.get(
-        END_POINTS.get("get_degrees"), params=params, headers=secure_headers
+        END_POINTS.get("get_degrees"), params=params, headers=headers
     )
     return response
 
 
-def choose_degree_api(data):
+def choose_degree_api(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.put(
-        END_POINTS.get("choose_degree_api"), json=data, headers=secure_headers
+        END_POINTS.get("choose_degree_api"), json=data, headers=headers
     )
     return response
 
 
-def cyl_test(data):
+def cyl_test(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.put(
-        END_POINTS.get("cyl_test"), json=data, headers=secure_headers
+        END_POINTS.get("cyl_test"), json=data, headers=headers
     )
     return response
 
 
-def get_snellen_fraction_red_green_test(params):
+def get_snellen_fraction_red_green_test(customer_id, params):
     # ?test_id={{eye_test_test_id}}
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.get(
         END_POINTS.get("get_snellen_fraction_red_green_test"),
         params=params,
-        headers=secure_headers,
+        headers=headers,
     )
     return response
 
 
-def final_red_green_action_test(data):
+def final_red_green_action_test(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.post(
-        END_POINTS.get("final_red_green_action_test"), json=data, headers=secure_headers
+        END_POINTS.get("final_red_green_action_test"), json=data, headers=headers
     )
     return response
 
 
-def update_red_green_action_api(data):
+def update_red_green_action_api(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.put(
-        END_POINTS.get("update_red_green_action_api"), json=data, headers=secure_headers
+        END_POINTS.get("update_red_green_action_api"), json=data, headers=headers
     )
-    return (response,)
+    return (response)
 
 
-def random_word_test(data):
+def random_word_test(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.post(
-        END_POINTS.get("random_word_test"), json=data, headers=secure_headers
+        END_POINTS.get("random_word_test"), json=data, headers=headers
     )
     return response
 
 
-def update_Reading_SnellenFraction_TestApi(data):
+def update_Reading_SnellenFraction_TestApi(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.put(
         END_POINTS.get("update_Reading_SnellenFraction_TestApi"),
         json=data,
-        headers=secure_headers,
+        headers=headers,
     )
     return response
 
 
-def get_generated_report(params):
+def get_generated_report(customer_id, params):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     # ?test_id={{eye_test_test_id}}
     response = requests.get(
-        END_POINTS.get("get_generated_report"), params=params, headers=secure_headers
+        END_POINTS.get("get_generated_report"), params=params, headers=headers
     )
     return response
 
 
-def calculate_distance(data):
+def calculate_distance(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
     response = requests.post(
-        END_POINTS.get("calculate_distance"), json=data, headers=secure_headers
+        END_POINTS.get("calculate_distance"), json=data, headers=headers
     )
     return response
 
@@ -201,27 +229,25 @@ class CustomerView(UserMixin):
 
     def get(self, request):
         query_set = UserTestProfile.objects.filter(user=request.user)
-        serialized_data = UserTestProfileSerializer(query_set, many=True).data
+        serialized_data = UserTestProfileSerializer(query_set, many=True, fields=["id", "full_name", "customer_id", "age"]).data
         return Response(serialized_data, 200)
 
     def post(self, request):
+        # try:
+        #     data = dict(
+        #         email=request_user.email,
+        #         name=request_user.get_full_name(),
+        #         domain_url=settings.EYE_TEST_DOMAIN_URL,
+        #         age=request_user.age(),
+        #         mobile_no=request_user.phone_number,
+        #     )
+        #     response = add_customer(data)
+        #     return Response(response.json(), response.status_code)
+        # except Exception:
+        #     return HttpResponse(response)
+
+
         request_user = request.user
-
-
-        try:
-            data = dict(
-                email=request_user.email,
-                name=request_user.get_full_name(),
-                domain_url=settings.EYE_TEST_DOMAIN_URL,
-                age=request_user.age(),
-                mobile_no=request_user.phone_number,
-            )
-            response = add_customer(data)
-            return Response(response.json(), response.status_code)
-        except Exception:
-            return HttpResponse(response)
-
-
         is_self = request.data.get('is_self', False)
         if is_self:
             data = dict(
@@ -242,7 +268,7 @@ class CustomerView(UserMixin):
                 name=full_name,
                 domain_url=settings.EYE_TEST_DOMAIN_URL,
                 age=age,
-                mobile_no=request.data.get('mobile_no'),
+                mobile_no=request_user.phone_number,
             )
         
         try:
@@ -257,23 +283,22 @@ class CustomerView(UserMixin):
             if created:
                 try:
                     response = add_customer(data)
-                    json_response = response.json()
                     if response.status_code != 200:
+                        profile_obj.delete()
                         return Response(response, response.status_code)
-                    print("json_response === ", json_response)
                 except:
                     return Response(response, response.status_code)
-                profile_obj.customer_id =  base64_encode(json_response["data"]["id"])
-                profile_obj.save()
 
-            print("profile_obj.customer_id == ", profile_obj.customer_id)
+                profile_obj.customer_id =  base64_encode(response.json()["data"]["id"])
+                profile_obj.save()
 
             access_token = get_user_token(profile_obj.customer_id)
             data = profile_obj.to_json()
-            data["access_token"] = access_token
+            data["message"] = "Profile found successfully. You may start your eye test."
+            # data["access_token"] = access_token
             return Response(data)
-        except Exception as e:
-            raise e
+        except Exception:
+            # raise Exception
             return HttpResponse(response)
 
 class AccessTokenView(UserMixin):
@@ -284,18 +309,19 @@ class AccessTokenView(UserMixin):
         except:
             return HttpResponse(response)
 
-class GetQuestionDetails(UserMixin):
+class GetQuestionDetails(SecureHeadersMixin):
     def get(self, request):
-        response = get_question_details()
+        customer_id = request.headers.get('Customer-Id')
+        response = get_question_details(customer_id)
         try:
             return Response(response.json(), response.status_code)
         except:
             return HttpResponse(response)
 
 
-class SelectQuestion(UserMixin):
+class SelectQuestion(SecureHeadersMixin):
     def post(self, request):
-        response = select_question(request.data)
+        response = select_question(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -304,7 +330,7 @@ class SelectQuestion(UserMixin):
 
 class SelectEye(UserMixin):
     def post(self, request):
-        response = select_eye(request.data)
+        response = select_eye(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -322,7 +348,7 @@ class GetSnellenFraction(UserMixin):
 
 class RandomText(UserMixin):
     def post(self, request):
-        response = random_text(request.data)
+        response = random_text(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -331,7 +357,7 @@ class RandomText(UserMixin):
 
 class MyopiaOrHyperopiaOrPresbyopiaTest(UserMixin):
     def put(self, request):
-        response = myopia_or_hyperopia_or_presbyopia_test(request.data)
+        response = myopia_or_hyperopia_or_presbyopia_test(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -340,7 +366,7 @@ class MyopiaOrHyperopiaOrPresbyopiaTest(UserMixin):
 
 class ChooseAstigmatism(UserMixin):
     def put(self, request):
-        response = choose_astigmatism(request.data)
+        response = choose_astigmatism(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -349,7 +375,7 @@ class ChooseAstigmatism(UserMixin):
 
 class GetDegrees(UserMixin):
     def get(self, request):
-        response = get_degrees(request.GET)
+        response = get_degrees(request.headers.get('Customer-Id'), request.GET)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -358,7 +384,7 @@ class GetDegrees(UserMixin):
 
 class ChooseDegreeApi(UserMixin):
     def put(self, request):
-        response = choose_degree_api(request.data)
+        response = choose_degree_api(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -367,7 +393,7 @@ class ChooseDegreeApi(UserMixin):
 
 class CylTest(UserMixin):
     def put(self, request):
-        response = cyl_test(request.data)
+        response = cyl_test(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -376,7 +402,7 @@ class CylTest(UserMixin):
 
 class GetSnellenFractionRedGreenTest(UserMixin):
     def get(self, request):
-        response = get_snellen_fraction_red_green_test(request.GET)
+        response = get_snellen_fraction_red_green_test(request.headers.get('Customer-Id'), request.GET)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -385,7 +411,7 @@ class GetSnellenFractionRedGreenTest(UserMixin):
 
 class FinalRedGreenActionTest(UserMixin):
     def post(self, request):
-        response = final_red_green_action_test(request.data)
+        response = final_red_green_action_test(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -394,7 +420,7 @@ class FinalRedGreenActionTest(UserMixin):
 
 class UpdateRedGreenActionApi(UserMixin):
     def put(self, request):
-        response = update_red_green_action_api(request.data)
+        response = update_red_green_action_api(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -403,7 +429,7 @@ class UpdateRedGreenActionApi(UserMixin):
 
 class RandomWordTest(UserMixin):
     def post(self, request):
-        response = random_word_test(request.data)
+        response = random_word_test(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -412,7 +438,7 @@ class RandomWordTest(UserMixin):
 
 class UpdateReadingSnellenFractionTestApi(UserMixin):
     def put(self, request):
-        response = update_Reading_SnellenFraction_TestApi(request.data)
+        response = update_Reading_SnellenFraction_TestApi(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -421,7 +447,7 @@ class UpdateReadingSnellenFractionTestApi(UserMixin):
 
 class GetGeneratedReport(UserMixin):
     def get(self, request):
-        response = get_generated_report(request.GET)
+        response = get_generated_report(request.headers.get('Customer-Id'), request.GET)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -430,7 +456,7 @@ class GetGeneratedReport(UserMixin):
 
 class CalculateDistance(UserMixin):
     def post(self, request):
-        response = calculate_distance(request.data)
+        response = calculate_distance(request.headers.get('Customer-Id'), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
