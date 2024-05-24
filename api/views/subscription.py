@@ -16,7 +16,7 @@ class IsActivePlan(UserMixin):
 
 class SubscriptionPlansView(APIView):
     def get(self, request):
-        subscriptions = SubscriptionPlan.objects.exclude(plan_type="basic").filter(
+        subscriptions = SubscriptionPlan.objects.filter(
             is_active=True
         )
         subscriptions_data = SubscriptionPlanSerializer(subscriptions, many=True).data
