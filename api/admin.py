@@ -83,12 +83,11 @@ class UserPushNotificationAdmin(admin.ModelAdmin):
 @admin.register(Offers)
 class OffersAdmin(admin.ModelAdmin):
     list_display = [
+        "offer_id",
         "title",
-        "image",
-        "description",
+        "expiry_date",
+        "status",
         "required_points",
-        "created_on",
-        "updated_on",
     ]
 
 
