@@ -1,3 +1,5 @@
+from core.utils import api_response, custom_404
+from api.serializers.prescription import UserPrescriptions, UserPrescriptionsSerializer
 from .base import UserMixin, APIView
 from core.utils import api_response
 from api.models.notifications import UserPushNotification
@@ -104,10 +106,6 @@ class OffersView(UserMixin):
         return api_response(
             True, 200, data=serialized_data, eye_health_score=eye_health_score
         )
-
-
-from api.serializers.prescription import UserPrescriptions, UserPrescriptionsSerializer
-from core.utils import api_response, custom_404
 
 
 class UserPrescriptionsView(UserMixin):

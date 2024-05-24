@@ -30,7 +30,7 @@ users = [
 
 strip_urls = [
     path("create-checkout-session", CreateCheckoutSession.as_view()),
-    path("webhook", WebHook.as_view()),  # localhost:8000api/payment/webhook
+    path("webhook", WebHook.as_view()),
     path("create-customer", CreateCustomerView.as_view()),
 ]
 

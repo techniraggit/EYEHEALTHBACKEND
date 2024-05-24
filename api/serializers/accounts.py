@@ -57,7 +57,6 @@ class UserAddressSerializer(BaseSerializer):
                 city=validated_data.get("city"),
                 state=validated_data.get("state"),
                 country=validated_data.get("country"),
-                locality=validated_data.get("locality"),
             )
             user.stripe_customer_id = stripe_customer_id
             user.save()
@@ -257,6 +256,3 @@ class LoginSerializer(serializers.Serializer):
         data["user"] = UserSerializer(user_obj).data
         data["tokens"] = tokens
         return data
-
-
-ERROR_500_MSG = "An unexpected server error occurred. Please contact support."

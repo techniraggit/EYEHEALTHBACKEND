@@ -96,7 +96,9 @@ class OffersAdmin(admin.ModelAdmin):
     list_display = ["user", "offer", "created_on", "updated_on"]
 
 
-admin.register(EyeTestReport)
+@admin.register(EyeTestReport)
+class EyeTestReportAdmin(admin.ModelAdmin):
+    list_display = ["id", "report_id", "user_profile", "health_score"]
 
 
 @admin.register(EyeFatigueReport)
