@@ -14,6 +14,10 @@ class UserModelAdmin(admin.ModelAdmin):
     search_fields = ["email", "phone_number"]
 
 
+@admin.register(UserPoints)
+class UserPointsAdmin(admin.ModelAdmin):
+    list_display = ["user", "points", "method"]
+
 @admin.register(UserAddress)
 class UserAddressAdmin(admin.ModelAdmin):
     list_display = [

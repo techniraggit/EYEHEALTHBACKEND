@@ -47,10 +47,6 @@ class UserModel(AbstractUser, BaseModel):
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name"]
 
-    def increase_points(self, points: int):
-        self.points = self.points + points
-        self.save()
-
     def age(self):
         today = date.today()
         age = (
@@ -59,6 +55,27 @@ class UserModel(AbstractUser, BaseModel):
             - ((today.month, today.day) < (self.dob.month, self.dob.day))
         )
         return age
+
+    def increase_points(self, points: int):
+        self.points = self.points + points
+        self.save()
+
+    def decrease_points(self, points: int):
+        self.points = self.points - points
+        self.save()
+
+
+class UserPoints(BaseModel):
+    method_options = (
+        ("eye test", "eye test"),
+        ("fatigue test", "fatigue test"),
+        ("prescription upload", "prescription upload"),
+        ("referral", "referral"),
+    )
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="user_points")
+    points = models.PositiveIntegerField(default=0)
+    method = models.CharField(max_length=250, choices=method_options)
 
 
 class UserAddress(BaseModel):
@@ -83,17 +100,17 @@ class UserAddress(BaseModel):
 
     def to_json(self):
         return dict(
-            full_name = self.full_name,
-            phone_number = self.phone_number,
-            email = self.email,
-            address = self.address,
-            locality = self.locality,
-            postal_code = self.postal_code,
-            city = self.city,
-            state = self.state,
-            country = self.country,
-            address_type = self.address_type,
-            is_default = self.is_default,
+            full_name=self.full_name,
+            phone_number=self.phone_number,
+            email=self.email,
+            address=self.address,
+            locality=self.locality,
+            postal_code=self.postal_code,
+            city=self.city,
+            state=self.state,
+            country=self.country,
+            address_type=self.address_type,
+            is_default=self.is_default,
         )
 
 

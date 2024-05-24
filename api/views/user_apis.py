@@ -1,9 +1,10 @@
+from django.db.models import Sum
+from core.constants import POINTS_VALUE
 from django.db.models.functions import Concat
 from django.db.models import F, Value
 from core.utils import api_response, custom_404
 from api.serializers.prescription import UserPrescriptions, UserPrescriptionsSerializer
-from .base import UserMixin, APIView
-from core.utils import api_response
+from .base import UserMixin
 from api.models.notifications import UserPushNotification
 from api.serializers.accounts import (
     ProfileSerializer,
@@ -13,6 +14,7 @@ from api.serializers.accounts import (
     ReferTrack,
 )
 from api.serializers.rewards import OffersSerializer, Offers
+from api.models.accounts import UserPoints
 
 
 class ProfileView(UserMixin):
@@ -124,9 +126,22 @@ class UserPrescriptionsView(UserMixin):
             data = UserPrescriptionsSerializer(self.get_object(prescription_id)).data
             return api_response(True, 200, data=data)
 
+        total_points = UserPoints.objects.filter(
+            user=request.user, method="prescription upload"
+        ).aggregate(total=Sum("points"))["total"]
+
+        total_points = total_points or 0  # Handle case where total_points is None
+        prescription_upload_points = POINTS_VALUE.get("prescription_upload", 0)
+
         prescriptions = UserPrescriptions.objects.filter(user=request.user)
         serializer = UserPrescriptionsSerializer(prescriptions, many=True)
-        return api_response(True, 200, data=serializer.data)
+        return api_response(
+            True,
+            200,
+            data=serializer.data,
+            total_points_by_prescription_upload=total_points,
+            you_can_get_points_by_prescription_upload=prescription_upload_points,
+        )
 
     def post(self, request):
         serializer = UserPrescriptionsSerializer(data=request.data)

@@ -3,3 +3,9 @@ SMS_TEMPLATE = {
 }
 
 ERROR_500_MSG = "An unexpected server error occurred. Please contact support."
+
+POINTS_VALUE = {
+    "prescription_upload": 10,
+    "eye_test": 25,
+    "fatigue_test": 20
+}
