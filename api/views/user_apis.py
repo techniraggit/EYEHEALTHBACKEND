@@ -1,3 +1,5 @@
+from django.db.models.functions import Concat
+from django.db.models import F, Value
 from core.utils import api_response, custom_404
 from api.serializers.prescription import UserPrescriptions, UserPrescriptionsSerializer
 from .base import UserMixin, APIView
@@ -8,6 +10,7 @@ from api.serializers.accounts import (
     UserModel,
     UserAddressSerializer,
     UserAddress,
+    ReferTrack,
 )
 from api.serializers.rewards import OffersSerializer, Offers
 
@@ -152,3 +155,21 @@ class UserAddressesView(UserMixin):
                 True, 201, data=serializer.data, message="Address added successfully"
             )
         return api_response(False, 400, data=serializer.errors)
+
+
+class MyReferralsView(UserMixin):
+    def get(self, request):
+        refer_objs = (
+            ReferTrack.objects.filter(referred_by=request.user)
+            .select_related("user")
+            .annotate(
+                full_name=Concat(
+                    F("user__first_name"), Value(" "), F("user__last_name")
+                ),
+                phone=F("user__phone_number"),
+            )
+            .values("full_name", "phone")
+        )
+
+        data = list(refer_objs)
+        return api_response(True, 200, data=data)
