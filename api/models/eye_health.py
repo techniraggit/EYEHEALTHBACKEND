@@ -65,10 +65,11 @@ class EyeFatigueReport(BaseModel):
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="eye_fatigue_test_reports"
     )
-    is_fatigue_right = models.CharField(max_length=25)
-    is_mild_tiredness_right = models.CharField(max_length=25)
-    is_fatigue_left = models.CharField(max_length=25)
-    is_mild_tiredness_left = models.CharField(max_length=25)
+    report_id = models.IntegerField(unique=True)
+    is_fatigue_right = models.BooleanField()
+    is_mild_tiredness_right = models.BooleanField()
+    is_fatigue_left = models.BooleanField()
+    is_mild_tiredness_left = models.BooleanField()
 
     def __str__(self) -> str:
-        return self.full_name
+        return self.user.get_full_name()

@@ -13,7 +13,8 @@ class IsAdminOnly(BasePermission):
 class IsValidHeaders(BasePermission):
     def has_permission(self, request, view):
         customer_id = request.headers.get('Customer-Id')
-        if customer_id:
+        customer_access_token = request.headers.get('Customer-Access-Token')
+        if customer_id or customer_access_token:
             return True
         return False
 

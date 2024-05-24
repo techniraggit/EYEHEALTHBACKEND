@@ -97,7 +97,18 @@ class OffersAdmin(admin.ModelAdmin):
 
 
 admin.register(EyeTestReport)
-admin.register(EyeFatigueReport)
+
+
+@admin.register(EyeFatigueReport)
+class EyeFatigueReportAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "report_id",
+        "is_fatigue_right",
+        "is_mild_tiredness_right",
+        "is_fatigue_left",
+        "is_mild_tiredness_left",
+    ]
 
 
 @admin.register(UserTestProfile)
