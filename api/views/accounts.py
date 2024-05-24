@@ -43,7 +43,7 @@ class VerificationOTPView(APIView):
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
                 return api_response(
-                    True, 200, f"OTP sent successfully - {username} - otp - {otp}"
+                    True, 200, f"OTP sent successfully to {username}."
                 )
 
             except Exception as e:
@@ -53,7 +53,7 @@ class VerificationOTPView(APIView):
         else:
             message = SMS_TEMPLATE["send_otp"].format(otp=otp)
             send_sms(username, message)
-            return api_response(False, 200, f"OTP sent successfully", sms=message)
+            return api_response(False, 200, f"OTP sent successfully to {username}.")
 
     def patch(self, request):
         username = request.data.get("username")
@@ -102,7 +102,7 @@ class SendLoginOTP(APIView):
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
                 return api_response(
-                    True, 200, f"OTP sent successfully - {username} otp - {otp}"
+                    True, 200, f"OTP sent successfully to {username}."
                 )
 
             except Exception as e:
@@ -117,7 +117,7 @@ class SendLoginOTP(APIView):
 
             message = SMS_TEMPLATE["send_otp"].format(otp=otp)
             send_sms(username, message)
-            return api_response(False, 200, f"OTP sent successfully", sms=message)
+            return api_response(False, 200, f"OTP sent successfully to {username}.")
 
 
 class VerifyLoginOTPView(APIView):
