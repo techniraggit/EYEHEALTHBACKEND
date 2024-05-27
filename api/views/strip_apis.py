@@ -60,7 +60,10 @@ class CreateCheckoutSession(UserMixin):
                 return Exception
         return api_response(False, 400, serialized_data.errors)
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 
+@method_decorator(csrf_exempt, name='dispatch')
 class WebHook(APIView):
     def post(self, request):
         event = None
