@@ -65,3 +65,7 @@ class EyeFatigueReport(BaseModel):
             is_fatigue_left=self.is_fatigue_left,
             is_mild_tiredness_left=self.is_mild_tiredness_left,
         )
+
+    def get_percent(self):
+        return (4 - (self.is_fatigue_right + self.is_mild_tiredness_right + self.is_fatigue_left + self.is_mild_tiredness_left)) * 100 / 4
+

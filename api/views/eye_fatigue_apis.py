@@ -1,3 +1,4 @@
+from django.utils import timezone
 from api.models.eye_health import EyeFatigueReport
 from core.utils import api_response, custom_404
 from api.serializers.eye_health import EyeFatigueReportSerializer
@@ -128,3 +129,40 @@ class EyeFatigueReportsView(UserMixin):
         reports = EyeFatigueReport.objects.filter(user=request.user)
         serializer = EyeFatigueReportSerializer(reports, many=True, fields=self.fields)
         return api_response(True, 200, data=serializer.data)
+
+
+class EyeFatigueGraph(UserMixin):
+    def get(self, request):
+        query_set = EyeFatigueReport.objects.filter(user=request.user)
+
+        from_date = request.GET.get("from_date")
+        to_date = request.GET.get("to_date")
+
+        try:
+            if from_date and not to_date:
+                query_set = query_set.filter(created_on__date__gte=from_date)
+            elif to_date and not from_date:
+                query_set = query_set.filter(created_on__date__lte=to_date)
+            elif from_date and to_date:
+                query_set = query_set.filter(
+                    created_on__date__range=[from_date, to_date]
+                )
+            else:
+                query_set = query_set.filter(
+                    created_on__date__gte=(timezone.now() - timezone.timedelta(days=7))
+                )
+
+            data = [
+                {
+                    "date": report.created_on,
+                    "value": report.get_percent(),
+                    "is_fatigue_right": report.is_fatigue_right,
+                    "is_mild_tiredness_right": report.is_mild_tiredness_right,
+                    "is_fatigue_left": report.is_fatigue_left,
+                    "is_mild_tiredness_left": report.is_mild_tiredness_left,
+                }
+                for report in query_set
+            ]
+            return api_response(True, 200, data=data)
+        except Exception as e:
+            return api_response(False, 500, message=str(e))
