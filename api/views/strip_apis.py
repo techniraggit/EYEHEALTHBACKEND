@@ -63,6 +63,7 @@ class CreateCheckoutSession(UserMixin):
 
 class WebHook(APIView):
     def post(self, request):
+        logger.info(request.body)
         event = None
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
