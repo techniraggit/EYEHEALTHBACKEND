@@ -63,7 +63,6 @@ class CreateCheckoutSession(UserMixin):
 
 class WebHook(APIView):
     def post(self, request):
-        logger.info(request.body)
         event = None
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
@@ -76,11 +75,12 @@ class WebHook(APIView):
             return HttpResponse(status=400)
         except stripe.error.SignatureVerificationError as e:
             return HttpResponse(status=400)
+        
+        logger.error(event["type"])
 
         payment_status_map = dict(
             requires_payment_method="pending", succeeded="success"
         )
-        logger.info(event["type"])
 
         if event["type"] == "payment_intent.succeeded":
             session = event["data"]["object"]
