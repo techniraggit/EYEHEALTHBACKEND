@@ -61,9 +61,6 @@ class CreateCheckoutSession(UserMixin):
         return api_response(False, 400, serialized_data.errors)
 
 
-STRIPE_WEBHOOK_SECRET = settings.STRIPE_WEBHOOK_SECRET
-
-
 class WebHook(APIView):
     def post(self, request):
         event = None
@@ -72,11 +69,13 @@ class WebHook(APIView):
 
         try:
             event = stripe.Webhook.construct_event(
-                payload, sig_header, STRIPE_WEBHOOK_SECRET
+                payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
             )
         except ValueError as e:
+            logger.error(str(e))
             return HttpResponse(status=400)
         except stripe.error.SignatureVerificationError as e:
+            logger.error(str(e))
             return HttpResponse(status=400)
 
         logger.warning(event.get("type"))
@@ -87,24 +86,21 @@ class WebHook(APIView):
 
         if event["type"] == "payment_intent.succeeded":
             session = event["data"]["object"]
-            print("session == ", session)
             user = UserModel.objects.get(id=session["metadata"]["user_id"])
             plan = SubscriptionPlan.objects.get(id=session["metadata"]["plan_id"])
             end_date = timezone.now() + timezone.timedelta(days=plan.duration)
             payment_method = session["payment_method_types"][0]
             paid_amount = session["amount"] / 100
-            try:
-                UserSubscription.objects.create(
-                    user=user,
-                    plan=plan,
-                    end_date=end_date,
-                    is_active=True,
-                    payment_method=payment_method,
-                    paid_amount=paid_amount,
-                    payment_status=payment_status_map.get(session["status"], "failed"),
-                )
-            except Exception as e:
-                logger.error(e)
+
+            UserSubscription.objects.create(
+                user=user,
+                plan=plan,
+                end_date=end_date,
+                is_active=True,
+                payment_method=payment_method,
+                paid_amount=paid_amount,
+                payment_status=payment_status_map.get(session["status"], "failed"),
+            )
 
         elif event["type"] == "payment_intent.created":
             pass
