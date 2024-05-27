@@ -294,8 +294,9 @@ class CustomerView(UserMixin):
             access_token = get_user_token(profile_obj.customer_id)
             data = profile_obj.to_json()
             data["message"] = "Profile found successfully. You may start your eye test."
+            data["status_code"] = 200
             # data["access_token"] = access_token
-            return Response(data)
+            return Response(data, 200)
         except Exception:
             # raise Exception
             return HttpResponse(response)
