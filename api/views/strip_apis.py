@@ -60,108 +60,50 @@ class CreateCheckoutSession(UserMixin):
                 return Exception
         return api_response(False, 400, serialized_data.errors)
 
-# from django.utils.decorators import method_decorator
-# from django.views.decorators.csrf import csrf_exempt
-
-# @method_decorator(csrf_exempt, name='dispatch')
-# class WebHook(APIView):
-#     def post(self, request):
-#         event = None
-#         payload = request.body
-#         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-#         logger.info("settings.STRIPE_WEBHOOK_SECRET == ", settings.STRIPE_WEBHOOK_SECRET)
-
-#         try:
-#             event = stripe.Webhook.construct_event(
-#                 payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
-#             )
-#         except ValueError as e:
-#             logger.error(str(e))
-#             return HttpResponse(status=400)
-#         except stripe.error.SignatureVerificationError as e:
-#             logger.error(str(e))
-#             return HttpResponse(status=400)
-        
-#         logger.info(event.get("type"))
-
-#         payment_status_map = dict(
-#             requires_payment_method="pending", succeeded="success"
-        # )
-
-        # if event["type"] == "payment_intent.succeeded":
-        #     session = event["data"]["object"]
-        #     user = UserModel.objects.get(id=session["metadata"]["user_id"])
-        #     plan = SubscriptionPlan.objects.get(id=session["metadata"]["plan_id"])
-        #     end_date = timezone.now() + timezone.timedelta(days=plan.duration)
-        #     payment_method = session["payment_method_types"][0]
-        #     paid_amount = session["amount"] / 100
-        #     UserSubscription.objects.create(
-        #         user=user,
-        #         plan=plan,
-        #         end_date=end_date,
-        #         is_active=True,
-        #         payment_method=payment_method,
-        #         paid_amount=paid_amount,
-        #         payment_status=payment_status_map.get(session["status"], "failed"),
-        #     )
-        # elif event["type"] == "payment_intent.created":
-        #     pass
-
-        # return HttpResponse(status=200)
-    
+STRIPE_WEBHOOK_SECRET = settings.STRIPE_WEBHOOK_SECRET
 class WebHook(APIView):
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
+        event = None
         payload = request.body
-        sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-        
+        sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
+        logger.info("STRIPE_WEBHOOK_SECRET == ", STRIPE_WEBHOOK_SECRET)
+
         try:
             event = stripe.Webhook.construct_event(
-                payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+                payload, sig_header, STRIPE_WEBHOOK_SECRET
             )
         except ValueError as e:
-            # Invalid payload
+            logger.error(str(e))
             return HttpResponse(status=400)
         except stripe.error.SignatureVerificationError as e:
-            # Invalid signature
+            logger.error(str(e))
             return HttpResponse(status=400)
-        
+
+        logger.info(event.get("type"))
+
         payment_status_map = dict(
             requires_payment_method="pending", succeeded="success"
         )
 
-        logger.info(f"event['type'] === {event['type']}")
-        # Handle the event
-        if event['type'] == 'payment_intent.succeeded':
-            session = event['data']['object']
-            try:
-                user = UserModel.objects.get(id=session['metadata']['user_id'])
-                plan = SubscriptionPlan.objects.get(id=session['metadata']['plan_id'])
-                end_date = timezone.now() + timezone.timedelta(days=plan.duration)
-                payment_method = session['payment_method_types'][0]
-                paid_amount = session['amount'] / 100
-                status = session['status']
-                
-                payment_status = "failed"
-                if status in payment_status_map:
-                    payment_status = payment_status_map[status]
-
-                UserSubscription.objects.create(
-                    user=user,
-                    plan=plan,
-                    end_date=end_date,
-                    is_active=True,
-                    payment_method=payment_method,
-                    paid_amount=paid_amount,
-                    payment_status=payment_status,
-                )
-            except (UserModel.DoesNotExist, SubscriptionPlan.DoesNotExist, KeyError) as e:
-                # Handle missing user, plan, or metadata
-                return HttpResponse(status=400)
-                
-        elif event['type'] == 'payment_intent.created':
-            # Handle created event if needed
+        if event["type"] == "payment_intent.succeeded":
+            session = event["data"]["object"]
+            user = UserModel.objects.get(id=session["metadata"]["user_id"])
+            plan = SubscriptionPlan.objects.get(id=session["metadata"]["plan_id"])
+            end_date = timezone.now() + timezone.timedelta(days=plan.duration)
+            payment_method = session["payment_method_types"][0]
+            paid_amount = session["amount"] / 100
+            UserSubscription.objects.create(
+                user=user,
+                plan=plan,
+                end_date=end_date,
+                is_active=True,
+                payment_method=payment_method,
+                paid_amount=paid_amount,
+                payment_status=payment_status_map.get(session["status"], "failed"),
+            )
+        elif event["type"] == "payment_intent.created":
             pass
-        
+
         return HttpResponse(status=200)
 
 
