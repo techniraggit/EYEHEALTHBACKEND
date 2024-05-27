@@ -60,10 +60,10 @@ class CreateCheckoutSession(UserMixin):
                 return Exception
         return api_response(False, 400, serialized_data.errors)
 
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+# from django.utils.decorators import method_decorator
+# from django.views.decorators.csrf import csrf_exempt
 
-@method_decorator(csrf_exempt, name='dispatch')
+# @method_decorator(csrf_exempt, name='dispatch')
 class WebHook(APIView):
     def post(self, request):
         event = None
@@ -76,8 +76,10 @@ class WebHook(APIView):
                 payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
             )
         except ValueError as e:
+            logger.error(str(e))
             return HttpResponse(status=400)
         except stripe.error.SignatureVerificationError as e:
+            logger.error(str(e))
             return HttpResponse(status=400)
         
         logger.info(event.get("type"))
