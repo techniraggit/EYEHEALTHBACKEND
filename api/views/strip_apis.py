@@ -87,6 +87,7 @@ class WebHook(APIView):
 
         if event["type"] == "payment_intent.succeeded":
             session = event["data"]["object"]
+            print("session == ", session)
             user = UserModel.objects.get(id=session["metadata"]["user_id"])
             plan = SubscriptionPlan.objects.get(id=session["metadata"]["plan_id"])
             end_date = timezone.now() + timezone.timedelta(days=plan.duration)
