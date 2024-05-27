@@ -1,6 +1,5 @@
 from django.utils import timezone
 from api.models.subscription import SubscriptionPlan, UserSubscription, UserModel
-from rest_framework.response import Response
 from rest_framework.views import APIView
 import stripe
 from django.conf import settings
@@ -8,6 +7,9 @@ from rest_framework import serializers
 from core.utils import api_response
 from .base import UserMixin
 from django.http import HttpResponse
+from core.logs import Logger
+
+logger = Logger("stripe.logs")
 
 
 class CheckoutSessionSerializer(serializers.Serializer):
@@ -77,6 +79,7 @@ class WebHook(APIView):
         payment_status_map = dict(
             requires_payment_method="pending", succeeded="success"
         )
+        logger.info(event["type"])
 
         if event["type"] == "payment_intent.succeeded":
             session = event["data"]["object"]
