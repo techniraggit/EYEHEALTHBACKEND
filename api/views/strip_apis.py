@@ -66,7 +66,7 @@ class WebHook(APIView):
         event = None
         payload = request.body
         sig_header = request.META["HTTP_STRIPE_SIGNATURE"]
-        logger.info("STRIPE_WEBHOOK_SECRET == ", STRIPE_WEBHOOK_SECRET)
+        logger.info(f"STRIPE_WEBHOOK_SECRET == {STRIPE_WEBHOOK_SECRET}")
 
         try:
             event = stripe.Webhook.construct_event(
