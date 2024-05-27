@@ -76,7 +76,7 @@ class WebHook(APIView):
         except stripe.error.SignatureVerificationError as e:
             return HttpResponse(status=400)
         
-        logger.error(event["type"])
+        logger.error(event.get("type"))
 
         payment_status_map = dict(
             requires_payment_method="pending", succeeded="success"
