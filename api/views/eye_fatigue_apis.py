@@ -1,3 +1,4 @@
+from core.constants import ERROR_500_MSG
 import os
 from django.shortcuts import get_object_or_404
 from utilities.utils import generate_pdf
@@ -89,22 +90,28 @@ class BlinkReportDetails(SecureHeadersMixin):
             try:
                 json_data = response.json()["data"]
                 processed_data = convert_fatigue_data(json_data)
-                processed_data["user"] = request.user.id
+                processed_data["user_id"] = request.user.id
                 processed_data["report_id"] = json_data.get("report_id")
-                serializer = EyeFatigueReportSerializer(data=processed_data)
-                if serializer.is_valid():
-                    serializer.save()
+
+                if EyeFatigueReport.objects.filter(
+                    report_id=processed_data["report_id"]
+                ).exists():
+                    return api_response(
+                        False, 400, "Report already exists with this report id"
+                    )
+                try:
+                    data = EyeFatigueReport.objects.create(**processed_data)
                     return api_response(
                         True,
                         200,
-                        data=serializer.data,
+                        data=data.to_json(),
                         message="Report generated successfully.",
                     )
-                return api_response(False, 400, message=serializer.errors)
-            except:
-                return Response(response.json(), response.status_code)
-        except Exception as e:
-            print(e)
+                except Exception as e:
+                    return api_response(False, 400, message=str(e))
+            except Exception as e:
+                return api_response(False, 500, message=ERROR_500_MSG, error=str(e))
+        except:
             return HttpResponse(response)
 
 
