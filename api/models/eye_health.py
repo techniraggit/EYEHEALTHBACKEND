@@ -40,6 +40,29 @@ class EyeTestReport(BaseModel):
             health_score=self.health_score,
         )
 
+    def eye_obj(self, eye):
+        return {
+            "sph": eye.get("hyperopia_sph_power", eye.get("myopia_sph_power")),
+            "cyl": eye.get("cyl_power"),
+            "axis": eye.get("degree"),
+            "add": eye.get("age_power"),
+        }
+
+    def left_eye_obj(self):
+        return self.eye_obj(self.left_eye)
+
+    def right_eye_obj(self):
+        return self.eye_obj(self.right_eye)
+
+    def report(self):
+        return dict(
+            report_id=self.report_id,
+            name=self.user_profile.full_name,
+            age=self.user_profile.age,
+            right=self.right_eye_obj(),
+            left=self.left_eye_obj(),
+        )
+
 
 class EyeFatigueReport(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
@@ -67,5 +90,4 @@ class EyeFatigueReport(BaseModel):
         )
 
     def get_percent(self):
-        return (4 - (self.is_fatigue_right + self.is_mild_tiredness_right + self.is_fatigue_left + self.is_mild_tiredness_left)) * 100 / 4
-
+        return (4 - (self.is_fatigue_right + self.is_mild_tiredness_right + self.is_fatigue_left + self.is_mild_tiredness_left ) * 100 / 4)

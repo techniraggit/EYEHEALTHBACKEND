@@ -188,6 +188,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ProfileSerializer(BaseSerializer):
+    age = serializers.SerializerMethodField()
     class Meta:
         model = UserModel
         fields = [
@@ -200,6 +201,7 @@ class ProfileSerializer(BaseSerializer):
             "points",
             "email",
             "image",
+            "age",
         ]
         extra_kwargs = {
             "points": {"read_only": True},
@@ -224,6 +226,9 @@ class ProfileSerializer(BaseSerializer):
         except:
             raise serializers.ValidationError("Email not verified.")
         return value
+
+    def get_age(self, object):
+        return object.age()
 
 
 class LoginSerializer(serializers.Serializer):

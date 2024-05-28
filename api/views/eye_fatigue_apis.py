@@ -108,10 +108,13 @@ class BlinkReportDetails(SecureHeadersMixin):
 class EyeFatigueReportsView(UserMixin):
     fields = [
         "report_id",
+        "user",
         "is_fatigue_right",
         "is_mild_tiredness_right",
         "is_fatigue_left",
         "is_mild_tiredness_left",
+        "created_on",
+        "suggestion",
     ]
 
     def get_object(self, pk):
