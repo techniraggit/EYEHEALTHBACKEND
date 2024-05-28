@@ -10,6 +10,7 @@ class UserTestProfileSerializer(BaseSerializer):
 
 
 class EyeTestReportSerializer(BaseSerializer):
+    user_profile = UserTestProfileSerializer(fields=["full_name", "age"])
     class Meta:
         model = EyeTestReport
         fields = "__all__"
