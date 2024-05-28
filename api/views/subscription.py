@@ -11,7 +11,8 @@ class IsActivePlan(UserMixin):
     def get(self, obj):
         plan_obj = UserSubscription.objects.filter(user=obj.user).order_by("created_on")
         is_active_plan = plan_obj.first().is_active if plan_obj.first() else False
-        return api_response(True, 200, is_active_plan=is_active_plan)
+        plan_id = plan_obj.first().id if plan_obj.first() else 0
+        return api_response(True, 200, is_active_plan=is_active_plan, plan_id=plan_id)
 
 
 class SubscriptionPlansView(APIView):
