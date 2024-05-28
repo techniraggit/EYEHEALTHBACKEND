@@ -1,6 +1,6 @@
 from .base import BaseModel
 from django.db import models
-from api.models.accounts import UserModel
+from api.models.accounts import UserModel, UserAddress
 from uuid import uuid4
 # from datetime import datetime
 from django.utils import timezone
@@ -40,8 +40,16 @@ class Offers(BaseModel):
 
 
 class UserRedeemedOffers(BaseModel):
+    offer_status_choices = (
+        ("pending", "pending"),
+        ("dispatched", "dispatched"),
+        ("emailed", "emailed"),
+    )
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="redeemed_offers"
     )
     offer = models.ForeignKey(Offers, on_delete=models.CASCADE)
+    status = models.CharField(max_length=50, choices=offer_status_choices, default="pending")
+    address = models.ForeignKey(UserAddress, on_delete=models.CASCADE, null=True)
+    redeemed_on = models.DateTimeField(auto_now_add=True)

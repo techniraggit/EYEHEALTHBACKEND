@@ -4,7 +4,7 @@ from django.db.models.functions import Concat
 from django.db.models import F, Value
 from core.utils import api_response, custom_404
 from api.serializers.prescription import UserPrescriptions, UserPrescriptionsSerializer
-from .base import UserMixin
+from .base import UserMixin, ERROR_500_MSG
 from api.models.notifications import UserPushNotification
 from api.serializers.accounts import (
     ProfileSerializer,
@@ -13,7 +13,8 @@ from api.serializers.accounts import (
     UserAddress,
     ReferTrack,
 )
-from api.serializers.rewards import OffersSerializer, Offers
+from api.serializers.rewards import OffersSerializer, Offers, UserRedeemedOffersSerializer
+from api.models.rewards import UserRedeemedOffers
 from api.models.accounts import UserPoints
 
 
@@ -188,3 +189,36 @@ class MyReferralsView(UserMixin):
 
         data = list(refer_objs)
         return api_response(True, 200, data=data)
+
+
+class UserRedeemedOffersView(UserMixin):
+    def get(self, request):
+        queryset = UserRedeemedOffers.objects.filter(user=request.user)
+        serialized_data = UserRedeemedOffersSerializer(queryset, many=True).data
+        return api_response(True, 200, data=serialized_data)
+
+    def post(self, request):
+        offer_id = request.data.get("offer_id")
+        address_id = request.data.get("address_id")
+        if not offer_id:
+            return api_response(False, 400, "Offer id required")
+        try:
+            offer_obj = Offers.objects.get(offer_id=offer_id)
+        except:
+            return api_response(False, 404, "Offer does not exits")
+        address_obj = None
+        if address_id:
+            try:
+                address_obj = UserAddress.objects.get(id=address_id)
+            except:
+                return api_response(False, 404, "Address does not exits")
+        data = {
+            "user": request.user,
+            "offer": offer_obj,
+            "address": address_obj,
+        }
+        try:
+            UserRedeemedOffers.objects.create(**data)
+            return api_response(True, 201, "Offer redeemed successfully. Please wait for an admin response.")
+        except Exception as e:
+            return api_response(False, 500, ERROR_500_MSG, error=str(e) )

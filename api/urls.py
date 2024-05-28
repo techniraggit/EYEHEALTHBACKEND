@@ -27,6 +27,7 @@ users = [
     path("prescription", UserPrescriptionsView.as_view()),
     path("address", UserAddressesView.as_view()),
     path("my-referrals", MyReferralsView.as_view()),
+    path("redeemed-offers", UserRedeemedOffersView.as_view()),
 ]
 
 strip_urls = [

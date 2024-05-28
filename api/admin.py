@@ -18,6 +18,7 @@ class UserModelAdmin(admin.ModelAdmin):
 class UserPointsAdmin(admin.ModelAdmin):
     list_display = ["user", "points", "method"]
 
+
 @admin.register(UserAddress)
 class UserAddressAdmin(admin.ModelAdmin):
     list_display = [
@@ -95,11 +96,6 @@ class OffersAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(UserRedeemedOffers)
-class OffersAdmin(admin.ModelAdmin):
-    list_display = ["user", "offer", "created_on", "updated_on"]
-
-
 @admin.register(EyeTestReport)
 class EyeTestReportAdmin(admin.ModelAdmin):
     list_display = ["id", "report_id", "user_profile", "health_score"]
@@ -124,4 +120,15 @@ class UserTestProfileAdmin(admin.ModelAdmin):
         "full_name",
         "customer_id",
         "age",
+    ]
+
+
+@admin.register(UserRedeemedOffers)
+class UserRedeemedOffersAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "user",
+        "offer",
+        "status",
+        "redeemed_on",
     ]

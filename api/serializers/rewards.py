@@ -1,5 +1,6 @@
 from .base import BaseSerializer, serializers
-from api.models.rewards import Offers
+from api.models.rewards import Offers, UserRedeemedOffers
+from api.serializers.accounts import ProfileSerializer, UserAddressSerializer
 
 
 class OffersSerializer(BaseSerializer):
@@ -11,3 +12,11 @@ class OffersSerializer(BaseSerializer):
 
     def get_expiry(self, obj):
         return obj.get_expiry_time()
+
+class UserRedeemedOffersSerializer(BaseSerializer):
+    # user = ProfileSerializer()
+    # address = UserAddressSerializer()
+    offer = OffersSerializer()
+    class Meta:
+        model =  UserRedeemedOffers
+        fields = "__all__"
