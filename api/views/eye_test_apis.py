@@ -1,5 +1,5 @@
 from core.utils import api_response
-from api.models.eye_health import UserTestProfile
+from api.models.eye_health import UserTestProfile, EyeTestReport
 from core.utils import custom_404
 from utilities.utils import base64_encode
 from api.serializers.eye_health import (
@@ -501,3 +501,9 @@ class CalculateDistance(UserMixin):
             return Response(response.json(), response.status_code)
         except:
             return HttpResponse(response)
+
+class EyeTestReports(UserMixin):
+    def get(self, request):
+        data = EyeTestReport.objects.filter(user_profile__user=request.user)
+        serialized_data = EyeTestReportSerializer(data, many=True).data
+        return api_response(True, 200, data=serialized_data)
