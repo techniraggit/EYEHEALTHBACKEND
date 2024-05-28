@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        font-family: 'Open Sans', sans-serif;
+    }
+
+    p {
+        margin: 0;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    .main-wrapper {
+        padding: 10px 12px 20px;
+        max-width: 595px;
+        margin: 0 auto;
+        width: 100%;
+        background-color: #f2f2f2;
+    }
+
+    .pt-text h5 {
+        text-align: center;
+        color: #100162;
+        font-size: 24px;
+        font-weight: 700;
+        margin-top: 20px;
+        margin-bottom: 22px;
+    }
+
+    p.detail-text {
+        color: #100162;
+        font-weight: 500;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .detail-wrap {
+        margin: 20px 0px;
+    }
+
+    .upper-wrap {
+        display: flex;
+        justify-content: space-between;
+        padding: 7px 16px;
+        background-color: #D9D9D9;
+        align-items: center;
+        height: 38px;
+    }
+
+    .upper-wrap:first-child {
+        margin-bottom: 14px;
+    }
+
+    .upper-wrap:first-child p {
+        color: #100162;
+        font-weight: 700;
+    }
+
+    .upper-wrap p {
+        color: #100162;
+    }
+
+    .fatigue-wrap table {
+        width: 100%;
+        border-spacing: 0px;
+    }
+
+    .fatigue-wrap tr th,
+    .fatigue-wrap tr td {
+        padding: 6px 8px;
+        border: 1.5px solid #c5c5c5;
+        background-color: #D9D9D9;
+    }
+
+    tr td {
+        text-align: center;
+        color: #100162;
+    }
+
+    .fatigue-wrap tr th {
+        color: #100162;
+        border-bottom: 0px;
+    }
+
+    .fatigue-wrap tr td:last-child {
+        border-left: 0px;
+    }
+
+    .fatigue-wrap tr th:last-child {
+        border-left: 0px;
+    }
+
+    .desc-text {
+        color: #100162;
+        font-weight: 600;
+        font-size: 17px;
+    }
+
+    .inner-testt {
+        padding: 10px 12px 20px;
+        background-color: #d9d9d9;
+    }
+
+    .inner-testt h6 {
+        font-size: 17px;
+        color: #100162;
+        margin-bottom: 15px;
+    }
+
+    .inner-testt>p {
+        text-align: start;
+        font-size: 15px;
+        color: #100162;
+    }
+
+    .inner-testt ul {
+        padding-top: 10px;
+        color: #100162;
+    }
+
+    .sug-test {
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
+    .inner-testt ul li {
+        font-size: 14px;
+    }
+
+    .sug-test p.desc-text {
+        margin-bottom: 20px;
+    }
+
+    .disclaimer-wrap h6 {
+        font-size: 16px;
+        color: #100162;
+        margin-bottom: 12px;
+    }
+
+    .disclaimer-wrap p {
+        color: #100162;
+        font-weight: 500;
+    }
+
+    .disclaimer-wrap p:not(:last-child) {
+        margin-bottom: 7px;
+    }
+    .logo-wrap {
+    text-align: center;
+}
+</style>
+
+<body>
+    <div class="main-wrapper">
+        <div class="logo-wrap">
+            <a href="#"><img src="{{ logo_url }}" alt=""></a>
+        </div>
+        <div class="pt-text">
+            <h5>Patient's Report</h5>
+            <p class="mb-3 detail-text">Patient's Details</p>
+        </div>
+        <div class="detail-wrap">
+            <div class="upper-wrap">
+                <p class="mb-0">Full Name</p>
+                <p class="mb-0">Age</p>
+            </div>
+            <div class="upper-wrap">
+                <p class="mb-0">{{ full_name }}</p>
+                <p class="mb-0">{{ age }}</p>
+            </div>
+        </div>
+        <div class="fatigue-wrap">
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Eye Fatigue in Left</th>
+                        <th>Eye Fatigue in Right</th>
+                    </tr>
+                    <tr>
+                        <td>{% if is_fatigue_left %}YES{% else %}NO{% endif %}</td>
+                        <td>{% if is_fatigue_right %}YES{% else %}NO{% endif %}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="sug-test">
+            <p class="desc-text text-center">Patient's Description</p>
+            <div class="inner-testt">
+                <h6>Suggestion</h6>
+                <p>Here are some suggestions based on your eye fatigue report:</p>
+                <ul>
+                    <li>{{ suggestion }} </li>
+                    <li>
+                        Hydrate with water and rest your eyes to combat dryness and fatigue.
+                    </li>
+                    <li>
+                        Practice quick eye exercise during breaks to relax eye muscles.
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="disclaimer-wrap">
+            <h6>Disclaimer:</h6>
+            <p class="mb-0">1. The results displayed are for reference purposes only.</p>
+            <p class="mb-0">2. If you feel the power displayed is different then your old power, then please speak
+                with your eye doctor or call EyeMyEye and speak with the optometrist.</p>
+            <p class="mb-0">
+                3. Without confirmation from your eye doctor or EyeMyEye optometrist do not use this power to make
+                glasses.
+            </p>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -81,7 +81,8 @@ class EyeFatigueReport(BaseModel):
     def to_json(self):
         return dict(
             id=self.id,
-            user=self.user.get_full_name(),
+            full_name=self.user.get_full_name(),
+            age = self.user.age(),
             report_id=self.report_id,
             is_fatigue_right=self.is_fatigue_right,
             is_mild_tiredness_right=self.is_mild_tiredness_right,

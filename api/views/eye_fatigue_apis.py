@@ -1,3 +1,6 @@
+import os
+from django.shortcuts import get_object_or_404
+from utilities.utils import generate_pdf
 from django.utils import timezone
 from api.models.eye_health import EyeFatigueReport
 from core.utils import api_response, custom_404
@@ -169,3 +172,32 @@ class EyeFatigueGraph(UserMixin):
             return api_response(True, 200, data=data)
         except Exception as e:
             return api_response(False, 500, message=str(e))
+
+
+class DownloadReportView(UserMixin):
+    def get(self, request):
+        report_id = request.GET.get("report_id")
+        if not report_id:
+            return api_response(False, 400, message="Report ID is required")
+
+        try:
+            report = get_object_or_404(EyeFatigueReport, report_id=report_id)
+            context_data = EyeFatigueReportSerializer(report).data
+            context = {
+                "full_name": f"{context_data.get('user', {}).get('first_name', '')} {context_data.get('user', {}).get('last_name', '')}",
+                "age": context_data.get("user", {}).get("age", ""),
+                "suggestion": context_data.get("suggestion", ""),
+                "is_fatigue_right": context_data.get("is_fatigue_right", False),
+                "is_fatigue_left": context_data.get("is_fatigue_left", False),
+                "logo_url": os.getenv("ZUKTI_LOGO"),
+            }
+
+            buffer = generate_pdf("reports/fatigue.html", context)
+            response = HttpResponse(buffer, content_type="application/pdf")
+            response["Content-Disposition"] = (
+                f'attachment; filename="fatigue_report_{report_id}.pdf"'
+            )
+            return response
+
+        except EyeFatigueReport.DoesNotExist:
+            return api_response(False, 404, message="Report not found")

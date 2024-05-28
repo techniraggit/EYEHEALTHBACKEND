@@ -1,3 +1,5 @@
+from django.template.loader import get_template
+from weasyprint import HTML, CSS
 from rest_framework_simplejwt.tokens import RefreshToken
 import os
 import base64
@@ -43,9 +45,9 @@ def get_tokens_for_user(user):
 
 def base64_encode(data):
     if isinstance(data, str):
-        data_bytes = data.encode('utf-8')
+        data_bytes = data.encode("utf-8")
     elif isinstance(data, int):
-        data_bytes = str(data).encode('utf-8')
+        data_bytes = str(data).encode("utf-8")
     else:
         raise TypeError("Data must be a string or an integer")
 
@@ -55,3 +57,14 @@ def base64_encode(data):
 def base64_decode(encoded_data: bytes) -> str:
     decoded_bytes = base64.b64decode(encoded_data)
     return decoded_bytes.decode("utf-8")
+
+
+def generate_pdf(template_name, context_data, page_width="9.5in", page_height="11.6in"):
+    template = get_template(template_name)
+    html_content = template.render(context_data)
+    html = HTML(string=html_content)
+    html = html.render(
+        stylesheets=[CSS(string=f"@page {{ size: {page_width} {page_height}; }}")]
+    )
+    pdf_file = html.write_pdf()
+    return pdf_file
