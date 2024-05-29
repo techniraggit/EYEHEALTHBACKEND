@@ -71,6 +71,37 @@ class UserAddressSerializer(BaseSerializer):
         address = UserAddress.objects.create(**validated_data)
         return address
 
+    def update(self, instance, validated_data):
+        is_default = validated_data.get("is_default", False)
+
+        # Update the fields of the existing instance
+        instance.address = validated_data.get("address", instance.address)
+        instance.postal_code = validated_data.get("postal_code", instance.postal_code)
+        instance.city = validated_data.get("city", instance.city)
+        instance.state = validated_data.get("state", instance.state)
+        instance.country = validated_data.get("country", instance.country)
+        instance.full_name = validated_data.get("full_name", instance.full_name)
+        instance.phone_number = validated_data.get(
+            "phone_number", instance.phone_number
+        )
+        instance.email = validated_data.get("email", instance.email)
+        instance.locality = validated_data.get("locality", instance.locality)
+        instance.address_type = validated_data.get(
+            "address_type", instance.address_type
+        )
+
+        # Handle the default address logic
+        if is_default:
+            UserAddress.objects.filter(user=instance.user, is_default=True).update(
+                is_default=False
+            )
+            instance.is_default = True
+        else:
+            instance.is_default = validated_data.get("is_default", instance.is_default)
+
+        instance.save()
+        return instance
+
 
 class UserSerializer(serializers.ModelSerializer):
     device_token = DeviceInfoSerializer(many=True, read_only=True)
@@ -189,6 +220,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(BaseSerializer):
     age = serializers.SerializerMethodField()
+
     class Meta:
         model = UserModel
         fields = [

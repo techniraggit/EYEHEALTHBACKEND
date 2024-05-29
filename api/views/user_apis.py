@@ -28,13 +28,19 @@ class Dashboard(UserMixin):
             user_profile__user=request.user
         ).count()
         eye_fatigue_count = EyeFatigueReport.objects.filter(user=request.user).count()
-        eye_health_score = EyeTestReport.objects.filter(user_profile__user=request.user, user_profile__full_name=request.user.get_full_name(), user_profile__age=request.user.age())
+        eye_health_score = EyeTestReport.objects.filter(
+            user_profile__user=request.user,
+            user_profile__full_name=request.user.get_full_name(),
+            user_profile__age=request.user.age(),
+        )
         return api_response(
             True,
             200,
             total_eye_test_count=eye_test_count,
             total_eye_fatigue_count=eye_fatigue_count,
-            eye_health_score=eye_health_score.first().health_score if eye_health_score.first() else 0,
+            eye_health_score=(
+                eye_health_score.first().health_score if eye_health_score.first() else 0
+            ),
         )
 
 
@@ -191,6 +197,27 @@ class UserAddressesView(UserMixin):
                 True, 201, data=serializer.data, message="Address added successfully"
             )
         return api_response(False, 400, data=serializer.errors)
+
+    def patch(self, request):
+        address_id = request.data.get("address_id")
+
+        if not address_id:
+            return api_response(False, 400, "address_id required")
+
+        try:
+            user_address = UserAddress.objects.get(address_id=address_id)
+        except UserAddress.DoesNotExist:
+            return api_response(False, 404, "UserAddress not found")
+
+        serializer = UserAddressSerializer(
+            user_address, data=request.data, partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return api_response(
+                True, 200, "Address updated successfully", data=serializer.data
+            )
+        return api_response(False, 400, message=serializer.errors)
 
 
 class MyReferralsView(UserMixin):
