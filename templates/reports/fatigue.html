@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-{% load static %}
 
 <head>
     <meta charset="UTF-8">
@@ -8,220 +7,211 @@
     <title>Document</title>
 </head>
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
     * {
-        box-sizing: border-box;
-        margin: 0;
-        font-family: 'Open Sans', sans-serif;
+        font-family: "Roboto", sans-serif;
     }
-
-    p {
-        margin: 0;
-        font-size: 14px;
-        font-weight: 400;
-    }
-
-    .main-wrapper {
-        padding: 10px 12px 20px;
+ h6{
+    margin: 0;
+ }
+    .inner-wrap-log {
         max-width: 595px;
         margin: 0 auto;
-        width: 100%;
-        background-color: #f2f2f2;
+        padding: 20px 20px;
+    }
+    .inner-testt >p {
+        margin-top: 6px;
+    }
+    .inner-testt {
+        margin-top: 24px;
+    }
+    a {
+        text-decoration: none;
+    }
+
+
+    .logo-wrap a h4 {
+        color: #301168;
+        font-size: 28px;
+        text-align: center;
+        margin: 0;
+    }
+
+    .logo-wrap a h4 strong {
+        color: #00bed4;
+    }
+
+    .bottom-wrapper {
+        padding: 10px 10px 20px;
+        background-color: #fff;
+        margin-top: 20px;
+        border-radius: 3px;
     }
 
     .pt-text h5 {
-        text-align: center;
-        color: #100162;
-        font-size: 24px;
         font-weight: 700;
-        margin-top: 20px;
-        margin-bottom: 22px;
+        font-size: 22px;
+        text-align: center;
+        margin: 0;
     }
 
-    p.detail-text {
-        color: #100162;
+    .detail-text {
         font-weight: 500;
+        font-size: 17px;
         text-align: center;
-        font-size: 16px;
     }
 
-    .detail-wrap {
-        margin: 20px 0px;
+    p.desc-text {
+        font-weight: 500;
+        color: #211a3d;
+        font-size: 17px;
+        text-align: center;
     }
 
-    .upper-wrap {
-        display: flex;
-        justify-content: space-between;
-        padding: 7px 16px;
-        background-color: #D9D9D9;
-        align-items: center;
-        height: 38px;
+    .description-warp table {
+        width: 100%;
+        border-spacing: 0px;
+        border: 1.4px solid #d0d0d0;
     }
 
-    .upper-wrap:first-child {
-        margin-bottom: 14px;
+    .detail-wrap table {
+    width: 100%;
+    border-spacing: 0px;
+}
+    .detail-wrap table td,
+    th,
+    .description-warp table td {
+        border: 1.4px solid #d0d0d0;
+        padding: 5px 8px;
+        text-align: center;
+        font-size: 15px;
     }
 
-    .upper-wrap:first-child p {
-        color: #100162;
+    .description-warp table td {
+    border-left: 0px;
+    border-bottom: 0px;
+}
+
+    .description-warp table td:last-child {
+    border-right: 0px;
+}
+
+    .description-warp tr th {
+        border-left: 0px;
+    }
+
+    /* .description-warp tr th:first-child {
+        border-left: 1.4px solid #d0d0d0;
+    } */
+
+    .disclaimer-wrap {
+        margin-top: 23px;
+    }
+
+    .disclaimer-wrap h6 {
+        color: #118403;
         font-weight: 700;
+        font-size: 18px;
+        margin: 0 0px 13px;
     }
 
-    .upper-wrap p {
-        color: #100162;
+    .disclaimer-wrap p {
+        color: #34ac2e;
+        font-weight: 500;
+        margin: 0 0px 5px;
     }
 
-    .fatigue-wrap table {
+    .description-warp table {
         width: 100%;
         border-spacing: 0px;
     }
 
-    .fatigue-wrap tr th,
-    .fatigue-wrap tr td {
-        padding: 6px 8px;
-        border: 1.5px solid #c5c5c5;
-        background-color: #D9D9D9;
+    .description-warp tr th {
+        border-bottom: 0px;
+        border-top: 0px;
     }
 
-    tr td {
-        text-align: center;
-        color: #100162;
-    }
-
-    .fatigue-wrap tr th {
-        color: #100162;
+    .detail-wrap table th {
         border-bottom: 0px;
     }
 
-    .fatigue-wrap tr td:last-child {
+    .detail-wrap table th:last-child,
+    .detail-wrap table td:last-child {
         border-left: 0px;
     }
 
-    .fatigue-wrap tr th:last-child {
+    .description-warp tr th:last-child {
         border-left: 0px;
+        border-right: 0px;
     }
-
-    .desc-text {
-        color: #100162;
-        font-weight: 600;
-        font-size: 17px;
-    }
-
-    .inner-testt {
-        padding: 10px 12px 20px;
-        background-color: #d9d9d9;
-    }
-
     .inner-testt h6 {
-        font-size: 17px;
-        color: #100162;
-        margin-bottom: 15px;
+        font-size: 19px;
     }
-
-    .inner-testt>p {
-        text-align: start;
-        font-size: 15px;
-        color: #100162;
-    }
-
-    .inner-testt ul {
-        padding-top: 10px;
-        color: #100162;
-    }
-
-    .sug-test {
-        margin-top: 20px;
-        margin-bottom: 20px;
-    }
-
-    .inner-testt ul li {
-        font-size: 14px;
-    }
-
-    .sug-test p.desc-text {
-        margin-bottom: 20px;
-    }
-
-    .disclaimer-wrap h6 {
-        font-size: 16px;
-        color: #100162;
-        margin-bottom: 12px;
-    }
-
-    .disclaimer-wrap p {
-        color: #100162;
-        font-weight: 500;
-    }
-
-    .disclaimer-wrap p:not(:last-child) {
-        margin-bottom: 7px;
-    }
-    .logo-wrap {
-    text-align: center;
-}
 </style>
 
 <body>
-    <div class="main-wrapper">
-        <div class="logo-wrap">
-            <a href="#"><img src="{{ logo_url }}" alt=""></a>
-        </div>
-        <div class="pt-text">
-            <h5>Patient's Report</h5>
-            <p class="mb-3 detail-text">Patient's Details</p>
-        </div>
-        <div class="detail-wrap">
-            <div class="upper-wrap">
-                <p class="mb-0">Full Name</p>
-                <p class="mb-0">Age</p>
+    <section class="report-screen-kt">
+        <div class="inner-wrap-log">
+            <div class="logo-wrap text-center">
+                <a href="#">
+                    <h4>Zukti <strong>Fatigue Test</strong></h4>
+                </a>
             </div>
-            <div class="upper-wrap">
-                <p class="mb-0">{{ full_name }}</p>
-                <p class="mb-0">{{ age }}</p>
+            <div class="bottom-wrapper">
+                <div class="pt-text text-center">
+                    <h5>Patient's Report</h5>
+                </div>
+                <div class="detail-wrap">
+                    <p class="mb-0 detail-text text-center ">Patient's Details</p>
+                    <table class="mt-1">
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Age</th>
+                        </tr>
+                        <tr>
+                            <td>{{name}}</td>
+                            <td>{{age}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="description-warp">
+                    <p class="desc-text text-center mb-0">Patient's Description</p>
+                    <table class="mt-1">
+                        <tr>
+                            <th>Eye Fatigue in Left</th>
+                            <th>Eye Fatigue in Right</th>
+                        </tr>
+                        <tr>
+                            <td>{% if is_fatigue_left %}YES{% else %}NO{% endif %}</td>
+                            <td>{% if is_fatigue_right %}YES{% else %}NO{% endif %}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="inner-testt">
+                    <h6>Suggestion</h6>
+                    <p>Here are some suggestions based on your eye fatigue report:</p>
+                    <ul>
+                        {% for suggestion in suggestions %}
+                            <li>{{ suggestion }} </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="disclaimer-wrap">
+                    <h6>Disclaimer:</h6>
+                    <p class="mb-0"><b>1.</b> The results displayed are for reference purposes only.</p>
+                    <p class="mb-0"><b>2.</b> If you feel the power displayed is different then your old power, then
+                        please speak
+                        with your eye doctor or call EyeMyEye and speak with the optometrist.</p>
+                    <p class="mb-0">
+                        <b>3.</b> Without confirmation from your eye doctor or EyeMyEye optometrist do not use this
+                        power to make
+                        glasses.
+                    </p>
+                </div>
             </div>
         </div>
-        <div class="fatigue-wrap">
-            <table>
-                <tbody>
-                    <tr>
-                        <th>Eye Fatigue in Left</th>
-                        <th>Eye Fatigue in Right</th>
-                    </tr>
-                    <tr>
-                        <td>{% if is_fatigue_left %}YES{% else %}NO{% endif %}</td>
-                        <td>{% if is_fatigue_right %}YES{% else %}NO{% endif %}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="sug-test">
-            <p class="desc-text text-center">Patient's Description</p>
-            <div class="inner-testt">
-                <h6>Suggestion</h6>
-                <p>Here are some suggestions based on your eye fatigue report:</p>
-                <ul>
-                    <li>{{ suggestion }} </li>
-                    <li>
-                        Hydrate with water and rest your eyes to combat dryness and fatigue.
-                    </li>
-                    <li>
-                        Practice quick eye exercise during breaks to relax eye muscles.
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="disclaimer-wrap">
-            <h6>Disclaimer:</h6>
-            <p class="mb-0">1. The results displayed are for reference purposes only.</p>
-            <p class="mb-0">2. If you feel the power displayed is different then your old power, then please speak
-                with your eye doctor or call EyeMyEye and speak with the optometrist.</p>
-            <p class="mb-0">
-                3. Without confirmation from your eye doctor or EyeMyEye optometrist do not use this power to make
-                glasses.
-            </p>
-        </div>
-
-    </div>
-
+    </section>
 </body>
 
 </html>

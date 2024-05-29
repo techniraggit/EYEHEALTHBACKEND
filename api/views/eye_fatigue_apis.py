@@ -180,8 +180,8 @@ class EyeFatigueGraph(UserMixin):
         except Exception as e:
             return api_response(False, 500, message=str(e))
 
-
-class DownloadReportView(UserMixin):
+from rest_framework.views import APIView
+class DownloadReportView(APIView):
     def get(self, request):
         report_id = request.GET.get("report_id")
         if not report_id:
@@ -189,14 +189,12 @@ class DownloadReportView(UserMixin):
 
         try:
             report = get_object_or_404(EyeFatigueReport, report_id=report_id)
-            context_data = EyeFatigueReportSerializer(report).data
             context = {
-                "full_name": f"{context_data.get('user', {}).get('first_name', '')} {context_data.get('user', {}).get('last_name', '')}",
-                "age": context_data.get("user", {}).get("age", ""),
-                "suggestion": context_data.get("suggestion", ""),
-                "is_fatigue_right": context_data.get("is_fatigue_right", False),
-                "is_fatigue_left": context_data.get("is_fatigue_left", False),
-                "logo_url": os.getenv("ZUKTI_LOGO"),
+                "name": report.user.get_full_name(),
+                "age": report.user.age(),
+                "suggestions": str(report.get_suggestions()).split("\n"),
+                "is_fatigue_right": report.is_fatigue_right,
+                "is_fatigue_left": report.is_fatigue_left,
             }
 
             buffer = generate_pdf("reports/fatigue.html", context)

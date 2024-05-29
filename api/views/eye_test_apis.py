@@ -1,3 +1,5 @@
+from django.shortcuts import get_object_or_404
+from utilities.utils import generate_pdf
 from core.utils import api_response
 from api.models.eye_health import UserTestProfile, EyeTestReport
 from core.utils import custom_404
@@ -516,3 +518,23 @@ class EyeTestReports(UserMixin):
         data = EyeTestReport.objects.filter(user_profile__user=request.user)
         serialized_data = EyeTestReportSerializer(data, many=True).data
         return api_response(True, 200, data=serialized_data)
+
+from rest_framework.views import APIView
+class DownloadReportView(APIView):
+    def get(self, request):
+        report_id = request.GET.get("report_id")
+        if not report_id:
+            return api_response(False, 400, message="Report ID is required")
+
+        try:
+            report = get_object_or_404(EyeTestReport, report_id=report_id)
+
+            buffer = generate_pdf("reports/prescription.html", report.report())
+            response = HttpResponse(buffer, content_type="application/pdf")
+            response["Content-Disposition"] = (
+                f'attachment; filename="prescription_{report_id}.pdf"'
+            )
+            return response
+
+        except EyeTestReport.DoesNotExist:
+            return api_response(False, 404, message="Report not found")

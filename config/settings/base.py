@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import logging
 from pathlib import Path
 from datetime import timedelta
 import os
@@ -191,7 +192,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 # EYE TEST SERVER CONFIGURATION
-EYE_TEST_BASE_API_URL =  os.getenv("EYE_TEST_BASE_API_URL")
+EYE_TEST_BASE_API_URL = os.getenv("EYE_TEST_BASE_API_URL")
 SNELLEN_FRACTION_STATIC_TOKEN = os.getenv("SNELLEN_FRACTION_STATIC_TOKEN")
 EYE_TEST_DOMAIN_URL = os.getenv("EYE_TEST_DOMAIN_URL")
 
@@ -211,3 +212,6 @@ CBIS_SMS_BASEURL = os.getenv("CBIS_SMS_BASEURL")
 CBIS_SMS_USERNAME = os.getenv("CBIS_SMS_USERNAME")
 CBIS_SMS_PASSWORD = os.getenv("CBIS_SMS_PASSWORD")
 CBIS_SMS_SENDER_ID = os.getenv("CBIS_SMS_SENDER_ID")
+
+logger = logging.getLogger("weasyprint")
+logger.addHandler(logging.FileHandler(os.path.join(LOG_DIR, "weasyprint.log")))

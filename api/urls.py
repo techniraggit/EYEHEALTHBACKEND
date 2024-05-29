@@ -64,6 +64,7 @@ eye_health_apis = [
     path("generate-report", GetGeneratedReport.as_view()),
     path("calculate-distance", CalculateDistance.as_view()),
     path("reports", EyeTestReports.as_view()),
+    path("download-reports", DownloadReportView.as_view()),
 ]
 
 fatigue_apis = [

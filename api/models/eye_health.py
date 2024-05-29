@@ -63,7 +63,7 @@ class EyeTestReport(BaseModel):
             left=self.left_eye_obj(),
         )
 
-
+from core.constants import FATIGUE_SUGGESTIONS
 class EyeFatigueReport(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(
@@ -91,4 +91,7 @@ class EyeFatigueReport(BaseModel):
         )
 
     def get_percent(self):
-        return (4 - (self.is_fatigue_right + self.is_mild_tiredness_right + self.is_fatigue_left + self.is_mild_tiredness_left ) * 100 / 4)
+        return ((4 - (self.is_fatigue_right + self.is_mild_tiredness_right + self.is_fatigue_left + self.is_mild_tiredness_left )) * 100 / 4)
+
+    def get_suggestions(self):
+        return FATIGUE_SUGGESTIONS.get(int(self.get_percent()))

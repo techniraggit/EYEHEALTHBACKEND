@@ -25,5 +25,4 @@ class EyeFatigueReportSerializer(BaseSerializer):
         fields = "__all__"
 
     def get_suggestion(self, object):
-        suggestion = "Great job! Your eye health is in good shape. Continue practicing healthy habits like staying well-hydrated and taking short breaks during screen time."
-        return suggestion
+        return object.get_suggestions()

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+    * {
+        font-family: "Roboto", sans-serif;
+    }
+
+    .inner-wrap-log {
+        max-width: 595px;
+        margin: 0 auto;
+        padding: 20px 20px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+
+    .logo-wrap a h4 {
+        color: #301168;
+        font-size: 28px;
+        text-align: center;
+        margin: 0;
+    }
+
+    .logo-wrap a h4 strong {
+        color: #00bed4;
+    }
+
+    .bottom-wrapper {
+        padding: 10px 10px 20px;
+        background-color: #fff;
+        margin-top: 20px;
+        border-radius: 3px;
+    }
+
+    .pt-text h5 {
+        font-weight: 700;
+        font-size: 22px;
+        text-align: center;
+        margin: 0;
+    }
+
+    .detail-text {
+        font-weight: 500;
+        font-size: 17px;
+        text-align: center;
+    }
+
+    p.desc-text {
+        font-weight: 500;
+        color: #211a3d;
+        font-size: 17px;
+        text-align: center;
+    }
+
+    .description-warp table {
+        width: 100%;
+        border-spacing: 0px;
+        border: 1.4px solid #d0d0d0;
+    }
+
+    .detail-wrap table {
+    width: 100%;
+    border-spacing: 0px;
+}
+    .detail-wrap table td,
+    th,
+    .description-warp table td {
+        border: 1.4px solid #d0d0d0;
+        padding: 5px 8px;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    .description-warp table td {
+    border-left: 0px;
+    border-bottom: 0px;
+}
+
+    .description-warp table td:last-child {
+    border-right: 0px;
+}
+
+    .description-warp tr th {
+        border-left: 0px;
+    }
+
+    /* .description-warp tr th:first-child {
+        border-left: 1.4px solid #d0d0d0;
+    } */
+
+    .disclaimer-wrap {
+        margin-top: 23px;
+    }
+
+    .disclaimer-wrap h6 {
+        color: #118403;
+        font-weight: 700;
+        font-size: 18px;
+        margin: 0 0px 13px;
+    }
+
+    .disclaimer-wrap p {
+        color: #34ac2e;
+        font-weight: 500;
+        margin: 0 0px 5px;
+    }
+
+    .description-warp table {
+        width: 100%;
+        border-spacing: 0px;
+    }
+
+    .description-warp tr th {
+        border-bottom: 0px;
+        border-top: 0px;
+    }
+
+    .detail-wrap table th {
+        border-bottom: 0px;
+    }
+
+    .detail-wrap table th:last-child,
+    .detail-wrap table td:last-child {
+        border-left: 0px;
+    }
+
+    .description-warp tr th:last-child {
+        border-left: 0px;
+        border-right: 0px;
+    }
+</style>
+
+<body>
+    <section class="report-screen-kt">
+        <div class="inner-wrap-log">
+            <div class="logo-wrap text-center">
+                <a href="#">
+                    <h4>Zukti <strong>Eyetest</strong></h4>
+                </a>
+            </div>
+            <div class="bottom-wrapper">
+                <div class="pt-text text-center">
+                    <h5>Patient's Report</h5>
+                </div>
+                <div class="detail-wrap">
+                    <p class="mb-0 detail-text text-center ">Patient's Details</p>
+                    <table class="mt-1">
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Age</th>
+                        </tr>
+                        <tr>
+                            <td>{{name|title}}</td>
+                            <td>{{age}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="description-warp">
+                    <p class="desc-text text-center mb-0">Patient's Description</p>
+                    <table class="mt-1">
+                        <tr>
+                            <th>EYE</th>
+                            <th>SPH</th>
+                            <th>CYL</th>
+                            <th>AXIS</th>
+                            <th>ADD</th>
+                        </tr>
+                        <tr>
+                            <td>Left</td>
+                            <td>{{left.sph}}</td>
+                            <td>{{left.cyl}}</td>
+                            <td>{{left.axis}}</td>
+                            <td>{{left.add}}</td>
+                        </tr>
+                        <tr>
+                            <td>Right</td>
+                            <td>{{right.sph}}</td>
+                            <td>{{right.cyl}}</td>
+                            <td>{{right.axis}}</td>
+                            <td>{{right.add}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="disclaimer-wrap">
+                    <h6>Disclaimer:</h6>
+                    <p class="mb-0"><b>1.</b> The results displayed are for reference purposes only.</p>
+                    <p class="mb-0"><b>2.</b> If you feel the power displayed is different then your old power, then
+                        please speak
+                        with your eye doctor or call EyeMyEye and speak with the optometrist.</p>
+                    <p class="mb-0">
+                        <b>3.</b> Without confirmation from your eye doctor or EyeMyEye optometrist do not use this
+                        power to make
+                        glasses.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>
