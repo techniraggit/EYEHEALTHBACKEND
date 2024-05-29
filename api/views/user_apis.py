@@ -256,7 +256,7 @@ class UserRedeemedOffersView(UserMixin):
         address_obj = None
         if address_id:
             try:
-                address_obj = UserAddress.objects.get(id=address_id)
+                address_obj = UserAddress.objects.get(address_id=address_id)
             except:
                 return api_response(False, 404, "Address does not exits")
         data = {
