@@ -1,7 +1,6 @@
-from django.db.models import Sum
 from core.constants import POINTS_VALUE
 from django.db.models.functions import Concat
-from django.db.models import F, Value
+from django.db.models import F, Value, Sum
 from core.utils import api_response, custom_404
 from api.serializers.prescription import UserPrescriptions, UserPrescriptionsSerializer
 from .base import UserMixin, ERROR_500_MSG
@@ -13,9 +12,30 @@ from api.serializers.accounts import (
     UserAddress,
     ReferTrack,
 )
-from api.serializers.rewards import OffersSerializer, Offers, UserRedeemedOffersSerializer
+from api.serializers.rewards import (
+    OffersSerializer,
+    Offers,
+    UserRedeemedOffersSerializer,
+)
 from api.models.rewards import UserRedeemedOffers
 from api.models.accounts import UserPoints
+from api.models.eye_health import EyeFatigueReport, EyeTestReport
+
+
+class Dashboard(UserMixin):
+    def get(self, request):
+        eye_test_count = EyeTestReport.objects.filter(
+            user_profile__user=request.user
+        ).count()
+        eye_fatigue_count = EyeFatigueReport.objects.filter(user=request.user).count()
+        eye_health_score = EyeTestReport.objects.filter(user_profile__user=request.user, user_profile__full_name=request.user.get_full_name(), user_profile__age=request.user.age())
+        return api_response(
+            True,
+            200,
+            total_eye_test_count=eye_test_count,
+            total_eye_fatigue_count=eye_fatigue_count,
+            eye_health_score=eye_health_score.first().health_score if eye_health_score.first() else 0,
+        )
 
 
 class ProfileView(UserMixin):
@@ -219,6 +239,10 @@ class UserRedeemedOffersView(UserMixin):
         }
         try:
             UserRedeemedOffers.objects.create(**data)
-            return api_response(True, 201, "Offer redeemed successfully. Please wait for an admin response.")
+            return api_response(
+                True,
+                201,
+                "Offer redeemed successfully. Please wait for an admin response.",
+            )
         except Exception as e:
-            return api_response(False, 500, ERROR_500_MSG, error=str(e) )
+            return api_response(False, 500, ERROR_500_MSG, error=str(e))

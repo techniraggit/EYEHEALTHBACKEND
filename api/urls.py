@@ -21,6 +21,7 @@ subscriptions = [
 ]
 
 users = [
+    path("dashboard-count", Dashboard.as_view()),
     path("user_notification", NotificationView.as_view()),
     path("profile", ProfileView.as_view()),
     path("offers", OffersView.as_view()),

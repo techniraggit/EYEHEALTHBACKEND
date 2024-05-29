@@ -502,8 +502,17 @@ class CalculateDistance(UserMixin):
         except:
             return HttpResponse(response)
 
+
 class EyeTestReports(UserMixin):
     def get(self, request):
+        report_id = request.GET.get("report_id")
+        if report_id:
+            try:
+                data = EyeTestReport.objects.get(id=report_id)
+                serialized_data = EyeTestReportSerializer(data).data
+                return api_response(True, 200, data=serialized_data)
+            except:
+                return api_response(False, 404, "Report not found")
         data = EyeTestReport.objects.filter(user_profile__user=request.user)
         serialized_data = EyeTestReportSerializer(data, many=True).data
         return api_response(True, 200, data=serialized_data)
