@@ -475,7 +475,7 @@ class GetGeneratedReport(UserMixin):
             try:
                 data = dict(
                     report_id=report_id,
-                    user_profile=user_profile_obj.id,
+                    user_profile=user_profile_obj,
                     right_eye=json_response["data"]["test"][1],
                     left_eye=json_response["data"]["test"][0],
                     health_score=json_response["data"]["health_score"],
