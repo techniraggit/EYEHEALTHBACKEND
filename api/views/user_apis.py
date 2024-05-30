@@ -42,8 +42,8 @@ class Dashboard(UserMixin):
             eye_health_score=(
                 eye_health_score.first().health_score if eye_health_score.first() else 0
             ),
-            is_prescription_uploaded = prescription_obj.exists(),
-            visits_to_optometry = prescription_obj.filter(status="approved").count(),
+            is_prescription_uploaded=prescription_obj.exists(),
+            visits_to_optometry=prescription_obj.filter(status="approved").count(),
         )
 
 

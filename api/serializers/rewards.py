@@ -13,8 +13,10 @@ class OffersSerializer(BaseSerializer):
     def get_expiry(self, obj):
         return obj.get_expiry_time()
 
+
 class UserRedeemedOffersSerializer(BaseSerializer):
     offer = OffersSerializer(fields=["offer_id", "title", "image", "description"])
+
     class Meta:
-        model =  UserRedeemedOffers
+        model = UserRedeemedOffers
         fields = "__all__"

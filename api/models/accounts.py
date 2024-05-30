@@ -73,7 +73,9 @@ class UserPoints(BaseModel):
         ("referral", "referral"),
     )
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name="user_points")
+    user = models.ForeignKey(
+        UserModel, on_delete=models.CASCADE, related_name="user_points"
+    )
     points = models.PositiveIntegerField(default=0)
     method = models.CharField(max_length=250, choices=method_options)
 

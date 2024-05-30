@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+from django.contrib.messages import constants as messages
 import logging
 from pathlib import Path
 from datetime import timedelta
@@ -41,6 +42,7 @@ THIRD_APPS = [
 
 LOCAL_APPS = [
     "api",
+    "AdminHub",
 ]
 
 INSTALLED_APPS += THIRD_APPS + LOCAL_APPS
@@ -215,3 +217,13 @@ CBIS_SMS_SENDER_ID = os.getenv("CBIS_SMS_SENDER_ID")
 
 logger = logging.getLogger("weasyprint")
 logger.addHandler(logging.FileHandler(os.path.join(LOG_DIR, "weasyprint.log")))
+
+
+MESSAGE_TAGS = {
+    messages.DEBUG: "alert-secondary",
+    messages.INFO: "alert-info",
+    messages.SUCCESS: "alert-success",
+    messages.WARNING: "alert-warning",
+    messages.ERROR: "alert-error",
+}
+LOGIN_URL = "login_view"

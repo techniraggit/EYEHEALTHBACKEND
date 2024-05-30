@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{% endblock title %}
+{% block body %}
+<h1>Side Nav</h1>
+<nav>
+    <ul>
+        <li><a href="{% url 'logout_view' %}">Logout</a></li>
+        <li><a href="#">Find</a></li>
+        <li><a href="#">Contacts</a></li>
+        <li id="products">Products</li>
+        <li><a href="#">Carpets & Flooring</a></li>
+        <li><a href="wallpapers.html">Wallpapers & Paints</a></li>
+        <li><a href="#">Fabrics & Trimmings</a></li>
+        <li><a href="#">Upholstery & Furniture</a></li>
+        <li><a href="#">Curtains & Blinds</a></li>
+    </ul>
+</nav>
+{% endblock body %}
