@@ -480,16 +480,24 @@ class GetGeneratedReport(UserMixin):
                     left_eye=json_response["data"]["test"][0],
                     health_score=json_response["data"]["health_score"],
                 )
-                serialized = EyeTestReportSerializer(data=data)
-                if serialized.is_valid():
-                    serialized.save()
+                # serialized = EyeTestReportSerializer(data=data)
+
+                # if serialized.is_valid():
+                #     serialized.save()
+                try:
+                    # user_profile
+                    # right_eye
+                    # left_eye
+                    # health_score
+                    data = EyeTestReport.objects.create(**data)
                     return api_response(
                         True,
                         200,
                         "Eye Test Report saved successfully",
-                        data=serialized.data,
+                        data=data.to_json(),
                     )
-                return api_response(False, 500, serialized.errors)
+                except Exception as e:
+                    return api_response(False, 500, str(e))
             except:
                 return Response(response.json(), response.status_code)
         except:
