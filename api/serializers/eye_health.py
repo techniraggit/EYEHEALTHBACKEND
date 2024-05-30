@@ -19,6 +19,7 @@ class EyeTestReportSerializer(BaseSerializer):
 class EyeFatigueReportSerializer(BaseSerializer):
     user = ProfileSerializer(read_only=True, fields=["first_name", "last_name", "age"])
     suggestion = serializers.SerializerMethodField()
+    percentage = serializers.SerializerMethodField()
 
     class Meta:
         model = EyeFatigueReport
@@ -26,3 +27,6 @@ class EyeFatigueReportSerializer(BaseSerializer):
 
     def get_suggestion(self, object):
         return object.get_suggestions()
+
+    def get_percentage(self, object):
+        return object.get_percent()

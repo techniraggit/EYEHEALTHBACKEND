@@ -125,6 +125,7 @@ class EyeFatigueReportsView(UserMixin):
         "is_mild_tiredness_left",
         "created_on",
         "suggestion",
+        "percentage",
     ]
 
     def get_object(self, pk):
