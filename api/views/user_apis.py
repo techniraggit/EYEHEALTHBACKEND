@@ -33,6 +33,7 @@ class Dashboard(UserMixin):
             user_profile__full_name=request.user.get_full_name(),
             user_profile__age=request.user.age(),
         )
+        prescription_obj = UserPrescriptions.objects.filter(user=request.user)
         return api_response(
             True,
             200,
@@ -41,6 +42,8 @@ class Dashboard(UserMixin):
             eye_health_score=(
                 eye_health_score.first().health_score if eye_health_score.first() else 0
             ),
+            is_prescription_uploaded = prescription_obj.exists(),
+            visits_to_optometry = prescription_obj.filter(status="approved").count(),
         )
 
 
@@ -240,8 +243,19 @@ class MyReferralsView(UserMixin):
 
 class UserRedeemedOffersView(UserMixin):
     def get(self, request):
+        fields = ["id", "offer", "status", "redeemed_on", "address"]
+        id = request.GET.get("id")
+        if id:
+            try:
+                queryset = UserRedeemedOffers.objects.get(id=id)
+            except:
+                return api_response(False, 404, "Offer not found")
+            serialized_data = UserRedeemedOffersSerializer(queryset, fields=fields).data
+            return api_response(True, 200, data=serialized_data)
         queryset = UserRedeemedOffers.objects.filter(user=request.user)
-        serialized_data = UserRedeemedOffersSerializer(queryset, many=True).data
+        serialized_data = UserRedeemedOffersSerializer(
+            queryset, many=True, fields=fields
+        ).data
         return api_response(True, 200, data=serialized_data)
 
     def post(self, request):

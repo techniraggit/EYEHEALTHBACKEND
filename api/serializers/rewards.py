@@ -14,9 +14,7 @@ class OffersSerializer(BaseSerializer):
         return obj.get_expiry_time()
 
 class UserRedeemedOffersSerializer(BaseSerializer):
-    # user = ProfileSerializer()
-    # address = UserAddressSerializer()
-    offer = OffersSerializer()
+    offer = OffersSerializer(fields=["offer_id", "title", "image", "description"])
     class Meta:
         model =  UserRedeemedOffers
         fields = "__all__"
