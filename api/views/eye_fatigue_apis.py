@@ -145,9 +145,13 @@ class EyeFatigueReportsView(UserMixin):
         return api_response(True, 200, data=serializer.data)
 
 
+from api.models.eye_health import EyeTestReport
+
+
 class EyeFatigueGraph(UserMixin):
     def get(self, request):
         query_set = EyeFatigueReport.objects.filter(user=request.user)
+        eye_fatigue_count = query_set.count()
 
         from_date = request.GET.get("from_date")
         to_date = request.GET.get("to_date")
@@ -177,7 +181,27 @@ class EyeFatigueGraph(UserMixin):
                 }
                 for report in query_set
             ]
-            return api_response(True, 200, data=data)
+            eye_test_count = EyeTestReport.objects.filter(
+                user_profile__user=request.user
+            ).count()
+            eye_health_score = EyeTestReport.objects.filter(
+                user_profile__user=request.user,
+                user_profile__full_name=request.user.get_full_name(),
+                user_profile__age=request.user.age(),
+            )
+            eye_health_score = (
+                eye_health_score.first().health_score if eye_health_score.first() else 0
+            )
+
+            return api_response(
+                True,
+                200,
+                data=data,
+                no_of_eye_test=eye_test_count,
+                name=request.user.get_full_name(),
+                no_of_fatigue_test=eye_fatigue_count,
+                eye_health_score=eye_health_score,
+            )
         except Exception as e:
             return api_response(False, 500, message=str(e))
 

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 urlpatterns = [
     path("backend/", admin.site.urls),
     path("api/", include("api.urls")),
-    path("", include("AdminHub.urls")),
+    path("admin_hub", include("AdminHub.urls")),
 ]
 
 if settings.DEBUG:
