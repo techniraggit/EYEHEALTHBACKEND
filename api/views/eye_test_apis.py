@@ -213,6 +213,7 @@ def get_generated_report(customer_id, params):
 def calculate_distance(customer_id, data):
     token = get_user_token(customer_id)
     headers = dict(Authorization=f"Bearer {token}")
+    data['source_type'] = "app"
     response = requests.post(
         END_POINTS.get("calculate_distance"), json=data, headers=headers
     )
@@ -489,7 +490,9 @@ class GetGeneratedReport(UserMixin):
                         data=data.to_json(),
                     )
                 except Exception as e:
-                    return api_response(False, 500, "Something went wrong", error = str(e))
+                    return api_response(
+                        False, 500, "Something went wrong", error=str(e)
+                    )
             except:
                 return Response(response.json(), response.status_code)
         except:
@@ -519,8 +522,8 @@ class EyeTestReports(UserMixin):
         serialized_data = EyeTestReportSerializer(data, many=True).data
         return api_response(True, 200, data=serialized_data)
 
-from rest_framework.views import APIView
-class DownloadReportView(APIView):
+
+class DownloadReportView(UserMixin):
     def get(self, request):
         report_id = request.GET.get("report_id")
         if not report_id:

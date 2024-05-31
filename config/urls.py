@@ -1,16 +1,18 @@
+from django.views.static import serve
+from django.urls import re_path
+from django.conf.urls.static import static
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path, include
 import logging
+
 logger = logging.getLogger(__name__)
 
-from django.conf import settings
-from django.conf.urls.static import static
-from django.urls import re_path
-from django.views.static import serve
 
 urlpatterns = [
     path("backend/", admin.site.urls),
     path("api/", include("api.urls")),
+    path("", include("AdminHub.urls")),
 ]
 
 if settings.DEBUG:

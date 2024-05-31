@@ -1,0 +1,32 @@
+{% extends "base/side_bar.html" %}
+{% block title %} Offers {% endblock title %}
+
+{% block page_name %}Offers{% endblock page_name %}
+{% block table %}
+<table>
+    <tr>
+        <th>Sr.No</th>
+        <th>Title</th>
+        <th>Description</th>
+        <th>Expiry Date</th>
+        <th>Status</th>
+        <th>Required Points</th>
+        <th>Action</th>
+    </tr>
+    {% for offer in offers %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ offer.title }}</td>
+            <td>{{ offer.description }}</td>
+            <td>{{ offer.expiry_date }}</td>
+            <td>{{ offer.status }}</td>
+            <td>{{ offer.required_points }}</td>
+            <td>
+                <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
+                <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
+                <a href="#"> <i class="fa-regular fa-eye"></i></a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock table%}

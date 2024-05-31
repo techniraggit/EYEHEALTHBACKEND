@@ -1,0 +1,99 @@
+<style>
+    a{
+        text-decoration:none;
+    }
+    .pagination {
+        text-align: center;
+        margin-top: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .pages {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 100%;
+        width: 230px;
+    }
+    
+    .page-number {
+        cursor: pointer;
+        background-color: white;
+        color: #999;
+        border-radius: 50%;
+        height: 40px;
+        width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: .4s ease;
+    }
+    .page-number:hover {
+        background-color: #005db0;
+        color: #fff;
+    }
+    .page-number:hover a {
+        color: #fff;
+    }
+    .active-pagination {
+        font-size: 1.3em;
+        height: 40px;
+        width: 40px;
+        background-color: #0057b3;
+        color: white;
+    }
+    
+    button {
+        width: 120px;
+        padding: 8px 16px;
+        background-color: #ffffff00;
+        color: #0057b3;
+        border: none;
+        cursor: pointer;
+        margin: 0 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    button:hover .page-number:hower{
+        color: #0056b3;
+    }
+    
+    button:disabled {
+        background-color: #ffffff00;
+        color: #ccc;
+        cursor: not-allowed;
+    }
+    
+    #prevPage {
+        margin-right: 20px;
+    }
+    
+    #nextPage {
+        margin-left: 20px;
+    }
+    
+    .arrow {
+        font-size: 1.2em;
+    }
+    
+    .nav-text {
+        font-size: 0.7em;
+        letter-spacing: 0.3em;
+    }
+</style>
+
+<div class="pagination">
+    <button class="arrow" id="prevPage" disabled>← <span class="nav-text">PREV</span></button>
+    <div class="pages">
+        <div class="page-number active-pagination me-1">1</div>
+        <div class="page-number me-1"><a href="google.com">2</a></div>
+        <div class="page-number me-1"><a href="google.com">3</a></div>
+        <div class="page-number me-1"><a href="google.com">4</a></div>
+        <div class="page-number me-1"><a href="google.com">5</a></div>
+    </div>
+    <button class="arrow" id="nextPage"><span class="nav-text">NEXT</span> →</button>
+</div>

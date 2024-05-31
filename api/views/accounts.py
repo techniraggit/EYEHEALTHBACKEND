@@ -42,9 +42,7 @@ class VerificationOTPView(APIView):
             try:
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
-                return api_response(
-                    True, 200, f"OTP sent successfully to {username}."
-                )
+                return api_response(True, 200, f"OTP sent successfully to {username}.")
 
             except Exception as e:
                 # raise e
@@ -101,9 +99,7 @@ class SendLoginOTP(APIView):
 
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
-                return api_response(
-                    True, 200, f"OTP sent successfully to {username}."
-                )
+                return api_response(True, 200, f"OTP sent successfully to {username}.")
 
             except Exception as e:
                 # raise e

@@ -1,0 +1,82 @@
+<style>
+  .toaster {
+    position: fixed;
+    bottom: 20px;
+    left: 30px;
+    width: 450px;
+    border-radius: 4px;
+    box-shadow: #310808 1px 1px 5px;
+    /*   background-color: rgba(177, 7, 15, 0.78); */
+    padding: 10px;
+    color: #f5bfbf;
+
+    opacity: 1;
+    animation: toaster 500ms cubic-bezier(0.23, 0.82, 0.16, 1.46);
+    animation-iteration-count: 1;
+  }
+  .alert-success {
+    background-color: #28a745;
+  }
+
+  .alert-warning {
+    background-color: #ffc107;
+  }
+
+  .alert-info {
+    background-color: #17a2b8;
+  }
+
+  .alert-error {
+    background-color: #dc3545;
+  }
+
+  .message {
+    color: white;
+    margin-left: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .toaster.alert-success {
+    z-index: 7777;
+}
+  .toaster.alert-warning {
+    z-index: 7777;
+}
+  .toaster.alert-info {
+    z-index: 7777;
+}
+  .toaster.alert-error {
+    z-index: 7777;
+}
+
+  @keyframes toaster {
+    0% {
+      opacity: 0;
+      transform: translateY(200px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0px);
+    }
+  }
+</style>
+{% if messages %}
+    {% for message in messages %}
+        <div class="toaster {% if message.tags %}{{ message.tags }}{% endif %}">
+        <p class="message">{{ message }}</p>
+        </div>
+    {% endfor %}
+{% endif %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var toasters = document.querySelectorAll('.toaster');
+    toasters.forEach(function(toaster) {
+      setTimeout(function() {
+        toaster.remove();
+      }, 2000); // 2 seconds
+    });
+  });
+</script>

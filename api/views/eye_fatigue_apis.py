@@ -181,8 +181,8 @@ class EyeFatigueGraph(UserMixin):
         except Exception as e:
             return api_response(False, 500, message=str(e))
 
-from rest_framework.views import APIView
-class DownloadReportView(APIView):
+
+class DownloadReportView(UserMixin):
     def get(self, request):
         report_id = request.GET.get("report_id")
         if not report_id:

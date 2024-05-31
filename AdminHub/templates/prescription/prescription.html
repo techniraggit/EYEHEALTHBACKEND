@@ -1,0 +1,28 @@
+{% extends "base/side_bar.html" %}
+{% block title %} Prescription {% endblock title %}
+
+{% block page_name %}Prescription{% endblock page_name %}
+{% block table %}
+<table>
+    <tr>
+        <th>Sr.No</th>
+        <th>prescription_id</th>
+        <th>file</th>
+        <th>status</th>
+        <th>Action</th>
+    </tr>
+    {% for prescription in prescriptions %}
+        <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ prescription.prescription_id }}</td>
+            <td>{{ prescription.file }}</td>
+            <td>{{ prescription.status }}</td>
+            <td>
+                <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
+                <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
+                <a href="#"> <i class="fa-regular fa-eye"></i></a>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+{% endblock table%}
