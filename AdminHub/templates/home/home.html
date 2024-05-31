@@ -1,137 +1,93 @@
 {% extends "base/side_bar.html" %}
+{% load static %}
 {% block title %}
 Dashbord
 {% endblock title %}
 {% block page_name %}Home{% endblock page_name %}
 {% block table %}
-<table>
-    <tr>
-        <th>Sr.No</th>
-        <th>Company</th>
-        <th>Contact</th>
-        <th>Country</th>
-        <th>Country</th>
-        <th>Action</th>
-    </tr>
-    <tr>
-        <td>1</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>2</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>3</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>4</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>5</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>6</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>7</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>8</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>9</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-    <tr>
-        <td>10</td>
-        <td>Alfreds Futterkiste</td>
-        <td>Maria Anders</td>
-        <td>Germany</td>
-        <td>Germany</td>
-        <td>
-            <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#"> <i class="fa-regular fa-eye"></i></a>
-        </td>
-    </tr>
-</table>
+
+<div class="right-table1">
+    <div class="row">
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static "icons/group.png" %}" />
+                </div>
+                <div>
+                    <h4>{{ total_users }}</h4>
+                    <span>Total Users</span>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static "icons/discount.png" %}" />
+                </div>
+                <div>
+                    <h4>{{ total_offers }}</h4>
+                    <span>Total Offers</span>
+                </div>
+
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4"  src="{% static "icons/box.png" %}" />
+                </div>
+                <div>
+                    <h4>{{ total_redeemed_offers }}</h4>
+                    <span>
+                        Total Redmeed Offers
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4"  src="{% static "icons/prescription.png" %}" />
+                </div>
+                <div>
+                    <h4>
+                        {{ total_prescriptions }}
+                    </h4>
+                    <span>
+                        Total Prescription Uploaded
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4"  src="{% static "icons/eye-exam.png" %}" />
+                </div>
+                <div>
+                    <h4>{{ total_eye_tests }}</h4>
+                    <span>
+                        Total Eye Test
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static "icons/eye-test.png" %}" />
+                </div>
+                <div>
+                    <h4>{{ total_eye_fatigue_test }}</h4>
+                    <span>
+                        Total Fatigue Test
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock table %}

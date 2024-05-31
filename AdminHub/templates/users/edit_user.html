@@ -1,0 +1,66 @@
+{% extends "base/side_bar.html" %}
+{% block title %} Edit User {% endblock title %}
+
+{% block page_name %}Edit User{% endblock page_name %}
+{% block table %}
+<div class="right-table1">
+    <div class="edit-nav row">
+        <div class="profile col-4">
+            <img src="./static_files/img/man-user-circle-icon.png" alt="">
+        </div>
+    </div>
+    <div class=" form-main">
+        <form>
+            <div class="row">
+                <div class="col-md-4 f-name mt-4">
+                    <label>
+                        Name
+                    </label>
+                    <input type="text" />
+                </div>
+                <div class="col-md-4 f-lname mt-4">
+                    <label>Last Name</label>
+                    <input type="text" />
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label>E-mail</label>
+                    <input type="email" />
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label>Date Of Birth</label>
+                    <input type="date" />
+                </div>
+                <div class="col-md-4 f-name mt-4">
+                    <label>
+                        Phone no.
+                    </label>
+                    <input type="number" />
+                </div>
+                <div class="col-md-4 f-lname mt-4">
+                    <label>Points</label>
+                    <input type="number" />
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label>Latitude</label>
+                    <input type="number" />
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label>Longitude</label>
+                    <input type="number" />
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label> Referral_Code</label>
+                    <input type="text" />
+                </div>
+                <div class="col-md-3 cancel-btn mt-5">
+                    <button>Cancel</button>
+                </div>
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button>Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+{% endblock table%}

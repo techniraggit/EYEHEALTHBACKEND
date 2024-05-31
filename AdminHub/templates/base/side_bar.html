@@ -5,7 +5,7 @@
 <div class="mainwrapper">
     <div class="side-bar">
         <div class="innerdiv">
-            <h5>Admin</h2>
+            <h5><a href="/" style="color: rgb(38, 50, 56);">Admin</a></h5>
                 <div class="side-list">
                     <ul>
                         <li><a href="/backend" ><i class="fa-solid fa-database me-2"></i> Developer Admin</a></li>
@@ -22,15 +22,21 @@
                         {% endif %}
                         
                         {% if is_offer %}
-                        <li><a href="{% url "offers_view" %}" class="acive-link"><i class="fa-solid fa-user me-2"></i>Offers</a></li>
+                        <li><a href="{% url "offers_view" %}" class="acive-link"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
                         {% else %}
-                        <li><a href="{% url "offers_view" %}"><i class="fa-solid fa-user me-2"></i>Offers</a></li>
+                        <li><a href="{% url "offers_view" %}"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
                         {% endif %}
                         
                         {% if is_prescription %}
-                        <li><a href="{% url "prescription_view" %}" class="acive-link"><i class="fa-solid fa-user me-2"></i>Prescription</a></li>
+                        <li><a href="{% url "prescription_view" %}" class="acive-link"><i class="fa-solid fa-prescription me-2"></i>Prescription</a></li>
                         {% else %}
-                        <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-user me-2"></i>Prescription</a></li>
+                        <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-prescription me-2"></i>Prescription</a></li>
+                        {% endif %}
+
+                        {% if is_notification %}
+                        <li><a href="{% url "notification_view" %}" class="acive-link"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
+                        {% else %}
+                        <li><a href="{% url "notification_view" %}"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
                         {% endif %}
 
 
@@ -44,7 +50,7 @@
     <div class="right-bar">
         <header class="header-main row">
             <div class=" header-heading col-9">
-                {% block page_name %}{% endblock page_name %}
+                {% block page_name %}-----{% endblock page_name %}
             </div>
             <div class="col-3">
                 <div class="login-wrap">
@@ -53,7 +59,8 @@
                 </div>
             </div>
         </header>
-        <div class="bottomwrap">
+        {% block nav_bar %}{% endblock nav_bar %}
+        {% comment %} <div class="bottomwrap">
             <div class="search-box row">
                 <div class="col-5">
                     <div class="input-wrapp">
@@ -78,7 +85,7 @@
                     
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
         <div class="right-table">
             {% block table %}
             {% endblock table %}

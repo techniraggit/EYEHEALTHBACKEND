@@ -3,7 +3,8 @@ from .views.auth import *
 from .views.home import *
 from .views.users import *
 from .views.offers import *
-from .views.prescriptioin import *
+from .views.prescription import *
+from .views.notifications import *
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -16,6 +17,7 @@ home_urls = [
 
 users_urls = [
     path("", UserView.as_view(), name="users_view"),
+    path("user-view", UserDetailView.as_view(), name="user_detailed_view"),
 ]
 
 offers_urls = [
@@ -26,6 +28,10 @@ prescription_urls = [
     path("", PrescriptionView.as_view(), name="prescription_view"),
 ]
 
+notification_urls = [
+    path("", NotificationView.as_view(), name="notification_view"),
+]
+
 
 urlpatterns = [
     path("", include(auth_urls)),
@@ -33,4 +39,5 @@ urlpatterns = [
     path("users/", include(users_urls)),
     path("offers/", include(offers_urls)),
     path("prescription/", include(prescription_urls)),
+    path("notification/", include(notification_urls)),
 ]

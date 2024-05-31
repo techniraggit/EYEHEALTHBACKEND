@@ -15,3 +15,6 @@ class UserView(AdminLoginView):
         paginated_users = paginator.get_page(page_number)
         return render(request, "users/users.html", {"users": paginated_users, "is_user": True})
 
+class UserDetailView(AdminLoginView):
+    def get(self, request):
+        return render(request, "users/edit_user.html",  {"is_user": True})
