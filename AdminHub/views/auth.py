@@ -12,8 +12,8 @@ User = get_user_model()
 class LoginView(View):
     def get(self, request):
         if request.user.is_authenticated and request.user.is_superuser:
-            return redirect("dashboard_view")
-        return render(request, "login.html")
+            return redirect("home_view")
+        return render(request, "auth/login.html")
 
     def post(self, request):
         email = request.POST.get("email")
@@ -36,7 +36,7 @@ class LoginView(View):
                 return redirect("login_view")
             login(request, auth_user)
             messages.success(request, "Login successful")
-            return redirect("dashboard_view")
+            return redirect("home_view")
         messages.error(request, "Not a valid email address or password")
         return redirect("login_view")
 

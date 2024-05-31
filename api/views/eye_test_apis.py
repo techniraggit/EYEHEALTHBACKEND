@@ -213,6 +213,7 @@ def get_generated_report(customer_id, params):
 def calculate_distance(customer_id, data):
     token = get_user_token(customer_id)
     headers = dict(Authorization=f"Bearer {token}")
+    data['source_type'] = "app"
     response = requests.post(
         END_POINTS.get("calculate_distance"), json=data, headers=headers
     )

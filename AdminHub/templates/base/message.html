@@ -1,5 +1,5 @@
 <style>
-  .toast {
+  .toaster {
     position: fixed;
     bottom: 20px;
     left: 30px;
@@ -11,7 +11,7 @@
     color: #f5bfbf;
 
     opacity: 1;
-    animation: toast 500ms cubic-bezier(0.23, 0.82, 0.16, 1.46);
+    animation: toaster 500ms cubic-bezier(0.23, 0.82, 0.16, 1.46);
     animation-iteration-count: 1;
   }
   .alert-success {
@@ -38,7 +38,20 @@
     font-weight: 600;
   }
 
-  @keyframes toast {
+  .toaster.alert-success {
+    z-index: 7777;
+}
+  .toaster.alert-warning {
+    z-index: 7777;
+}
+  .toaster.alert-info {
+    z-index: 7777;
+}
+  .toaster.alert-error {
+    z-index: 7777;
+}
+
+  @keyframes toaster {
     0% {
       opacity: 0;
       transform: translateY(200px);
@@ -52,18 +65,18 @@
 </style>
 {% if messages %}
     {% for message in messages %}
-        <div class="toast {% if message.tags %}{{ message.tags }}{% endif %}">
+        <div class="toaster {% if message.tags %}{{ message.tags }}{% endif %}">
         <p class="message">{{ message }}</p>
         </div>
     {% endfor %}
 {% endif %}
 <script>
   document.addEventListener('DOMContentLoaded', function() {
-    var toasts = document.querySelectorAll('.toast');
-    toasts.forEach(function(toast) {
+    var toasters = document.querySelectorAll('.toaster');
+    toasters.forEach(function(toaster) {
       setTimeout(function() {
-        toast.remove();
-      }, 5000); // 2 seconds
+        toaster.remove();
+      }, 2000); // 2 seconds
     });
   });
 </script>
