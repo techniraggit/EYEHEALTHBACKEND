@@ -5,46 +5,69 @@
 <div class="mainwrapper">
     <div class="side-bar">
         <div class="innerdiv">
-            <h5>Admin</h2>
-                <div class="side-list">
-                    <ul>
-                        <li><a href="/backend" ><i class="fa-solid fa-database me-2"></i> Developer Admin</a></li>
-                        {% if is_home %}
-                        <li><a href="/" class="acive-link"><i class="fa-solid fa-house me-2"></i>Home</a></li>
-                        {% else %}
-                        <li><a href="/"><i class="fa-solid fa-house me-2"></i>Home</a></li>
-                        {% endif %}
-                        
-                        {% if is_user %}
-                        <li><a href="{% url "users_view" %}" class="acive-link"><i class="fa-solid fa-user me-2"></i>User</a></li>
-                        {% else %}
-                        <li><a href="{% url "users_view" %}"><i class="fa-solid fa-user me-2"></i>User</a></li>
-                        {% endif %}
-                        
-                        {% if is_offer %}
-                        <li><a href="{% url "offers_view" %}" class="acive-link"><i class="fa-solid fa-user me-2"></i>Offers</a></li>
-                        {% else %}
-                        <li><a href="{% url "offers_view" %}"><i class="fa-solid fa-user me-2"></i>Offers</a></li>
-                        {% endif %}
-                        
-                        {% if is_prescription %}
-                        <li><a href="{% url "prescription_view" %}" class="acive-link"><i class="fa-solid fa-user me-2"></i>Prescription</a></li>
-                        {% else %}
-                        <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-user me-2"></i>Prescription</a></li>
-                        {% endif %}
+            <h5><a href="/" style="color: rgb(38, 50, 56);">Admin</a></h5>
+            <div class="side-list">
+                <ul>
+                    <li><a href="/backend"><i class="fa-solid fa-database me-2"></i> Developer Admin</a></li>
+                    {% if is_home %}
+                    <li><a href="/" class="acive-link"><i class="fa-solid fa-house me-2"></i>Home</a></li>
+                    {% else %}
+                    <li><a href="/"><i class="fa-solid fa-house me-2"></i>Home</a></li>
+                    {% endif %}
 
+                    {% if is_user %}
+                    <li><a href="{% url "users_view" %}" class="acive-link"><i class="fa-solid fa-user me-2"></i>User</a></li>
+                    {% else %}
+                    <li><a href="{% url "users_view" %}"><i class="fa-solid fa-user me-2"></i>User</a></li>
+                    {% endif %}
 
-                    </ul>
-                    <div class="logout-wrap">
-                        <a href="{% url "logout_view" %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
-                    </div>
+                    {% if is_offer %}
+                    <li><a href="{% url "offers_view" %}" class="acive-link"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
+                    {% else %}
+                    <li><a href="{% url "offers_view" %}"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
+                    {% endif %}
+
+                    {% if is_prescription %}
+                    <li><a href="{% url "prescription_view" %}" class="acive-link"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
+                    {% else %}
+                    <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
+                    {% endif %}
+
+                    {% if is_notification %}
+                    <li><a href="{% url "notification_view" %}" class="acive-link"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
+                    {% else %}
+                    <li><a href="{% url "notification_view" %}"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
+                    {% endif %}
+
+                    {% if is_redeemed_offers %}
+                    <li><a href="{% url "redeemed_offers_view" %}" class="acive-link"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
+                    {% else %}
+                    <li><a href="{% url "redeemed_offers_view" %}"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
+                    {% endif %}
+
+                    {% if is_subscription %}
+                    <li><a href="{% url "subscription_view" %}" class="acive-link"><img  src="{% static "icons/side_bar/subscription.png" %}" alt="">Subscription Plans</a></li>
+                    {% else %}
+                    <li><a href="{% url "subscription_view" %}"><img class="me-2" src="{% static "icons/side_bar/subscription.png"%}" alt="">Subscription Plans</a></li>
+                    {% endif %}
+
+                    {% if is_user_subscription %}
+                    <li><a href="{% url "user_subscription_plans_view" %}" class="acive-link"><img  class="me-2" src="{% static "icons/side_bar/calendar.png" %}" alt="">User Subscription</a></li>
+                    {% else %}
+                    <li><a href="{% url "user_subscription_plans_view" %}"><img  class="me-2" src="{% static "icons/side_bar/calendar.png" %}" alt="">User Subscription</a></li>
+                    {% endif %}
+
+                </ul>
+                <div class="logout-wrap">
+                    <a href="{% url "logout_view" %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
                 </div>
+            </div>
         </div>
     </div>
     <div class="right-bar">
         <header class="header-main row">
             <div class=" header-heading col-9">
-                {% block page_name %}{% endblock page_name %}
+                {% block page_name %}-----{% endblock page_name %}
             </div>
             <div class="col-3">
                 <div class="login-wrap">
@@ -53,7 +76,8 @@
                 </div>
             </div>
         </header>
-        <div class="bottomwrap">
+        {% block nav_bar %}{% endblock nav_bar %}
+        {% comment %} <div class="bottomwrap">
             <div class="search-box row">
                 <div class="col-5">
                     <div class="input-wrapp">
@@ -65,20 +89,21 @@
                 <div class="col-3"></div>
                 <div class="export col-4">
                     <ul>
-                    <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button>
-                        <div class="drop-downmenu">
-                    <li class="ex-li" ><a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
-                        <ul class="dropdown-content">
-                            <li class="mb-1"><a href="#">PDF</a></li>
-                            <li class="mb-1"><a href="#">Excel</a></li>
-                            <li><a href="#">CSV</a></li>
-                        </ul>
-                    </li>
-                </ul>
-                    
+                        <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button>
+                            <div class="drop-downmenu">
+                        <li class="ex-li"><a class="export-btn" href="#">Export<i
+                                    class="fa-solid fa-file-export ms-2"></i></a>
+                            <ul class="dropdown-content">
+                                <li class="mb-1"><a href="#">PDF</a></li>
+                                <li class="mb-1"><a href="#">Excel</a></li>
+                                <li><a href="#">CSV</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+
                 </div>
             </div>
-        </div>
+        </div> {% endcomment %}
         <div class="right-table">
             {% block table %}
             {% endblock table %}

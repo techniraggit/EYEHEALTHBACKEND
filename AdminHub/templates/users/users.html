@@ -1,14 +1,53 @@
 {% extends "base/side_bar.html" %}
+{% load static %}
 {% block title %} Users {% endblock title %}
 
 {% block page_name %}Users{% endblock page_name %}
+
+{% block nav_bar %}
+<div class="bottomwrap">
+    <div class="search-box row">
+        <div class="col-8">
+            <div class="input-wrapp">
+                <form action="{% url "users_view" %}" method="get" id="searchForm">
+                    <div> 
+                    <input type="text" name="search"id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{search}}{% else %}""{% endif %}">
+                    </div>
+                  <div>
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button type="button" onclick="resetForm()">Clear</button>
+                  </div>
+                </form>
+            </div>
+        </div>
+        {% comment %} <div class="col-3"></div> {% endcomment %}
+        <div class="export col-4">
+            <ul>
+            {% comment %} <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button> {% endcomment %}
+                <div class="drop-downmenu">
+            <li class="ex-li" ><a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                <ul class="dropdown-content">
+                    <li class="mb-1"><a href="{% url 'user_export_view' 'excel' %}" style="font-weight: bold;">Excel</a></li>
+                    <li><a href="{% url 'user_export_view' 'csv' %}" style="font-weight: bold;">CSV</a></li>
+                </ul>
+            </li>
+        </ul>
+            
+        </div>
+    </div>
+</div>
+{% endblock nav_bar %}
 {% block table %}
 <table>
     <tr>
         <th>Sr.No</th>
         <th>Firt Name</th>
         <th>Last Name</th>
+        <th>Email</th>
+        <th>Phone Number</th>
         <th>Age</th>
+        <th>points</th>
+        <th>referral_code</th>
         <th>Action</th>
     </tr>
     {% for user in users %}
@@ -16,13 +55,25 @@
             <td>{{ forloop.counter }}</td>
             <td>{{ user.first_name }}</td>
             <td>{{ user.last_name }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.phone_number }}</td>
             <td>{{ user.age }}</td>
+            <td>{{ user.points }}</td>
+            <td>{{ user.referral_code }}</td>
             <td>
-                <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-                <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="#"> <i class="fa-regular fa-eye"></i></a>
+                <a href="{% url "user_delete_view" user.id %}"><i class="fa-solid fa-trash-can me-2"></i></a>
+                <a href="{% url "user_edit_view" user.id %}"><i class="fa-solid fa-pen me-2"></i></a>
+                <a href="{% url "user_detailed_view" user.id %}"> <i class="fa-regular fa-eye"></i></a>
             </td>
         </tr>
     {% endfor %}
 </table>
+<script>
+    function resetForm() {
+        document.getElementById('searchForm').reset();
+        document.getElementById('searchInput').value = '';
+        window.location.href = window.location.pathname;
+    }
+</script>
 {% endblock table%}
+

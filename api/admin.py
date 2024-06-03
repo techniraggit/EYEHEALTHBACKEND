@@ -4,6 +4,7 @@ from api.models.notifications import *
 from api.models.subscription import *
 from api.models.rewards import *
 from api.models.eye_health import *
+from api.models.prescription import *
 
 
 # Register your models here.
@@ -36,11 +37,13 @@ class UserAddressAdmin(admin.ModelAdmin):
 @admin.register(OTPLog)
 class OTPLog(admin.ModelAdmin):
     list_display = ["username", "is_verify"]
+    search_fields = ["username"]
 
 
 @admin.register(DeviceInfo)
 class DeviceInfoAdmin(admin.ModelAdmin):
     list_display = ["user", "token", "device_type", "created_on", "updated_on"]
+    search_fields = ["user__email", "user__phone_number"]
 
 
 @admin.register(ReferTrack)
@@ -74,7 +77,10 @@ class UserSubscriptionAdmin(admin.ModelAdmin):
 
 
 # NOTIFICATION
-admin.register(PushNotification)
+@admin.register(PushNotification)
+class PushNotificationAdmin(admin.ModelAdmin):
+    list_display = ["id", "title", "message", "created_on"]
+    search_fields = ["title"]
 
 
 @admin.register(UserPushNotification)
@@ -132,3 +138,9 @@ class UserRedeemedOffersAdmin(admin.ModelAdmin):
         "status",
         "redeemed_on",
     ]
+
+
+@admin.register(UserPrescriptions)
+class UserPrescriptionsAdmin(admin.ModelAdmin):
+    list_display = ["prescription_id", "status", "user"]
+    search_fields = ["prescription_id", "user__email", "user__phone_number"]

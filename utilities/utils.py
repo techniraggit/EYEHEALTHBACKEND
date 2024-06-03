@@ -68,3 +68,10 @@ def generate_pdf(template_name, context_data, page_width="9.5in", page_height="1
     )
     pdf_file = html.write_pdf()
     return pdf_file
+
+from datetime import datetime
+import pytz
+
+def time_localize(datetime_object: datetime):
+    timezone = pytz.timezone("Asia/Kolkata")
+    return datetime_object.astimezone(timezone)

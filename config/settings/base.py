@@ -215,8 +215,8 @@ CBIS_SMS_USERNAME = os.getenv("CBIS_SMS_USERNAME")
 CBIS_SMS_PASSWORD = os.getenv("CBIS_SMS_PASSWORD")
 CBIS_SMS_SENDER_ID = os.getenv("CBIS_SMS_SENDER_ID")
 
-logger = logging.getLogger("weasyprint")
-logger.addHandler(logging.FileHandler(os.path.join(LOG_DIR, "weasyprint.log")))
+# logger = logging.getLogger("weasyprint")
+# logger.addHandler(logging.FileHandler(os.path.join(LOG_DIR, "weasyprint.log")))
 
 
 MESSAGE_TAGS = {
