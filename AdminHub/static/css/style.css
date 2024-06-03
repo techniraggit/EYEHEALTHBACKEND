@@ -36,18 +36,18 @@ ul {
 }
 
 .un, .pass {
-    width: 76%;
-    color: rgb(38, 50, 56);
+    width: 76% !important;
+    color: rgb(38, 50, 56) !important;
     font-weight: 700;
     font-size: 14px;
     letter-spacing: 1px;
     background: rgba(136, 126, 126, 0.04);
-    padding: 10px 20px;
-    border: none;
+    padding: 10px 20px !important;
+    border: none !important;
     border-radius: 20px;
-    outline: none;
+    outline: none !important;
     box-sizing: border-box;
-    border: 2px solid rgba(0, 0, 0, 0.02);
+    border: 2px solid rgba(0, 0, 0, 0.02)!important;
     margin-bottom: 27px;
     margin-left: 46px;
     text-align: center;
@@ -214,17 +214,23 @@ form.form1 {
     justify-content: end;
 }
 
-.add-btn {
+.add-btn  a {
     background-color: #5200a5;
-    color: white;
     border: none;
-    list-style: none;
     text-align: center;
-    padding: 8px;
+    padding: 8px 12px;
     width: 100%;
+    font-size: 14px;
+    color: #fff !important;
+    font-weight: 700;
     border-radius: 12px 12px 12px 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-
+.add-btn  a span , .add-btn i{
+    color: #fff;
+}
 .export>ul {
     text-align: end;
     display: flex;
@@ -341,7 +347,7 @@ button.export-btn:hover ul.dropdown-content {
     padding: 35px 18px 35px;
     cursor: pointer;
     align-items: center;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 500;
     border-radius: 5px;
 }
@@ -352,15 +358,9 @@ button.export-btn:hover ul.dropdown-content {
     height: 51px;
 }
 
-.export ul li {
+/* .export ul li {
     width: 100%;
-}
-
-li.add-btn>a {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+} */
 
 .edit-nav.row img {
     height: 85px;
@@ -731,4 +731,10 @@ td {
     font-weight: 500;
     border: none;
     font-size: 14px;
+}
+.profile {
+    text-align: left;
+}
+.form-main label {
+    font-weight: 500;
 }
