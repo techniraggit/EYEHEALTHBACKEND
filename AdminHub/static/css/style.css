@@ -744,3 +744,15 @@ td {
     height: 20px;
     align-items: center;
 }
+
+.input-wrapp button {
+    padding: 6px 12px;
+    border-radius: 7px;
+}
+
+form#searchForm {
+    display: flex;
+}
+.side-list ul li a img {
+    height: 18px;
+}

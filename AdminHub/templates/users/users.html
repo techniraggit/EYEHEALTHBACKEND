@@ -7,16 +7,20 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-        <div class="col-5">
+        <div class="col-8">
             <div class="input-wrapp">
                 <form action="{% url "users_view" %}" method="get" id="searchForm">
+                    <div> 
                     <input type="text" name="search"id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{search}}{% else %}""{% endif %}">
+                    </div>
+                  <div>
                     <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                     <button type="button" onclick="resetForm()">Clear</button>
+                  </div>
                 </form>
             </div>
         </div>
-        <div class="col-3"></div>
+        {% comment %} <div class="col-3"></div> {% endcomment %}
         <div class="export col-4">
             <ul>
             {% comment %} <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button> {% endcomment %}
