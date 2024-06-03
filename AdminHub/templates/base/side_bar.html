@@ -51,10 +51,10 @@
                     <li><a href="{% url "subscription_view" %}"><img src="{% static "icons/side_bar/subscription.png"%}" alt="">Subscription Plans</a></li>
                     {% endif %}
 
-                    {% if is_subscription %}
-                    <li><a href="{% url "subscription_view" %}" class="acive-link"><img src="{% static "icons/side_bar/calendar.png" %}" alt="">User Subscription</a></li>
+                    {% if is_user_subscription %}
+                    <li><a href="{% url "user_subscription_plans_view" %}" class="acive-link"><img src="{% static "icons/side_bar/calendar.png" %}" alt="">User Subscription</a></li>
                     {% else %}
-                    <li><a href="{% url "subscription_view" %}"><img src="{% static "icons/side_bar/calendar.png" %}" alt="">User Subscription</a></li>
+                    <li><a href="{% url "user_subscription_plans_view" %}"><img src="{% static "icons/side_bar/calendar.png" %}" alt="">User Subscription</a></li>
                     {% endif %}
 
                 </ul>

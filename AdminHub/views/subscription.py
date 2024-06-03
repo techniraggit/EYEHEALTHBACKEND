@@ -13,3 +13,12 @@ class SubscriptionView(AdminLoginView):
             is_subscription = True,
         )
         return render(request, "subscription/subscription.html", context)
+
+class UserSubscriptionView(AdminLoginView):
+    def get(self, request):
+        user_plans = UserSubscription.objects.all()
+        context = dict(
+            user_plans = user_plans,
+            is_user_subscription = True,
+        )
+        return render(request, "subscription/user_subscription.html", context)

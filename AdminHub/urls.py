@@ -37,6 +37,7 @@ notification_urls = [
 
 subscription_urls = [
     path("", SubscriptionView.as_view(), name="subscription_view"),
+    path("user-subscription-plans", UserSubscriptionView.as_view(), name="user_subscription_plans_view"),
 ]
 
 urlpatterns = [
