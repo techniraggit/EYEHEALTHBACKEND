@@ -10,3 +10,4 @@ python-dotenv==1.0.0
 stripe==9.7.0
 weasyprint==60.2
 pytz==2024.1
+openpyxl==3.0.10

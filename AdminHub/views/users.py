@@ -1,3 +1,7 @@
+from utilities.utils import time_localize
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
+from datetime import datetime
 from django.http import HttpResponse
 import csv
 from api.serializers.accounts import UserSerializer
@@ -86,26 +90,13 @@ class UserDeleteView(AdminLoginView):
         messages.success(request, "User deleted successfully")
         return redirect("users_view")
 
-class UserExportView(AdminLoginView):
-    def csv_export(self, request):
-        users = User.objects.all()
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="users.csv"'
-        writer = csv.writer(response)
-        writer.writerow(['id', 'first_name', 'last_name', 'email', 'phone_number', 'referral_code', 'points'])
-        for user in users:
-            writer.writerow([user.id, user.first_name, user.last_name, user.email, user.phone_number, user.referral_code, user.points])
-        return response
 
-    def excel_export(self, request):
-        users = User.objects.all()
-        response = HttpResponse(content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="users.csv"'
-        writer = csv.writer(response)
-        writer.writerow(['id', 'first_name', 'last_name', 'email', 'phone_number', 'referral_code', 'points'])
-        for user in users:
-            writer.writerow([user.id, user.first_name, user.last_name, user.email, user.phone_number, user.referral_code, user.points])
-        return response
+class UserExportView(AdminLoginView):
+    current_timestamp = time_localize(datetime.now()).strftime("%Y%m%d%H%M%S")
+    file_name = f"users-{current_timestamp}"
+
+    def get_queryset(self):
+        return User.objects.exclude(is_superuser=True)
 
     def get(self, request, file_type):
         if file_type == "csv":
@@ -114,3 +105,75 @@ class UserExportView(AdminLoginView):
             return self.excel_export(request)
         else:
             return HttpResponse("Invalid file type")
+
+    def csv_export(self, request):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = f'attachment; filename="{self.file_name}.csv"'
+        writer = csv.writer(response)
+        writer.writerow(
+            [
+                "id",
+                "first_name",
+                "last_name",
+                "email",
+                "phone_number",
+                "referral_code",
+                "points",
+            ]
+        )
+        for user in self.get_queryset():
+            writer.writerow(
+                [
+                    (user.id),
+                    user.first_name,
+                    user.last_name,
+                    user.email,
+                    user.phone_number,
+                    user.referral_code,
+                    user.points,
+                ]
+            )
+        return response
+
+    def excel_export(self, request):
+        headers = [
+            "id",
+            "first_name",
+            "last_name",
+            "email",
+            "phone_number",
+            "referral_code",
+            "points",
+        ]
+        workbook = Workbook()
+        worksheet = workbook.active
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+        worksheet.append(headers)
+        for user in self.get_queryset():
+            row = [
+                str(user.id),
+                user.first_name,
+                user.last_name,
+                user.email,
+                user.phone_number,
+                user.referral_code,
+                user.points,
+            ]
+            worksheet.append(row)
+
+        worksheet.column_dimensions["A"].width = 10
+        worksheet.column_dimensions["B"].width = 15
+        worksheet.column_dimensions["C"].width = 15
+        worksheet.column_dimensions["D"].width = 15
+        worksheet.column_dimensions["E"].width = 20
+        worksheet.column_dimensions["F"].width = 20
+        worksheet.column_dimensions["G"].width = 10
+
+        virtual_excel_file = save_virtual_workbook(workbook)
+        response["Content-Disposition"] = f"attachment; filename={self.file_name}.xlsx"
+        response["Content-Type"] = "application/octet-stream"
+        response.write(virtual_excel_file)
+        return response
