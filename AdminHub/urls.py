@@ -5,6 +5,7 @@ from .views.users import *
 from .views.offers import *
 from .views.prescription import *
 from .views.notifications import *
+from .views.subscription import *
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -34,6 +35,10 @@ notification_urls = [
 ]
 
 
+subscription_urls = [
+    path("", SubscriptionView.as_view(), name="subscription_view"),
+]
+
 urlpatterns = [
     path("", include(auth_urls)),
     path("home/", include(home_urls)),
@@ -41,4 +46,5 @@ urlpatterns = [
     path("offers/", include(offers_urls)),
     path("prescription/", include(prescription_urls)),
     path("notification/", include(notification_urls)),
+    path("subscription/", include(subscription_urls)),
 ]
