@@ -1,7 +1,7 @@
 {% extends "base/side_bar.html" %}
-{% block title %} Prescription {% endblock title %}
+{% block title %}Redeemed Offers {% endblock title %}
 
-{% block page_name %}Prescription{% endblock page_name %}
+{% block page_name %}Redeemed Offers{% endblock page_name %}
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
@@ -15,7 +15,7 @@
         <div class="col-3"></div>
         <div class="export col-4">
             <ul>
-            {% comment %} <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button> {% endcomment %}
+            <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button>
                 <div class="drop-downmenu">
             <li class="ex-li" ><a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                 <ul class="dropdown-content">
@@ -32,22 +32,22 @@
 {% endblock nav_bar %}
 {% block table %}
 <table>
-    
-
 
     <tr>
         <th>Sr.No</th>
         <th>User</th>
-        <th>Status</th>
-        <th>Text</th>
+        <th>offer Title</th>
+        <th>status</th>
+        <th>Redeemed On</th>
         <th>Action</th>
     </tr>
-    {% for prescription in prescriptions %}
+    {% for redeemed_offer in redeemed_offers %}
         <tr>
             <td>{{ forloop.counter }}</td>
-            <td>{{ prescription.user }}</td>
-            <td>{{ prescription.status|title }}</td>
-            <td>{{ prescription.text }}</td>
+            <td>{{ redeemed_offer.user }}</td>
+            <td>{{ redeemed_offer.offer.title }}</td>
+            <td>{{ redeemed_offer.status|title }}</td>
+            <td>{{ redeemed_offer.redeemed_on }}</td>
             <td>
                 <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
                 <a href="#"><i class="fa-solid fa-pen me-2"></i></a>

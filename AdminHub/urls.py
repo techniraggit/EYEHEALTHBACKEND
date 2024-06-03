@@ -22,6 +22,7 @@ users_urls = [
 
 offers_urls = [
     path("", OffersView.as_view(), name="offers_view"),
+    path("redeemed-offers", RedeemedOffersView.as_view(), name="redeemed_offers_view"),
 ]
 
 prescription_urls = [

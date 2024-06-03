@@ -4,6 +4,7 @@ from api.models.notifications import *
 from api.models.subscription import *
 from api.models.rewards import *
 from api.models.eye_health import *
+from api.models.prescription import *
 
 
 # Register your models here.
@@ -137,3 +138,9 @@ class UserRedeemedOffersAdmin(admin.ModelAdmin):
         "status",
         "redeemed_on",
     ]
+
+
+@admin.register(UserPrescriptions)
+class UserPrescriptionsAdmin(admin.ModelAdmin):
+    list_display = ["prescription_id", "status", "user"]
+    search_fields = ["prescription_id", "user__email", "user__phone_number"]

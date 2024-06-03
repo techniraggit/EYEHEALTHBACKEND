@@ -28,9 +28,9 @@
                         {% endif %}
                         
                         {% if is_prescription %}
-                        <li><a href="{% url "prescription_view" %}" class="acive-link"><i class="fa-solid fa-prescription me-2"></i>Prescription</a></li>
+                        <li><a href="{% url "prescription_view" %}" class="acive-link"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
                         {% else %}
-                        <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-prescription me-2"></i>Prescription</a></li>
+                        <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
                         {% endif %}
 
                         {% if is_notification %}
@@ -39,6 +39,11 @@
                         <li><a href="{% url "notification_view" %}"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
                         {% endif %}
 
+                        {% if is_redeemed_offers %}
+                        <li><a href="{% url "redeemed_offers_view" %}" class="acive-link"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
+                        {% else %}
+                        <li><a href="{% url "redeemed_offers_view" %}"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
+                        {% endif %}
 
                     </ul>
                     <div class="logout-wrap">
