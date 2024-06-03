@@ -86,7 +86,7 @@ class UserDeleteView(AdminLoginView):
         except:
             messages.error(request, "User does not exist")
             return redirect("users_view")
-        user_obj.delete()
+        # user_obj.delete()
         messages.success(request, "User deleted successfully")
         return redirect("users_view")
 
