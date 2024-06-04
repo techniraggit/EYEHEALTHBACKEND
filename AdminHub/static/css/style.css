@@ -807,3 +807,6 @@ form#searchForm {
     color: red;
 }
 /* required_star end */
+i#deleteButton {
+    color: #0d6efd;
+}
