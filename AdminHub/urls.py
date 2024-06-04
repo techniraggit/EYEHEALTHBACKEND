@@ -27,10 +27,14 @@ users_urls = [
 offers_urls = [
     path("", OffersView.as_view(), name="offers_view"),
     path("redeemed-offers", RedeemedOffersView.as_view(), name="redeemed_offers_view"),
+    path("add-offer", AddOffersView.as_view(), name="add_offer_view"),
+    path("edit-offer/<uuid:id>", EditOfferView.as_view(), name="edit_offer_view"),
 ]
 
 prescription_urls = [
     path("", PrescriptionView.as_view(), name="prescription_view"),
+    path("detailed-view/<uuid:id>", PrescriptionDetailView.as_view(), name="prescription_detailed_view"),
+    path("change-status/<uuid:id>/<str:status>", ChangePrescriptionStatusView.as_view(), name="change_status_view"),
 ]
 
 notification_urls = [

@@ -15,7 +15,7 @@
         <div class="col-3"></div>
         <div class="export col-4">
             <ul>
-            <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button>
+            <li class="add-btn me-3" ><a href="{% url "add_offer_view" %}">Add<i class="fa-solid fa-plus ms-2"></i> </a></button>
                 <div class="drop-downmenu">
             <li class="ex-li" ><a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                 <ul class="dropdown-content">
@@ -51,7 +51,7 @@
             <td>{{ offer.required_points }}</td>
             <td>
                 <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-                <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
+                <a href="{% url "edit_offer_view" offer.offer_id %}"><i class="fa-solid fa-pen me-2"></i></a>
                 <a href="#"> <i class="fa-regular fa-eye"></i></a>
             </td>
         </tr>

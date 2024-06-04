@@ -1,0 +1,46 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %} Edit Offer {% endblock title %}
+
+{% block page_name %}Edit Offer{% endblock page_name %}
+{% block table %}
+<div class="right-table1">
+    <div class=" form-main">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 f-name mt-4">
+                    <label for="title">Title <span id="required_star">*</span></label>
+                    <input type="text" name="title" id="title" class="form-control" value="{{ offer_obj.title}}"/>
+                </div>
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="description">Description <span id="required_star">*</span></label>
+                    <input type="text" name="description" id="description" class="form-control" value="{{ offer_obj.description }}"/>
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label for="image">Image <span id="required_star">*</span></label>
+                    <input type="file" name="image" id="image" src="{% if offer_obj.image %}{{offer_obj.image.url}}{% else %}""{% endif %}" class="form-control"/>
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label for="expiry_date">Expiry Date <span id="required_star">*</span></label>
+                    <input type="date" name="expiry_date" id="expiry_date" value="{{ offer_obj.expiry_date|date:'Y-m-d' }}" class="form-control"/>
+                </div>
+                <div class="col-md-4 f-name mt-4">
+                    <label for="status">Status <span id="required_star">*</span></label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="deactivate">Deactivate</option>
+                    </select>
+                </div>
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="required_points">Required Points <span id="required_star">*</span></label>
+                    <input type="number" name="required_points" id="required_points" value="{{ offer_obj.required_points}}" class="form-control"/>
+                </div>
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit" class="btn btn-primary save-btn">Save</button>
+                </div>
+            </div>
+        </form>
+</div>
+{% endblock table%}
