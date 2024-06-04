@@ -46,7 +46,7 @@
                     {% endif %}
 
                     {% if is_subscription %}
-                    <li><a href="{% url "subscription_view" %}" class="acive-link"><img  src="{% static "icons/side_bar/subscription.png" %}" alt="">Subscription Plans</a></li>
+                    <li><a href="{% url "subscription_view" %}" class="acive-link"><img class="me-2" src="{% static "icons/side_bar/subscription.png" %}" alt="">Subscription Plans</a></li>
                     {% else %}
                     <li><a href="{% url "subscription_view" %}"><img class="me-2" src="{% static "icons/side_bar/subscription.png"%}" alt="">Subscription Plans</a></li>
                     {% endif %}
