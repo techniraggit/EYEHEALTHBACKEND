@@ -25,16 +25,21 @@
                     <label for="status">Status </label>
                     <input type="text" name="status" id="status" class="form-control" value="{{ prescription_obj.status }}"/>
                 </div>
-                {% if prescription_obj.status == "pending" %}
-                <div class="col-md-3 cancel-btn mb-4 mt-5">
-                    <button type="submit" href="{% url 'change_status_view' prescription_obj.pk 'approved' %}" class="btn btn-primary save-btn">Approve</button>
-                </div>
-
-                <div class="col-md-3 cancel-btn mb-4 mt-5">
-                    <button type="submit" href="{% url "change_status_view" prescription_obj.pk 'rejected' %}" class="btn btn-primary save-btn">Reject</button>
-                </div>
-                {% endif %}
+      
             </div>
+            {% if prescription_obj.status == "pending" %}
+            <div class="d-flex"> 
+                <div class="col-md-3 Approve-btn mb-4 mt-5 me-2">
+                    <button type="submit" href="{% url 'change_status_view' prescription_obj.pk 'approved' %}" class="btn btn-primary1 save-btn">Approve</button>
+                </div>
+    
+                <div class="col-md-3 Reject-btn mb-4 mt-5">
+                    <button type="submit" href="{% url "change_status_view" prescription_obj.pk 'rejected' %}" class="btn btn-primary1 save-btn">Reject</button>
+                </div>
+            </div>
+
+          
+            {% endif %}
         </form>
 </div>
 {% endblock table%}

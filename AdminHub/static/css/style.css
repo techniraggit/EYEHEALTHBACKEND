@@ -810,3 +810,20 @@ form#searchForm {
 i#deleteButton {
     color: #0d6efd;
 }
+/* approve-reject prescription */
+.Approve-btn{
+    background-color: green;
+    color: #fff;
+    border-radius: 7px;
+}
+
+.Reject-btn{
+    background-color: red;
+    color: #fff;
+    border-radius: 7px;
+}
+.btn-primary1{
+    /* background-color: green; */
+    color: #FFF !important;
+}
+/* approve-reject prescription end*/
