@@ -27,7 +27,6 @@ class AddOffersView(AdminLoginView):
 
     def post(self, request):
         try:
-            print("here>>>>>>>>>>>>>>>>>>>>>>>>")
             offer_form = OffersForm(request.POST, request.FILES)
             if offer_form.is_valid():
                 offer_obj = offer_form.save(commit=False)
