@@ -827,3 +827,16 @@ i#deleteButton {
     color: #FFF !important;
 }
 /* approve-reject prescription end*/
+.btn-primary:hover {
+    color: #fff;
+    /* background-color: #0b5ed7; */
+    /* border-color: #0a58ca; */
+}
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+li.nav-item.dropdown {
+    border: 2px solid #5200a5;
+    border-radius: 7px;
+}
