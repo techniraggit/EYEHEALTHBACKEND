@@ -799,3 +799,11 @@ form#searchForm {
     background: #5200a5;
     color: white;
 }
+
+/* delete popup end */
+
+/* required_star */
+#required_star{
+    color: red;
+}
+/* required_star end */

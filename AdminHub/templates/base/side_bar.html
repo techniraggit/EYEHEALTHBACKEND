@@ -52,9 +52,9 @@
                     {% endif %}
 
                     {% if is_user_subscription %}
-                    <li><a href="{% url "user_subscription_plans_view" %}" class="acive-link"><img  class="me-2" src="{% static "icons/side_bar/calendar.png" %}" alt="">User Subscription</a></li>
+                    <li><a href="{% url "user_subscription_plans_view" %}" class="acive-link"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
                     {% else %}
-                    <li><a href="{% url "user_subscription_plans_view" %}"><img  class="me-2" src="{% static "icons/side_bar/calendar.png" %}" alt="">User Subscription</a></li>
+                    <li><a href="{% url "user_subscription_plans_view" %}"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
                     {% endif %}
 
                 </ul>
