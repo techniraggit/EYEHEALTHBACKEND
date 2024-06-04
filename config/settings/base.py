@@ -227,3 +227,5 @@ MESSAGE_TAGS = {
     messages.ERROR: "alert-error",
 }
 LOGIN_URL = "login_view"
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024 # (50 MEGABYTES)
