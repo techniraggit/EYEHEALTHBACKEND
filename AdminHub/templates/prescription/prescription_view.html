@@ -29,12 +29,12 @@
             </div>
             {% if prescription_obj.status == "pending" %}
             <div class="d-flex"> 
-                <div class="col-md-3 Approve-btn mb-4 mt-5 me-2">
-                    <button type="submit" href="{% url 'change_status_view' prescription_obj.pk 'approved' %}" class="btn btn-primary1 save-btn">Approve</button>
+                <div class=" Approve-btn mb-4 mt-5 me-2">
+                    <button type="submit" href="{% url 'change_status_view' prescription_obj.pk 'approved' %}" class="btn btn-primary1 save-btn col-md-3">Approve</button>
                 </div>
     
-                <div class="col-md-3 Reject-btn mb-4 mt-5">
-                    <button type="submit" href="{% url "change_status_view" prescription_obj.pk 'rejected' %}" class="btn btn-primary1 save-btn">Reject</button>
+                <div class=" Reject-btn mb-4 mt-5">
+                    <button type="submit" href="{% url "change_status_view" prescription_obj.pk 'rejected' %}" class="btn btn-primary1 save-btn col-md-3">Reject</button>
                 </div>
             </div>
 
