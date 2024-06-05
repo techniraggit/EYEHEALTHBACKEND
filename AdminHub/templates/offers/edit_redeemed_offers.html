@@ -1,0 +1,176 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %}Edit Redeemed Offer{% endblock title %}
+
+{% block page_name %}Edit Redeemed Offer{% endblock page_name %}
+{% block table %}
+
+<div class="right-table1">
+    <div class=" form-main">
+        <form id="edit_redeemed_offer" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="offer">Offer Title</label>
+                    <input type="text" name="offer" id="offer" class="form-control" value="{{ redeemed_offer_obj.offer.title }}" readonly/>
+                </div>
+
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="status">Status</label>
+                    <input {% if redeemed_offer_obj.status == "pending" %}style="color:red;" {% else %} style="color:green;" {% endif %} type="text" name="status" id="status" class="form-control" value="{{ redeemed_offer_obj.status|title }}" readonly/>
+                </div>
+
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="redeemed_on">Redeemed On</label>
+                    <input type="date" name="redeemed_on" id="redeemed_on" value="{{ redeemed_offer_obj.redeemed_on|date:'Y-m-d' }}" class="form-control" readonly/>
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="user">User Info</label>
+                    <textarea name="user" id="user" class="form-control" cols="30" rows="5" readonly>{{ redeemed_offer_obj.user.to_string }}</textarea>
+                </div>
+
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="offer">Offer Description</label>
+                    <textarea name="offer" id="offer" class="form-control" cols="30" rows="5" readonly>{{ redeemed_offer_obj.offer.description }}</textarea>
+                </div>
+
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="address">Address</label>
+                    <textarea name="address" id="address" class="form-control" cols="30" rows="5" readonly>{% if address_obj %} {{address_obj.get_full_address}} {% else %} {{address_obj}} {% endif %}</textarea>
+                </div>
+
+                {% if redeemed_offer_obj.status == "pending" %}
+                <div class="d-flex"> 
+                        <button type="button" id="dispatchBtn"  class="btn btn-primary1 save-btn col-md-3 mt-5 Dispatch-btn me-2">Dispatch</button>
+                        <button type="button" id="emailBtn" class="btn btn-primary1 save-btn col-md-3 mt-5 Email-btn">Email</button>
+                </div>
+                {% endif %}
+            </div>
+        </form>
+        
+        <!-- Dispatch Form (hidden initially) -->
+        <form id="dispatchForm" method="POST" style="display:none;">
+            {% csrf_token %}
+            <!-- Add dispatch form fields here -->
+            <div class="row">
+                <div class="col-md-12 mt-4">
+                    <label for="dispatch_address">Dispatch Address</label>
+                    <textarea name="dispatch_address" id="dispatch_address" class="form-control" cols="30" rows="5" readonly>{% if address_obj %} {{address_obj.get_full_address}} {% else %} {{address_obj}} {% endif %}</textarea>
+                </div>
+
+                <div class="col-md-12 mb-4 mt-4">
+                    <button type="button" id="submitDispatch" class="cancel-btn button">Submit Dispatch</button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Email Form (hidden initially) -->
+        <form id="emailForm" method="POST" style="display:none;">
+            {% csrf_token %}
+            <!-- Add email form fields here -->
+            <div class="row">
+                <div class="col-md-6 mt-4">
+                    <label for="email_subject">Email Subject</label>
+                    <input type="text" name="email_subject" id="email_subject" class="form-control"/>
+                </div>
+            <div class="col-md-12 mt-4">
+                <label for="email_body">Email Body</label>
+                <textarea name="email_body" id="email_body" class="form-control" cols="30" rows="5"></textarea>
+            </div>
+            <div class="col-md-12 mb-4 mt-4">
+                <button type="button" id="submitEmail" class="cancel-btn button">Send Email</button>
+            </div>
+        </div>
+        </form>
+</div>
+<script>
+    $(document).ready(function(){
+        let redeemed_offer_id = "{{redeemed_offer_obj.pk}}";
+        // Show the appropriate form when buttons are clicked
+        $('#dispatchBtn').click(function(){
+            $('#dispatchForm').show();
+            $('#emailForm').hide();
+        });
+        
+        $('#emailBtn').click(function(){
+            $('#emailForm').show();
+            $('#dispatchForm').hide();
+        });
+    
+        // Handle Dispatch form submission
+        $('#submitDispatch').click(function(){
+            // Validate the Dispatch form
+            var dispatchAddress = $('#dispatch_address').val();
+            if (dispatchAddress === '') {
+                showToaster("Please fill out all fields in the Dispatch form.", "alert-error");
+                return;
+            }
+    
+            var dispatchData = {
+                dispatch_address: dispatchAddress,
+                redeemed_offer_id: redeemed_offer_id,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            };
+    
+            $.ajax({
+                type: 'POST',
+                url: '{% url "offer_dispatch_view" %}',
+                data: dispatchData,
+                success: function(response){
+                    if(response.status){
+                        showToaster(response.message, "alert-success");
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    }else{
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function(error){
+                    alert('Error submitting dispatch form');
+                    // You can add additional error handling logic here
+                }
+            });
+        });
+    
+        // Handle Email form submission
+        $('#submitEmail').click(function(){
+            // Validate the Email form
+            var emailSubject = $('#email_subject').val();
+            var emailBody = $('#email_body').val();
+            if (emailSubject === '' || emailBody === '') {
+                showToaster("Please fill out all fields in the Email form", "alert-error");
+                return;
+            }
+    
+            var emailData = {
+                email_subject: emailSubject,
+                redeemed_offer_id: redeemed_offer_id,
+                email_body: emailBody,
+                csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+            };
+    
+            $.ajax({
+                type: 'POST',
+                url: '{% url "offer_email_view" %}',
+                data: emailData,
+                success: function(response){
+                    if(response.status){
+                        showToaster(response.message, "alert-success");
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    }else{
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function(error){
+                    alert('Error submitting email form');
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock table%}

@@ -49,9 +49,9 @@
             <td>{{ redeemed_offer.status|title }}</td>
             <td>{{ redeemed_offer.redeemed_on }}</td>
             <td>
-                <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-                <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="#"> <i class="fa-regular fa-eye"></i></a>
+                {% comment %} <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a> {% endcomment %}
+                <a href="{% url "edit_redeemed_offer_view" redeemed_offer.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
+                {% comment %} <a href="#"> <i class="fa-regular fa-eye"></i></a> {% endcomment %}
             </td>
         </tr>
     {% endfor %}
