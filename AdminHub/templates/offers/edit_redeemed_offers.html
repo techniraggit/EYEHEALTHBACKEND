@@ -42,12 +42,8 @@
 
                 {% if redeemed_offer_obj.status == "pending" %}
                 <div class="d-flex"> 
-                    <div class="Approve-btn mb-4 mt-5 me-2">
-                        <button type="button" id="dispatchBtn" class="btn btn-primary1 save-btn col-md-3">Dispatch</button>
-                    </div>
-                    <div class="Reject-btn mb-4 mt-5">
-                        <button type="button" id="emailBtn" class="btn btn-primary1 save-btn col-md-3">Email</button>
-                    </div>
+                        <button type="button" id="dispatchBtn"  class="btn btn-primary1 save-btn col-md-3 mt-5 Dispatch-btn me-2">Dispatch</button>
+                        <button type="button" id="emailBtn" class="btn btn-primary1 save-btn col-md-3 mt-5 Email-btn">Email</button>
                 </div>
                 {% endif %}
             </div>
@@ -58,15 +54,12 @@
             {% csrf_token %}
             <!-- Add dispatch form fields here -->
             <div class="row">
-                <div class="col-md-6 mt-4">
+                <div class="col-md-12 mt-4">
                     <label for="dispatch_address">Dispatch Address</label>
                     <textarea name="dispatch_address" id="dispatch_address" class="form-control" cols="30" rows="5" readonly>{% if address_obj %} {{address_obj.get_full_address}} {% else %} {{address_obj}} {% endif %}</textarea>
                 </div>
-                {% comment %} <div class="col-md-6 mt-4">
-                    <label for="dispatch_date">Dispatch Date</label>
-                    <input type="date" name="dispatch_date" id="dispatch_date" class="form-control"/>
-                </div> {% endcomment %}
-                <div class="col-md-12 mt-4">
+
+                <div class="col-md-12 mb-4 mt-4">
                     <button type="button" id="submitDispatch" class="cancel-btn button">Submit Dispatch</button>
                 </div>
             </div>
@@ -81,14 +74,14 @@
                     <label for="email_subject">Email Subject</label>
                     <input type="text" name="email_subject" id="email_subject" class="form-control"/>
                 </div>
-                <div class="col-md-6 mt-4">
-                    <label for="email_body">Email Body</label>
-                    <textarea name="email_body" id="email_body" class="form-control" cols="30" rows="5"></textarea>
-                </div>
-                <div class="col-md-12 mt-4">
-                    <button type="button" id="submitEmail" class="cancel-btn button">Send Email</button>
-                </div>
+            <div class="col-md-12 mt-4">
+                <label for="email_body">Email Body</label>
+                <textarea name="email_body" id="email_body" class="form-control" cols="30" rows="5"></textarea>
             </div>
+            <div class="col-md-12 mb-4 mt-4">
+                <button type="button" id="submitEmail" class="cancel-btn button">Send Email</button>
+            </div>
+        </div>
         </form>
 </div>
 <script>
