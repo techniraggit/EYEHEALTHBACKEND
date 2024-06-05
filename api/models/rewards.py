@@ -58,6 +58,6 @@ class UserRedeemedOffers(BaseModel):
     redeemed_on = models.DateTimeField(auto_now_add=True)
     emailed_on = models.DateTimeField(null=True, blank=True)
     email_body = models.TextField(null=True, blank=True)
-    email_subject = models.CharField(max_length=250)
+    email_subject = models.CharField(max_length=250, null=True, blank=True)
     dispatch_address = models.TextField(blank=True, null=True)
     dispatch_on = models.DateTimeField(null=True, blank=True)
