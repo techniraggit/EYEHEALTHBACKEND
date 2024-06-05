@@ -51,7 +51,10 @@
             // Perform client-side validation
             let isValid = true;
             $(".form-control").each(function() {
-                if ($(this).val().trim() === "") {  // Trimmed value check
+                if ($(this).hasClass("optional")) {
+                    return true;
+                }
+                if ($(this).val().trim() === "") {
                     isValid = false;
                     $(this).addClass("is-invalid");
                 } else {
@@ -60,10 +63,10 @@
             });
     
             if (!isValid) {
-                showToaster("Please fill out all required fields.", 'alert-error');
+                showToaster("Please fill out all required fields.", "alert-error");
                 return;
             }
-    
+            
             // If valid, proceed with AJAX submission
             let formData = new FormData(this);
     
@@ -77,23 +80,22 @@
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
                 success: function(response) {
-                    console.log("response == ", response)
-                    if (response.success) {
-                        showToaster(response.message, 'alert-success');
-                        window.location.href = response.redirect_url;
+                    if (response.status) {
+                        showToaster(response.message, "alert-success");
+                        setTimeout(function() {
+                            window.location.href = "/offers/";
+                        },2000);
                     } else {
-                        showToaster(response.message, 'alert-error');
+                        showToaster(response.message, "alert-error");
                     }
                 },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log("AJAX Error:", textStatus, errorThrown);
-                    showToaster('Error occurred while adding offer!', 'alert-danger');
-                    alert("An error occurred: " + textStatus);
+                error: function(xhr, textStatus, errorThrown) {
+                    const response = xhr.responseJSON
+                    showToaster(response.message, "alert-error");
                 }
             });
         });
     });
-    
 </script>
 
 {% endblock table%}

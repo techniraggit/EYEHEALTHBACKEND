@@ -3,6 +3,7 @@
 {% block title %} Prescription View {% endblock title %}
 
 {% block page_name %}Prescription View{% endblock page_name %}
+
 {% block table %}
 <div class="right-table1">
     <div class=" form-main">
@@ -19,7 +20,9 @@
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="file">File <span id="required_star">*</span></label>
-                    <input type="file" name="file" id="file" src="{% if prescription_obj.file %}{{prescription_obj.file.url}}{% else %}""{% endif %}" class="form-control"/>
+                    {% if prescription_obj.file %}
+                    <a href="{{prescription_obj.file.url}}" class="show-file-btn" target="_blank">Show File</a>
+                    {% endif %}
                 </div>
                 <div class="col-md-4 f-lname mt-4">
                     <label for="status">Status </label>

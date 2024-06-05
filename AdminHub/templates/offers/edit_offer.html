@@ -6,7 +6,7 @@
 {% block table %}
 <div class="right-table1">
     <div class=" form-main">
-        <form method="POST" enctype="multipart/form-data">
+        <form id="addOfferForm" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
@@ -30,7 +30,7 @@
                     <select name="status" id="status" class="form-control">
                         <option value="active">Active</option>
                         <option value="inactive">Inactive</option>
-                        <option value="deactivate">Deactivate</option>
+                        <option value="expired">Expired</option>
                     </select>
                 </div>
                 <div class="col-md-4 f-lname mt-4">
@@ -43,4 +43,59 @@
             </div>
         </form>
 </div>
+<script>
+    $(document).ready(function() {
+        $("#addOfferForm").submit(function(event) {
+            event.preventDefault(); // Prevent the form from submitting via the browser
+    
+            // Perform client-side validation
+            let isValid = true;
+            $(".form-control").each(function() {
+                if ($(this).hasClass("optional")) {
+                    return true;
+                }
+                if ($(this).val().trim() === "") {
+                    isValid = false;
+                    $(this).addClass("is-invalid");
+                } else {
+                    $(this).removeClass("is-invalid");
+                }
+            });
+    
+            if (!isValid) {
+                showToaster("Please fill out all required fields.", "alert-error");
+                return;
+            }
+            
+            // If valid, proceed with AJAX submission
+            let formData = new FormData(this);
+    
+            $.ajax({
+                url: "{% url 'edit_offer_view' offer_obj.pk %}",
+                type: "POST",
+                data: formData,
+                processData: false,  // Important!
+                contentType: false,  // Important!
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                success: function(response) {
+                    if (response.status) {
+                        showToaster(response.message, "alert-success");
+                        setTimeout(function() {
+                            window.location.href = "/offers/";
+                        },2000);
+                    } else {
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    const response = xhr.responseJSON
+                    showToaster(response.message, "alert-error");
+                }
+            });
+        });
+    });
+</script>
+
 {% endblock table%}

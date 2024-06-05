@@ -1,3 +1,6 @@
+from django.http import JsonResponse
+import json
+from django.urls import reverse
 from .base import AdminLoginView
 from django.shortcuts import render, redirect
 from api.models.rewards import Offers, UserRedeemedOffers
@@ -14,8 +17,7 @@ class OffersView(AdminLoginView):
         )
         return render(request, "offers/offers.html", context)
 
-from django.http import JsonResponse
-from django.urls import reverse
+
 class AddOffersView(AdminLoginView):
     def get(self, request):
         offer_form = OffersForm()
@@ -33,24 +35,29 @@ class AddOffersView(AdminLoginView):
                 offer_obj.created_by = request.user
                 offer_obj.updated_by = request.user
                 offer_obj.save()
-                # messages.success(request, "Offer added successfully")
                 response = {
-                    "success": True,
+                    "status": True,
                     "message": "Offer added successfully",
                     "redirect_url": reverse("offers_view"),
                 }
                 return JsonResponse(response, status=200)
-
-            errors = offer_form.errors.as_json()
-            response = {
-                "success": False,
-                "errors": errors,
-                "redirect_url": reverse("add_offer_view"),
-            }
-            return JsonResponse(response, status=400)
+            else:
+                errors = offer_form.errors.as_json()
+                parsed_data = json.loads(errors)
+                first_key = next(iter(parsed_data))
+                first_object = parsed_data[first_key][0]
+                message = (
+                    f"{first_key.title().replace('_', ' ')}: {first_object['message']}"
+                )
+                response = {
+                    "status": False,
+                    "message": message,
+                    "redirect_url": reverse("add_offer_view"),
+                }
+                return JsonResponse(response, status=400)
         except Exception as e:
             print(e)
-            return JsonResponse({"success": False, "message":str(e)}, status=400)
+            return JsonResponse({"status": False, "message": str(e)}, status=400)
 
 
 class EditOfferView(AdminLoginView):
@@ -69,22 +76,49 @@ class EditOfferView(AdminLoginView):
     def post(self, request, id):
         try:
             offer_obj = Offers.objects.get(pk=id)
-        except:
-            messages.error(request, "Offer does not exist")
-            return redirect("offers_view")
+        except Offers.DoesNotExist:
+            return JsonResponse(
+                {"status": False, "message": "Offer does not exist"}, status=404
+            )
+
         offer_form = OffersForm(request.POST, request.FILES, instance=offer_obj)
         if offer_form.is_valid():
             offer_obj = offer_form.save(commit=False)
             offer_obj.updated_by = request.user
             offer_obj.save()
-            messages.success(request, "Offer has been updated successfully")
+            return JsonResponse(
+                {"status": True, "message": "Offer has been updated successfully"}
+            )
         else:
-            messages.error(request, offer_form.errors)
+            errors = offer_form.errors.as_json()
+            return JsonResponse({"status": False, "errors": errors}, status=400)
+
+
+class OfferDetailedView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            offer_obj = Offers.objects.get(pk=id)
+        except Offers.DoesNotExist:
+            messages.error(request, "Offer does not exist")
+            return redirect("offers_view")
+        offer_obj = Offers.objects.get(pk=id)
         context = dict(
             offer_obj=offer_obj,
             is_offer=True,
         )
-        return render(request, "offers/edit_offer.html", context)
+        return render(request, "offers/offer_view.html", context)
+
+
+class DeleteOfferView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            offer_obj = Offers.objects.get(pk=id)
+        except Offers.DoesNotExist:
+            messages.error(request, "Offer does not exist")
+            return redirect("offers_view")
+        offer_obj.delete()
+        messages.success(request, "Offer has been deleted successfully")
+        return redirect("offers_view")
 
 
 class RedeemedOffersView(AdminLoginView):

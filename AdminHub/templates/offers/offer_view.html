@@ -1,8 +1,8 @@
 {% extends "base/side_bar.html" %}
 {% load static %}
-{% block title %} Edit Offer {% endblock title %}
+{% block title %} Offer View {% endblock title %}
 
-{% block page_name %}Edit Offer{% endblock page_name %}
+{% block page_name %}Offer View{% endblock page_name %}
 {% block table %}
 <div class="right-table1">
     <div class=" form-main">
@@ -10,37 +10,36 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
-                    <label for="title">Title <span id="required_star">*</span></label>
-                    <input type="text" name="title" id="title" class="form-control" value="{{ offer_obj.title}}"/>
+                    <label for="title">Title</label>
+                    <input type="text" name="title" id="title" class="form-control" value="{{ offer_obj.title}}" readonly/>
                 </div>
                 <div class="col-md-4 f-lname mt-4">
-                    <label for="description">Description <span id="required_star">*</span></label>
-                    <input name="description" id="description" class="form-control" value="{{ offer_obj.description }}"/>
+                    <label for="description">Description</label>
+                    <input name="description" id="description" class="form-control" value="{{ offer_obj.description }}" readonly/>
                 </div>
                 <div class="col-md-4 f-mail mt-4">
-                    <label for="image">Image <span id="required_star">*</span></label>
-                    <input type="file" name="image" id="image" value="{{ offer_obj.image}}" class="form-control"/>
+                    <label for="image">Image</label>
+                    <input type="file" name="image" id="image" value="{{ offer_obj.image}}" class="form-control" readonly/>
                 </div>
                 <div class="col-md-4 f-mail mt-4">
-                    <label for="expiry_date">Expiry Date <span id="required_star">*</span></label>
-                    <input type="date" name="expiry_date" id="expiry_date" value="{{ offer_obj.expiry_date|date:'Y-m-d' }}" class="form-control"/>
+                    <label for="expiry_date">Expiry Date</label>
+                    <input type="date" name="expiry_date" id="expiry_date" value="{{ offer_obj.expiry_date|date:'Y-m-d' }}" class="form-control" readonly/>
                 </div>
-                <div class="col-md-4 f-name mt-4">
-                    <label for="status">Status <span id="required_star">*</span></label>
-                    <select name="status" id="status" class="form-control">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="deactivate">Deactivate</option>
-                    </select>
+                <div class="col-md-4 f-mail mt-4">
+                    <label for="status">Status</label>
+                    <input type="text" name="status" id="status" value="{{ offer_obj.status }}" class="form-control" readonly/>
                 </div>
                 <div class="col-md-4 f-lname mt-4">
-                    <label for="required_points">Required Points <span id="required_star">*</span></label>
-                    <input type="number" name="required_points" id="required_points" value="{{ offer_obj.required_points}}" class="form-control"/>
+                    <label for="required_points">Required Points</label>
+                    <input type="number" name="required_points" id="required_points" value="{{ offer_obj.required_points}}" class="form-control" readonly/>
                 </div>
-                {% comment %} <div class="col-md-3 cancel-btn mb-4 mt-5">
-                    <button type="submit" class="btn btn-primary save-btn">Save</button>
-                </div> {% endcomment %}
             </div>
         </form>
 </div>
+<script>
+    $(document).ready(function() {
+        $("form input").attr("readonly", true);
+        $("form input[type='file']").attr("disabled", true);
+    });
+</script>
 {% endblock table%}

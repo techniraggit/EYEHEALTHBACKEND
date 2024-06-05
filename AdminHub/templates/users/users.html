@@ -26,11 +26,11 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-menu mt-2">
-                      <li><a class="dropdown-item" href="#scrollspyHeading3">Excel</a></li>
-                      <li><a class="dropdown-item" href="#scrollspyHeading3">CSV</a></li>
+                    <li><a class="dropdown-item" href="#scrollspyHeading3">Excel</a></li>
+                    <li><a class="dropdown-item" href="#scrollspyHeading3">CSV</a></li>
 
                     </ul>
-                  </li>
+                </li>
             </ul>
             
         </div>
@@ -100,13 +100,15 @@
                 type: 'GET',
                 success: function (data) {
                     $('#dlt-btn-overlay').css('display', 'none');
-                    showToaster('User deleted successfully!', 'alert-success');
-                    location.reload();
+                    showToaster('User deleted successfully!', "alert-success");
+                    setTimeout(function () {
+                        location.reload();
+                    })
                 },
                 error: function (xhr, status, error) {
                     console.error('Error making GET request:', error);
                     $('#dlt-btn-overlay').css('display', 'none');
-                    showToaster(error, 'alert-error');
+                    showToaster(error, "alert-error");
                 }
             });
             event.preventDefault();
