@@ -37,6 +37,7 @@ END_POINTS = {
     "get_generated_report": f"{BASE_URL}/genrate-report/",
     "calculate_distance": f"{BASE_URL}/calculate-distance/",
     "get_eye_access_token": f"{BASE_URL}/get-eye-access-token/",
+    "counter_api": f"{BASE_URL}/counter-api/",
 }
 
 
@@ -213,9 +214,17 @@ def get_generated_report(customer_id, params):
 def calculate_distance(customer_id, data):
     token = get_user_token(customer_id)
     headers = dict(Authorization=f"Bearer {token}")
-    data['source_type'] = "app"
+    data["source_type"] = "app"
     response = requests.post(
         END_POINTS.get("calculate_distance"), json=data, headers=headers
+    )
+    return response
+
+
+def counter_api(params):
+    headers = {"Authorization": settings.SNELLEN_FRACTION_STATIC_TOKEN}
+    response = requests.get(
+        END_POINTS.get("counter_api"), params=params, headers=headers
     )
     return response
 
@@ -541,3 +550,13 @@ class DownloadReportView(UserMixin):
 
         except EyeTestReport.DoesNotExist:
             return api_response(False, 404, message="Report not found")
+
+
+class CounterApiView(UserMixin):
+    def get(self, request):
+        params = request.GET
+        response = counter_api(params)
+        try:
+            return Response(response.json(), response.status_code)
+        except:
+            return HttpResponse(response)
