@@ -46,15 +46,33 @@
                     {% endif %}
 
                     {% if is_subscription %}
-                    <li><a href="{% url "subscription_view" %}" class="acive-link"><img class="me-2" src="{% static "icons/side_bar/subscription.png" %}" alt="">Subscription Plans</a></li>
+                    <li><a href="{% url "subscription_view" %}" class="acive-link"><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
                     {% else %}
-                    <li><a href="{% url "subscription_view" %}"><img class="me-2" src="{% static "icons/side_bar/subscription.png"%}" alt="">Subscription Plans</a></li>
+                    <li><a href="{% url "subscription_view" %}"><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
                     {% endif %}
 
                     {% if is_user_subscription %}
                     <li><a href="{% url "user_subscription_plans_view" %}" class="acive-link"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
                     {% else %}
                     <li><a href="{% url "user_subscription_plans_view" %}"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
+                    {% endif %}
+
+                    {% if is_eye_exam %}
+                    <li><a href="#" class="acive-link"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Exam</a></li>
+                    {% else %}
+                    <li><a href="#"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Exam</a></li>
+                    {% endif %}
+                    
+                    {% if is_eye_fatigue %}
+                    <li><a href="#" class="acive-link"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
+                    {% else %}
+                    <li><a href="#"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
+                    {% endif %}
+                    
+                    {% if is_settings %}
+                    <li><a href="#" class="acive-link"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
+                    {% else %}
+                    <li><a href="#"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
                     {% endif %}
 
                 </ul>

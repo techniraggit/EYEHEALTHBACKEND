@@ -102,7 +102,7 @@
                     showToaster('User deleted successfully!', "alert-success");
                     setTimeout(function () {
                         location.reload();
-                    })
+                    }, 2000)
                 },
                 error: function (xhr, status, error) {
                     console.error('Error making GET request:', error);

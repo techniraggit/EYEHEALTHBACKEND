@@ -439,16 +439,15 @@ i.fa.fa-search {
 /* 22-may */
 
 button {
-    cursor: pointer;
-    border-radius: 12px;
+    cursor: pointer !important;
+    border-radius: 12px !important;
     border: none;
-    font-size: 16px;
+    font-size: 16px !important;
     font-weight: 500;
     color: #FFFFFF;
     padding: 10px 24px;
     background-color: #5200a5;
 }
-
 .custom-button-1 {
     width: 15%;
     display: flex;
@@ -860,3 +859,7 @@ li.nav-item.dropdown {
     background-color: #ffffff;
 }
 /* show file button in prescription */
+
+.description_box {
+    width: 100%;
+}

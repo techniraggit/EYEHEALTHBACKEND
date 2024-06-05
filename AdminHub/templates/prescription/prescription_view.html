@@ -28,7 +28,6 @@
                     <label for="status">Status </label>
                     <input type="text" name="status" id="status" class="form-control" value="{{ prescription_obj.status }}"/>
                 </div>
-      
             </div>
             {% if prescription_obj.status == "pending" %}
             <div class="d-flex"> 
@@ -40,8 +39,6 @@
                     <button type="submit" href="{% url "change_status_view" prescription_obj.pk 'rejected' %}" class="btn btn-primary1 save-btn col-md-3">Reject</button>
                 </div>
             </div>
-
-          
             {% endif %}
         </form>
 </div>
