@@ -17,6 +17,7 @@ END_POINTS = {
     "add_customer": f"{settings.FATIGUE_BASE_URL}/add-customer/",
     "calculate_blink_rate": f"{settings.FATIGUE_BASE_URL}/calculate-blink-rate/",
     "blinks_report_details": f"{settings.FATIGUE_BASE_URL}/blinks-report-details/",
+    "take_user_selfie": f"{settings.FATIGUE_BASE_URL}/take-user-selfie/",
 }
 
 
@@ -41,6 +42,20 @@ def blinks_report_details(token, data):
     )
     return response
 
+def take_user_selfie(token, data):
+    headers = dict(Authorization=f"Bearer {token}")
+    response = requests.post(
+        END_POINTS.get("take_user_selfie"), files=data, headers=headers
+    )
+    return response
+
+class TakeUserSelfie(UserMixin):
+    def post(self, request):
+        response = take_user_selfie(request.headers.get("Customer-Access-Token"), request.FILES)
+        try:
+            return Response(response.json(), response.status_code)
+        except:
+            return HttpResponse(response)
 
 class AddCustomer(UserMixin):
     def post(self, request):

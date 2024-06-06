@@ -75,6 +75,7 @@ fatigue_apis = [
     path("fatigue-reports", eye_fatigue_apis.EyeFatigueReportsView.as_view()),
     path("fatigue-graph", eye_fatigue_apis.EyeFatigueGraph.as_view()),
     path("download-report", eye_fatigue_apis.DownloadReportView.as_view()),
+    path("take-user-selfie", eye_fatigue_apis.TakeUserSelfie.as_view()),
 ]
 
 urlpatterns = (
