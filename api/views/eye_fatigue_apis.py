@@ -1,3 +1,7 @@
+from api.models.rewards import GlobalPointsModel
+from api.models.eye_health import EyeTestReport
+from core.logs import Logger
+from api.models.accounts import UserPoints
 from core.constants import ERROR_500_MSG
 import os
 from django.shortcuts import get_object_or_404
@@ -11,6 +15,8 @@ import requests
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.conf import settings
+
+logger = Logger("fatigue.logs")
 
 
 END_POINTS = {
@@ -99,6 +105,19 @@ class BlinkReportDetails(SecureHeadersMixin):
                     return api_response(
                         False, 400, "Report already exists with this report id"
                     )
+
+                try:
+                    points = GlobalPointsModel.objects.get(
+                        event_type="fatigue_test"
+                    ).value
+                    UserPoints.objects.create(
+                        user=request.user,
+                        points=points,
+                        event_type="fatigue_test",
+                    )
+                except Exception as e:
+                    logger.error(str(e))
+
                 try:
                     data = EyeFatigueReport.objects.create(**processed_data)
                     return api_response(
@@ -143,9 +162,6 @@ class EyeFatigueReportsView(UserMixin):
         reports = EyeFatigueReport.objects.filter(user=request.user)
         serializer = EyeFatigueReportSerializer(reports, many=True, fields=self.fields)
         return api_response(True, 200, data=serializer.data)
-
-
-from api.models.eye_health import EyeTestReport
 
 
 class EyeFatigueGraph(UserMixin):

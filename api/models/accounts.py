@@ -1,3 +1,4 @@
+from core.constants import EVENT_CHOICES
 from datetime import date
 from uuid import uuid4
 from .base import BaseModel
@@ -6,7 +7,6 @@ from django.db import models
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
-from utilities.utils import time_localize
 
 
 class CustomUserManager(BaseUserManager):
@@ -64,7 +64,7 @@ class UserModel(AbstractUser, BaseModel):
     def decrease_points(self, points: int):
         self.points = self.points - points
         self.save()
-    
+
     def to_json(self):
         return dict(
             full_name=self.get_full_name(),
@@ -73,7 +73,7 @@ class UserModel(AbstractUser, BaseModel):
             points=self.points,
             dob=self.dob.strftime("%Y-%m-%d"),
         )
-    
+
     def to_string(self):
         return f"""
 Full Name: {self.get_full_name()}
@@ -85,18 +85,12 @@ DOB: {self.dob.strftime("%Y-%m-%d")}
 
 
 class UserPoints(BaseModel):
-    method_options = (
-        ("eye test", "eye test"),
-        ("fatigue test", "fatigue test"),
-        ("prescription upload", "prescription upload"),
-        ("referral", "referral"),
-    )
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="user_points"
     )
     points = models.PositiveIntegerField(default=0)
-    method = models.CharField(max_length=250, choices=method_options)
+    event_type = models.CharField(max_length=250, choices=EVENT_CHOICES)
 
 
 class UserAddress(BaseModel):

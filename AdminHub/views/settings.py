@@ -1,14 +1,8 @@
 import logging
-from django.utils import timezone
-from utilities.services.email import send_email
 from django.http import JsonResponse
-import json
-from django.urls import reverse
 from .base import AdminLoginView
-from django.shortcuts import render, redirect
-from api.models.rewards import Offers, UserRedeemedOffers
-from AdminHub.forms.offers import OffersForm, GlobalPointsModel
-from django.contrib import messages
+from django.shortcuts import render
+from AdminHub.forms.offers import GlobalPointsModel
 
 logger = logging.getLogger(__name__)
 
@@ -50,7 +44,7 @@ class SettingsView(AdminLoginView):
 
         logger.info(f"Points updated for id {id}: {points}")
 
-        event_name = points_obj.event.title().replace("_", " ")
+        event_name = points_obj.event_type.title().replace("_", " ")
 
         return JsonResponse(
             {"status": True, "message": f"{event_name} points updated successfully"}

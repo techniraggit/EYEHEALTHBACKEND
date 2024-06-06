@@ -1,11 +1,10 @@
-# myapp/templatetags/custom_filters.py
 from django import template
 from django.utils import timezone
 import pytz
 
 register = template.Library()
 
-@register.filter
+@register.filter(name='format_datetime')
 def format_datetime(value, tz_name='Asia/Kolkata'):
     if value is None:
         return ''
