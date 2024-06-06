@@ -60,9 +60,7 @@ def take_user_selfie(token, data):
 
 class TakeUserSelfie(UserMixin):
     def post(self, request):
-        logger.info(str(request.FILES))
-        logger.info(str(request.data))
-        response = take_user_selfie(request.headers.get("Customer-Access-Token"), request.FILES)
+        response = take_user_selfie(request.headers.get("Customer-Access-Token"), request.data)
         try:
             return Response(response.json(), response.status_code)
         except:
