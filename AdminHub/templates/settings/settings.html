@@ -4,20 +4,24 @@
 
 {% block page_name %}Settings{% endblock page_name %}
 {% block table %}
-{% for point in points %}
-    <div class="card" style="width: 18rem;">
-        <div class="card-body">
-            <h5 class="card-title">{{ point.event_type|title|replace_underscore }}</h5>
-            <form id="pointForm{{ point.id }}" class="update-point-form">
-                {% csrf_token %}
-                <label for="points-{{ point.id }}">Points:</label>
-                <input class="card-text" type="number" name="points" id="points-{{ point.id }}" value="{{ point.value }}">
-                <p class="card-text">Updated: {{ point.updated_on|format_datetime }}</p>
-                <button type="button" class="btn btn-primary update-point-btn" data-point-id="{{ point.id }}">Update</button>
-            </form>
+<div class="row mt-4">
+    {% for point in points %}
+        <div class="col-4">
+            <div class="card" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ point.event_type|title|replace_underscore }}</h5>
+                    <form id="pointForm{{ point.id }}" class="update-point-form">
+                        {% csrf_token %}
+                        <label for="points-{{ point.id }}">Points:</label>
+                        <input class="card-text mt-2 mb-2" type="number" name="points" id="points-{{ point.id }}" value="{{ point.value }}">
+                        <p class="card-text">Updated: {{ point.updated_on|format_datetime }}</p>
+                        <button type="button" class="btn btn-primary update-point-btn" data-point-id="{{ point.id }}">Update</button>
+                    </form>
+                </div>
+            </div>
         </div>
-    </div>
-{% endfor %}
+    {% endfor %}
+</div>
 
 <script>
     $(document).ready(function(){
