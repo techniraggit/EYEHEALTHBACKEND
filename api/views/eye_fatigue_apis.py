@@ -47,14 +47,12 @@ def blinks_report_details(token, data):
 
 def take_user_selfie(token, data):
     headers = dict(Authorization=f"Bearer {token}")
-    json_data = {
-        'source_type': 'app'
-    }
+    data["source_type"] = "app"
 
     logger.info(str(data))
 
     response = requests.post(
-        END_POINTS.get("take_user_selfie"), files=data, json=json_data, headers=headers
+        END_POINTS.get("take_user_selfie"), json=data, headers=headers
     )
     return response
 
