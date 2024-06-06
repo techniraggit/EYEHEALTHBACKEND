@@ -57,14 +57,6 @@ class UserModel(AbstractUser, BaseModel):
         )
         return age
 
-    def increase_points(self, points: int):
-        self.points = self.points + points
-        self.save()
-
-    def decrease_points(self, points: int):
-        self.points = self.points - points
-        self.save()
-
     def to_json(self):
         return dict(
             full_name=self.get_full_name(),
@@ -91,6 +83,18 @@ class UserPoints(BaseModel):
     )
     points = models.PositiveIntegerField(default=0)
     event_type = models.CharField(max_length=250, choices=EVENT_CHOICES)
+
+    def increase_points(self, points:int):
+        self.points = self.points + points
+        self.save()
+        self.user.points = self.points
+        self.user.save()
+
+    def decrease_points(self, points:int):
+        self.points = self.points - points
+        self.save()
+        self.user.points = self.points
+        self.user.save()
 
 
 class UserAddress(BaseModel):

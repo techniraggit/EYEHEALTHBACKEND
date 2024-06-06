@@ -11,35 +11,110 @@
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
-                    <label for="title">User</label>
-                    <input type="text" name="title" id="title" class="form-control" value="{{ prescription_obj.user}}"/>
+                    <label for="title">User:</label>
+                    <textarea name="title" id="title" cols="30" rows="6" readonly>{{ prescription_obj.user.to_string }}</textarea>
                 </div>
-                <div class="col-md-4 f-lname mt-4">
-                    <label for="text">Text </label>
-                    <input type="text" name="text" id="text" class="form-control" value="{{ prescription_obj.text }}"/>
-                </div>
+
                 <div class="col-md-4 f-mail mt-4">
                     <label for="file">File <span id="required_star">*</span></label>
-                    {% if prescription_obj.file %}
-                    <a href="{{prescription_obj.file.url}}" class="show-file-btn" target="_blank">Show File</a>
+                    {% if prescription_obj.uploaded_file %}
+                    <img src="{{ prescription_obj.uploaded_file.url }}" class="img-fluid" alt="Uploaded File">
                     {% endif %}
                 </div>
+                
                 <div class="col-md-4 f-lname mt-4">
-                    <label for="status">Status </label>
-                    <input type="text" name="status" id="status" class="form-control" value="{{ prescription_obj.status }}"/>
+                    <label for="status">Status: </label>
+                    {% if prescription_obj.status == "pending" %}<p style="color:red; font-weight: bold;">{{ prescription_obj.status|title }}</p>{% else %}<p style="color:green; font-weight: bold;">{{ prescription_obj.status|title }}</p>{% endif %}
                 </div>
+
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="problem_faced">Problem Faced: </label>
+                    <p>{% if prescription_obj.problem_faced %}{{ prescription_obj.problem_faced}} {% else %} No problems faced {% endif %}</p>
+                </div>
+                {% if prescription_obj.rejection_notes %}
+                    <div class="col-md-4 f-lname mt-4">
+                        <label for="problem_faced">Rejection Notes: </label>
+                        <p>{{ prescription_obj.rejection_notes }}</p>
+                    </div>
+                {% endif %}
+
             </div>
             {% if prescription_obj.status == "pending" %}
             <div class="d-flex"> 
-                <div class=" Approve-btn mb-4 mt-5 me-2">
-                    <button type="submit" href="{% url 'change_status_view' prescription_obj.pk 'approved' %}" class="btn btn-primary1 save-btn col-md-3">Approve</button>
+                <div class="Approve-btn mb-4 mt-5 me-2">
+                    <button type="button" id="approve-btn" class="btn btn-primary1 save-btn col-md-3">Approve</button>
                 </div>
-    
-                <div class=" Reject-btn mb-4 mt-5">
-                    <button type="submit" href="{% url "change_status_view" prescription_obj.pk 'rejected' %}" class="btn btn-primary1 save-btn col-md-3">Reject</button>
+                <div class="Reject-btn mb-4 mt-5">
+                    <button type="button" id="reject-btn" class="btn btn-primary1 save-btn col-md-3">Reject</button>
                 </div>
             </div>
             {% endif %}
         </form>
+
+        <!-- Modal for Rejection Notes -->
+        <div class="modal fade" id="rejectionModal" tabindex="-1" aria-labelledby="rejectionModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rejectionModalLabel">Rejection Notes</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="rejection-notes">Notes</label>
+                            <textarea id="rejection-notes" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="confirm-reject-btn">Reject</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#reject-btn').on('click', function() {
+            $('#rejectionModal').modal('show');
+        });
+
+        $('#approve-btn').on('click', function() {
+            makeAjaxRequest('approved', null);
+        });
+
+        $('#confirm-reject-btn').on('click', function() {
+            var rejection_notes = $('#rejection-notes').val();
+            makeAjaxRequest('rejected', rejection_notes);
+        });
+
+        function makeAjaxRequest(action, rejection_notes) {
+            $.ajax({
+                url: '{% url "change_status_view" prescription_obj.pk  %}',
+                type: "POST",
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                data: {
+                    status: action,
+                    rejection_notes: rejection_notes
+                },
+                success: function(response) {
+                    if (response.status){
+                        showToaster(response.message, "alert-success");
+                        setTimeout(function() {
+                            window.location.href = "{% url 'prescription_view' %}";
+                        }, 2000);
+                    }
+                    else{
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert("Error: " + xhr.responseText)
+                }
+            });
+        }
+    });
+</script>
 {% endblock table%}

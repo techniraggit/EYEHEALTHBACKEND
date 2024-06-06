@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from api.models.rewards import GlobalPointsModel
 from core.logs import Logger
 from api.models.accounts import UserPoints
@@ -8,6 +9,7 @@ from django.contrib import messages
 from django.urls import reverse
 
 logger = Logger("prescription.logs")
+
 
 class PrescriptionView(AdminLoginView):
     def get(self, request):
@@ -30,26 +32,31 @@ class PrescriptionDetailView(AdminLoginView):
 
 
 class ChangePrescriptionStatusView(AdminLoginView):
-    def get(self, request, id, status):
+    def post(self, request, id):
+        status = request.POST.get("status")
+        rejection_notes = request.POST.get("rejection_notes", None)
+
         if status not in ["approved", "rejected"]:
-            messages.error(request, "Invalid status")
-            return redirect(reverse("prescription_detailed_view", args=[id]))
+            return JsonResponse({"status": False, "message": "Invalid status"})
 
         prescription_obj = get_object_or_404(UserPrescriptions, prescription_id=id)
         prescription_obj.status = status
-        prescription_obj.save()
         if status == "approved":
             try:
                 points = GlobalPointsModel.objects.get(
                     event_type="prescription_upload"
                 ).value
-                UserPoints.objects.create(
+                usr_pnt = UserPoints.objects.create(
                     user=prescription_obj.user,
-                    points=points,
                     event_type="prescription_upload",
                 )
+                usr_pnt.increase_points(points)
+                usr_pnt.save()
             except Exception as e:
                 logger.error(str(e))
-
-        messages.success(request, f"Prescription {status} successfully")
-        return redirect(reverse("prescription_detailed_view", args=[id]))
+        else:
+            prescription_obj.rejection_notes = rejection_notes
+        prescription_obj.save()
+        return JsonResponse(
+            {"status": True, "message": f"Prescription {status} successfully"}
+        )

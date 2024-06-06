@@ -110,11 +110,12 @@ class BlinkReportDetails(SecureHeadersMixin):
                     points = GlobalPointsModel.objects.get(
                         event_type="fatigue_test"
                     ).value
-                    UserPoints.objects.create(
+                    usr_pnt = UserPoints.objects.create(
                         user=request.user,
-                        points=points,
                         event_type="fatigue_test",
                     )
+                    usr_pnt.increase_points(points)
+                    usr_pnt.save()
                 except Exception as e:
                     logger.error(str(e))
 

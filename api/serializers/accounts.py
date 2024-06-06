@@ -208,11 +208,12 @@ class UserSerializer(serializers.ModelSerializer):
                 points = GlobalPointsModel.objects.get(
                     event_type="referral"
                 ).value
-                UserPoints.objects.create(
+                usr_pnt = UserPoints.objects.create(
                     user=referred_by,
-                    points=points,
                     event_type="referral",
                 )
+                usr_pnt.increase_points(points)
+                usr_pnt.save()
             except Exception as e:
                 logger.error(str(e))
 

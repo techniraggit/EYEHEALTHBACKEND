@@ -7,7 +7,7 @@
 {% for point in points %}
     <div class="card" style="width: 18rem;">
         <div class="card-body">
-            <h5 class="card-title">{{ point.event|title|replace_underscore }}</h5>
+            <h5 class="card-title">{{ point.event_type|title|replace_underscore }}</h5>
             <form id="pointForm{{ point.id }}" class="update-point-form">
                 {% csrf_token %}
                 <label for="points-{{ point.id }}">Points:</label>

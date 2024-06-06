@@ -40,7 +40,7 @@ offers_urls = [
 prescription_urls = [
     path("", PrescriptionView.as_view(), name="prescription_view"),
     path("detailed-view/<uuid:id>", PrescriptionDetailView.as_view(), name="prescription_detailed_view"),
-    path("change-status/<uuid:id>/<str:status>", ChangePrescriptionStatusView.as_view(), name="change_status_view"),
+    path("change-status/<uuid:id>", ChangePrescriptionStatusView.as_view(), name="change_status_view"),
 ]
 
 notification_urls = [

@@ -502,11 +502,12 @@ class GetGeneratedReport(UserMixin):
                     points = GlobalPointsModel.objects.get(
                         event_type="eye_test"
                     ).value
-                    UserPoints.objects.create(
+                    usr_pnt = UserPoints.objects.create(
                         user=user_profile_obj.user,
-                        points=points,
                         event_type="eye_test",
                     )
+                    usr_pnt.increase_points(points)
+                    usr_pnt.save()
                 except Exception as e:
                     logger.error(str(e))
 
