@@ -89,7 +89,9 @@ class UserPushNotificationAdmin(admin.ModelAdmin):
 
 
 # REWARDS
-
+@admin.register(GlobalPointsModel)
+class GlobalPointsModelAdmin(admin.ModelAdmin):
+    list_display = ["id", "value", "event", "created_on", "updated_on"]
 
 @admin.register(Offers)
 class OffersAdmin(admin.ModelAdmin):

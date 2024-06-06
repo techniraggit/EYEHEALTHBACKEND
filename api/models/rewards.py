@@ -61,3 +61,15 @@ class UserRedeemedOffers(BaseModel):
     email_subject = models.CharField(max_length=250, null=True, blank=True)
     dispatch_address = models.TextField(blank=True, null=True)
     dispatch_on = models.DateTimeField(null=True, blank=True)
+
+class GlobalPointsModel(BaseModel):
+    event_choices = (
+        ("prescription_upload", "Prescription Upload"),
+        ("eye_test", "Eye Test"),
+        ("fatigue_test", "Fatigue Test"),
+        ("referral", "Referral"),
+    )
+
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    value = models.IntegerField()
+    event = models.CharField(max_length=50, choices=event_choices, unique=True)

@@ -1,4 +1,4 @@
-from api.models.rewards import Offers
+from api.models.rewards import Offers, GlobalPointsModel
 from django import forms
 from django.utils import timezone
 from datetime import timedelta
@@ -20,3 +20,7 @@ class OffersForm(forms.ModelForm):
             raise forms.ValidationError("Expiry date must be less than 1 year from today.")
 
         return expiry_date
+
+class GlobalPointsForm(forms.ModelForm):
+    model = GlobalPointsModel
+    fields = ["value", "event"]

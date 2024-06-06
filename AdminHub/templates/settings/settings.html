@@ -1,0 +1,64 @@
+{% extends "base/side_bar.html" %}
+{% load custom_filters %}
+{% block title %} Settings {% endblock title %}
+
+{% block page_name %}Settings{% endblock page_name %}
+{% block table %}
+{% for point in points %}
+    <div class="card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{ point.event|title|replace_underscore }}</h5>
+            <form id="pointForm{{ point.id }}" class="update-point-form">
+                {% csrf_token %}
+                <label for="points-{{ point.id }}">Points:</label>
+                <input class="card-text" type="number" name="points" id="points-{{ point.id }}" value="{{ point.value }}">
+                <p class="card-text">Updated: {{ point.updated_on|format_datetime }}</p>
+                <button type="button" class="btn btn-primary update-point-btn" data-point-id="{{ point.id }}">Update</button>
+            </form>
+        </div>
+    </div>
+{% endfor %}
+
+<script>
+    $(document).ready(function(){
+        $('.update-point-btn').click(function(){
+            var pointId = $(this).data('point-id');
+            var formId = '#pointForm' + pointId;
+            var pointsValue = $(formId + ' input[name="points"]').val();
+
+            if (pointsValue === '') {
+                showToaster("Please enter a value for points", "alert-error");
+                return;
+            }
+
+            var updateData = {
+                points: pointsValue,
+                id: pointId
+            };
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'settings_view' %}",
+                data: updateData,
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                success: function(response){
+                    if (response.status){
+                        showToaster(response.message, "alert-success");
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    }else{
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function(error){
+                    alert('Error updating point');
+                }
+            });
+        });
+    });
+
+</script>
+{% endblock table%}

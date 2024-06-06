@@ -14,3 +14,7 @@ def format_datetime(value, tz_name='Asia/Kolkata'):
     value = timezone.localtime(value, timezone=tz)
 
     return value.strftime("%B %d, %Y, %I:%M %p")
+
+@register.filter(name='replace_underscore')
+def replace_underscore(value):
+    return value.replace('_', ' ')

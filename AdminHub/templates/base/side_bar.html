@@ -70,9 +70,9 @@
                     {% endif %}
                     
                     {% if is_settings %}
-                    <li><a href="#" class="acive-link"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
+                    <li><a href="{% url "settings_view" %}" class="acive-link"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
                     {% else %}
-                    <li><a href="#"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
+                    <li><a href="{% url "settings_view" %}"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
                     {% endif %}
 
                 </ul>
