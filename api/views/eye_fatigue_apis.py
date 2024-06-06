@@ -11,6 +11,9 @@ import requests
 from rest_framework.response import Response
 from django.http import HttpResponse
 from django.conf import settings
+from core.logs import Logger
+
+logger = Logger("eye_fatigue.logs")
 
 
 END_POINTS = {
@@ -47,6 +50,9 @@ def take_user_selfie(token, data):
     json_data = {
         'source_type': 'app'
     }
+
+    logger.info(str(data))
+
     response = requests.post(
         END_POINTS.get("take_user_selfie"), files=data, json=json_data, headers=headers
     )
