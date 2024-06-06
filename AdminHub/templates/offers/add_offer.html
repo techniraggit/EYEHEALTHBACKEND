@@ -6,14 +6,17 @@
 {% block table %}
 <div class="right-table1">
     <div class=" form-main">
-        <form method="POST" enctype="multipart/form-data">
+        <form id="addOfferForm" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
                     <label for="title">Title <span id="required_star">*</span></label>
                     <input type="text" name="title" id="title" class="form-control"/>
                 </div>
-             
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="description">Description <span id="required_star">*</span></label>
+                    <textarea name="description" id="description" class="form-control" rows="4" cols="50"></textarea>
+                </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="image">Image <span id="required_star">*</span></label>
                     <input type="file" name="image" id="image" class="form-control"/>
@@ -34,17 +37,65 @@
                     <label for="required_points">Required Points <span id="required_star">*</span></label>
                     <input type="number" name="required_points" id="required_points" class="form-control"/>
                 </div>
-                <div class="col-md-12 f-lname mt-2">
-                    <label for="description">Description <span id="required_star">*</span></label>
-                  
-                    <textarea class="form-control " id="description" 
-                    placeholder=""></textarea>
-                </div>
                 <div class="col-md-3 cancel-btn mb-4 mt-5">
                     <button type="submit" class="btn btn-primary save-btn">Save</button>
                 </div>
             </div>
         </form>
 </div>
+<script>
+    $(document).ready(function() {
+        $("#addOfferForm").submit(function(event) {
+            event.preventDefault(); // Prevent the form from submitting via the browser
+    
+            // Perform client-side validation
+            let isValid = true;
+            $(".form-control").each(function() {
+                if ($(this).hasClass("optional")) {
+                    return true;
+                }
+                if ($(this).val().trim() === "") {
+                    isValid = false;
+                    $(this).addClass("is-invalid");
+                } else {
+                    $(this).removeClass("is-invalid");
+                }
+            });
+    
+            if (!isValid) {
+                showToaster("Please fill out all required fields.", "alert-error");
+                return;
+            }
+            
+            // If valid, proceed with AJAX submission
+            let formData = new FormData(this);
+    
+            $.ajax({
+                url: "{% url 'add_offer_view' %}",
+                type: "POST",
+                data: formData,
+                processData: false,  // Important!
+                contentType: false,  // Important!
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}"
+                },
+                success: function(response) {
+                    if (response.status) {
+                        showToaster(response.message, "alert-success");
+                        setTimeout(function() {
+                            window.location.href = "/offers/";
+                        },2000);
+                    } else {
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function(xhr, textStatus, errorThrown) {
+                    const response = xhr.responseJSON
+                    showToaster(response.message, "alert-error");
+                }
+            });
+        });
+    });
+</script>
 
 {% endblock table%}

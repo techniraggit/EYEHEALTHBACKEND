@@ -29,6 +29,11 @@ offers_urls = [
     path("redeemed-offers", RedeemedOffersView.as_view(), name="redeemed_offers_view"),
     path("add-offer", AddOffersView.as_view(), name="add_offer_view"),
     path("edit-offer/<uuid:id>", EditOfferView.as_view(), name="edit_offer_view"),
+    path("offer-detailed-view/<uuid:id>", OfferDetailedView.as_view(), name="offer_detailed_view"),
+    path("delete-offer-view/<uuid:id>", DeleteOfferView.as_view(), name="delete_offer_view"),
+    path("edit-redeemed-offer-view/<uuid:id>", EditRedeemedOffer.as_view(), name="edit_redeemed_offer_view"),
+    path("offer-dispatch", OfferDispatchView.as_view(), name="offer_dispatch_view"),
+    path("offer-email", OfferEmailView.as_view(), name="offer_email_view"),
 ]
 
 prescription_urls = [

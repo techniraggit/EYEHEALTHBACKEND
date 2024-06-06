@@ -6,6 +6,7 @@ from django.db import models
 
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.translation import gettext_lazy as _
+from utilities.utils import time_localize
 
 
 class CustomUserManager(BaseUserManager):
@@ -63,6 +64,24 @@ class UserModel(AbstractUser, BaseModel):
     def decrease_points(self, points: int):
         self.points = self.points - points
         self.save()
+    
+    def to_json(self):
+        return dict(
+            full_name=self.get_full_name(),
+            email=self.email,
+            phone_number=self.phone_number,
+            points=self.points,
+            dob=self.dob.strftime("%Y-%m-%d"),
+        )
+    
+    def to_string(self):
+        return f"""
+Full Name: {self.get_full_name()}
+Email: {self.email}
+Phone Number: {self.phone_number}
+Points:{self.points}
+DOB: {self.dob.strftime("%Y-%m-%d")}
+"""
 
 
 class UserPoints(BaseModel):

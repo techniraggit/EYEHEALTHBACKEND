@@ -3,6 +3,7 @@
 {% block title %} Prescription View {% endblock title %}
 
 {% block page_name %}Prescription View{% endblock page_name %}
+
 {% block table %}
 <div class="right-table1">
     <div class=" form-main">
@@ -19,26 +20,25 @@
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="file">File <span id="required_star">*</span></label>
-                    <input type="file" name="file" id="file" src="{% if prescription_obj.file %}{{prescription_obj.file.url}}{% else %}""{% endif %}" class="form-control"/>
+                    {% if prescription_obj.file %}
+                    <a href="{{prescription_obj.file.url}}" class="show-file-btn" target="_blank">Show File</a>
+                    {% endif %}
                 </div>
                 <div class="col-md-4 f-lname mt-4">
                     <label for="status">Status </label>
                     <input type="text" name="status" id="status" class="form-control" value="{{ prescription_obj.status }}"/>
                 </div>
-      
             </div>
             {% if prescription_obj.status == "pending" %}
             <div class="d-flex"> 
-                <div class="col-md-3 Approve-btn mb-4 mt-5 me-2">
-                    <button type="submit" href="{% url 'change_status_view' prescription_obj.pk 'approved' %}" class="btn btn-primary1 save-btn">Approve</button>
+                <div class=" Approve-btn mb-4 mt-5 me-2">
+                    <button type="submit" href="{% url 'change_status_view' prescription_obj.pk 'approved' %}" class="btn btn-primary1 save-btn col-md-3">Approve</button>
                 </div>
     
-                <div class="col-md-3 Reject-btn mb-4 mt-5">
-                    <button type="submit" href="{% url "change_status_view" prescription_obj.pk 'rejected' %}" class="btn btn-primary1 save-btn">Reject</button>
+                <div class=" Reject-btn mb-4 mt-5">
+                    <button type="submit" href="{% url "change_status_view" prescription_obj.pk 'rejected' %}" class="btn btn-primary1 save-btn col-md-3">Reject</button>
                 </div>
             </div>
-
-          
             {% endif %}
         </form>
 </div>

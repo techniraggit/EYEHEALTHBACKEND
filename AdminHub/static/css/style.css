@@ -439,16 +439,15 @@ i.fa.fa-search {
 /* 22-may */
 
 button {
-    cursor: pointer;
-    border-radius: 12px;
+    cursor: pointer !important;
+    border-radius: 12px !important;
     border: none;
-    font-size: 16px;
+    font-size: 16px !important;
     font-weight: 500;
     color: #FFFFFF;
     padding: 10px 24px;
     background-color: #5200a5;
 }
-
 .custom-button-1 {
     width: 15%;
     display: flex;
@@ -827,3 +826,48 @@ i#deleteButton {
     color: #FFF !important;
 }
 /* approve-reject prescription end*/
+.btn-primary:hover {
+    color: #fff;
+    /* background-color: #0b5ed7; */
+    /* border-color: #0a58ca; */
+}
+.dropdown-toggle::after {
+    display: none !important;
+}
+
+li.nav-item.dropdown {
+    border: 2px solid #5200a5;
+    border-radius: 7px;
+}
+
+/* show file button in prescription end */
+.show-file-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    color: #ffffff;
+    background-color: #5200a5;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+}
+
+.show-file-btn:hover {
+    background-color: #ffffff;
+}
+/* show file button in prescription */
+
+.description_box {
+    width: 100%;
+}
+
+button.btn.btn-primary1.save-btn.col-md-3.mt-5.Dispatch-btn.me-2 {
+    background-color: #5200a5;
+}
+
+button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
+    background-color: #5200a5;
+}
