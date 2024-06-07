@@ -17,8 +17,6 @@
                 <div class="col-md-8 f-name mt-4 d-flex label-bold">
                     <div class="row w-100">
 
-                    {% comment %} <label for="title">User:</label>
-                    <div name="title" id="title" cols="30" rows="6" readonly>{{ prescription_obj.user.to_string }}</div> {% endcomment %}
                     <div class="col-md-6 ">
                         <label for="user-full_name">Full Name:</label>
                     <p>Rajat Saini</p>
@@ -48,8 +46,6 @@
                     {% endif %}
                 </div>
                 
-             
-
                 <div class="col-md-12 f-lname mt-4">
                     <label for="problem_faced">Problem Faced: </label>
                     <p>{% if prescription_obj.problem_faced %}{{ prescription_obj.problem_faced}} {% else %} No problems faced {% endif %}</p>
@@ -80,7 +76,7 @@
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="rejectionModalLabel">Rejection Notes</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        {% comment %} <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button> {% endcomment %}
                     </div>
                     <div class="modal-body">
                         <div class="form-group">
@@ -88,9 +84,9 @@
                             <textarea id="rejection-notes" class="form-control"></textarea>
                         </div>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <div class="modal-footer d-flex">
                         <button type="button" class="btn btn-primary" id="confirm-reject-btn">Reject</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
