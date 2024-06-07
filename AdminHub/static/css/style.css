@@ -888,12 +888,14 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
 }
 
 .card {
-    border: none;
-    box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+    border: none !important;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
 .card input {
     border: none;
     padding: 6px 12px;
     border-radius: 7px;
+    width: 100%;
 }
+
