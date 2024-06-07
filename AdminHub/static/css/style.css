@@ -875,7 +875,7 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
 .right-table button {
     color: #fff;
     background-color: #5200a5;
-    /* border-color: #5200a5; */
+    border-color: #5200a5 !important;
     font-weight: 600;
     font-size: 13px !important;
     display: block;
@@ -900,6 +900,7 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
 .card input {
     border: none;
     padding: 6px 12px;
+    outline: none;
     border-radius: 7px;
     width: 100%;
 }
@@ -937,5 +938,29 @@ a.view-img {
 
 a.view-img :hover {
     color: white;
-    
+}
+
+.right-table  .modal-footer {
+    flex-direction: row;
+    flex-wrap: unset;
+}
+
+.right-table button#confirm-reject-btn {
+    background-color: #b10808;
+    border: 0;
+}
+
+button.btn.btn-secondary {
+    background-color: #021202;
+    border: none;
+}
+
+.right-table  textarea#rejection-notes {
+    height: 150px;
+}
+
+.btn-primary:hover {
+    color: #fff;
+    background-color: #5200a5 !important;
+    /* border-color: #0a58ca; */
 }
