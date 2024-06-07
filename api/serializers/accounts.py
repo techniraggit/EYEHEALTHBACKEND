@@ -1,5 +1,3 @@
-from api.models.subscription import UserSubscription, SubscriptionPlan
-from django.utils import timezone
 from uuid import uuid4
 from utilities.utils import (
     verify_otp,
@@ -7,10 +5,20 @@ from utilities.utils import (
     get_tokens_for_user,
 )
 from rest_framework import serializers
-from api.models.accounts import UserModel, OTPLog, DeviceInfo, ReferTrack, UserAddress
+from api.models.accounts import ( # Accounts models
+    UserModel,
+    OTPLog,
+    DeviceInfo,
+    ReferTrack,
+    UserAddress,
+    UserPoints,
+)
 from .base import BaseSerializer
 from datetime import datetime, timedelta
 from api.views.strip_apis import CreateCustomer
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class DeviceInfoSerializer(BaseSerializer):
@@ -102,6 +110,7 @@ class UserAddressSerializer(BaseSerializer):
         instance.save()
         return instance
 
+from api.models.rewards import GlobalPointsModel
 
 class UserSerializer(serializers.ModelSerializer):
     device_token = DeviceInfoSerializer(many=True, read_only=True)
@@ -195,6 +204,18 @@ class UserSerializer(serializers.ModelSerializer):
         if referral_code:
             referred_by = UserModel.objects.get(referral_code=referral_code)
             ReferTrack.objects.create(user=user, referred_by=referred_by)
+            try:
+                points = GlobalPointsModel.objects.get(
+                    event_type="referral"
+                ).value
+                usr_pnt = UserPoints.objects.create(
+                    user=referred_by,
+                    event_type="referral",
+                )
+                usr_pnt.increase_points(points)
+                usr_pnt.save()
+            except Exception as e:
+                logger.error(str(e))
 
         if device_token_data:
             DeviceInfo.objects.create(user=user, **device_token_data)

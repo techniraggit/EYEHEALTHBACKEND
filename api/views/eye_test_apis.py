@@ -16,6 +16,9 @@ from django.http import HttpResponse
 from django.conf import settings
 
 BASE_URL = settings.EYE_TEST_BASE_API_URL
+from core.logs import Logger
+
+logger = Logger("eye_test.logs")
 
 END_POINTS = {
     "add_customer": f"{BASE_URL}/add-customer/",
@@ -469,6 +472,10 @@ class UpdateReadingSnellenFractionTestApi(UserMixin):
             return HttpResponse(response)
 
 
+from api.models.rewards import GlobalPointsModel
+from api.models.accounts import UserPoints
+
+
 class GetGeneratedReport(UserMixin):
     def get(self, request):
         customer_id = request.headers.get("Customer-Id")
@@ -490,6 +497,20 @@ class GetGeneratedReport(UserMixin):
                     left_eye=json_response["data"]["test"][0],
                     health_score=json_response["data"]["health_score"],
                 )
+
+                try:
+                    points = GlobalPointsModel.objects.get(
+                        event_type="eye_test"
+                    ).value
+                    usr_pnt = UserPoints.objects.create(
+                        user=user_profile_obj.user,
+                        event_type="eye_test",
+                    )
+                    usr_pnt.increase_points(points)
+                    usr_pnt.save()
+                except Exception as e:
+                    logger.error(str(e))
+
                 try:
                     data = EyeTestReport.objects.create(**data)
                     return api_response(

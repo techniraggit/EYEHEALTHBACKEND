@@ -6,6 +6,7 @@ from .views.offers import *
 from .views.prescription import *
 from .views.notifications import *
 from .views.subscription import *
+from .views import settings
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -39,7 +40,7 @@ offers_urls = [
 prescription_urls = [
     path("", PrescriptionView.as_view(), name="prescription_view"),
     path("detailed-view/<uuid:id>", PrescriptionDetailView.as_view(), name="prescription_detailed_view"),
-    path("change-status/<uuid:id>/<str:status>", ChangePrescriptionStatusView.as_view(), name="change_status_view"),
+    path("change-status/<uuid:id>", ChangePrescriptionStatusView.as_view(), name="change_status_view"),
 ]
 
 notification_urls = [
@@ -52,6 +53,10 @@ subscription_urls = [
     path("user-subscription-plans", UserSubscriptionView.as_view(), name="user_subscription_plans_view"),
 ]
 
+settings_urls = [
+    path("", settings.SettingsView.as_view(), name="settings_view"),
+]
+
 urlpatterns = [
     path("", include(auth_urls)),
     path("home/", include(home_urls)),
@@ -60,4 +65,5 @@ urlpatterns = [
     path("prescription/", include(prescription_urls)),
     path("notification/", include(notification_urls)),
     path("subscription/", include(subscription_urls)),
+    path("settings/", include(settings_urls)),
 ]

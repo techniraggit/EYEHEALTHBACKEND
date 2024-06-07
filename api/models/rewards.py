@@ -1,9 +1,8 @@
+from core.constants import EVENT_CHOICES
 from .base import BaseModel
 from django.db import models
 from api.models.accounts import UserModel, UserAddress
 from uuid import uuid4
-
-# from datetime import datetime
 from django.utils import timezone
 
 
@@ -61,3 +60,11 @@ class UserRedeemedOffers(BaseModel):
     email_subject = models.CharField(max_length=250, null=True, blank=True)
     dispatch_address = models.TextField(blank=True, null=True)
     dispatch_on = models.DateTimeField(null=True, blank=True)
+
+
+class GlobalPointsModel(BaseModel):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    value = models.IntegerField(default=0)
+    event_type = models.CharField(
+        max_length=50, choices=EVENT_CHOICES, unique=True, null=True
+    )

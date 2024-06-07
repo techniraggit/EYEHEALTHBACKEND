@@ -17,7 +17,7 @@ class UserModelAdmin(admin.ModelAdmin):
 
 @admin.register(UserPoints)
 class UserPointsAdmin(admin.ModelAdmin):
-    list_display = ["user", "points", "method"]
+    list_display = ["user", "points", "event_type"]
 
 
 @admin.register(UserAddress)
@@ -89,7 +89,9 @@ class UserPushNotificationAdmin(admin.ModelAdmin):
 
 
 # REWARDS
-
+@admin.register(GlobalPointsModel)
+class GlobalPointsModelAdmin(admin.ModelAdmin):
+    list_display = ["id", "value", "event_type", "created_on", "updated_on"]
 
 @admin.register(Offers)
 class OffersAdmin(admin.ModelAdmin):
