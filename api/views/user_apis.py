@@ -160,7 +160,7 @@ class UserPrescriptionsView(UserMixin):
             return api_response(True, 200, data=data)
 
         total_points = UserPoints.objects.filter(
-            user=request.user, method="prescription upload"
+            user=request.user, event_type="prescription upload"
         ).aggregate(total=Sum("points"))["total"]
 
         total_points = total_points or 0  # Handle case where total_points is None
