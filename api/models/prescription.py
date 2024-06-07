@@ -26,8 +26,8 @@ class UserPrescriptions(BaseModel):
     status = models.CharField(
         max_length=50, choices=prescription_status, default="pending"
     )
-    rejection_notes = models.TextField(blank=True, null=True)
-    problem_faced = models.TextField(blank=True, null=True)
+    rejection_notes = models.TextField(default="")
+    problem_faced = models.TextField(default="")
     user = models.ForeignKey(
         UserModel, null=True, on_delete=models.SET_NULL, related_name="prescriptions"
     )
