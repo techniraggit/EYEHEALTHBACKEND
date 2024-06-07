@@ -1,3 +1,4 @@
+import pytz
 from django.db.models import Avg
 from datetime import datetime, time, timedelta
 from api.models.rewards import GlobalPointsModel
@@ -191,17 +192,21 @@ class EyeFatigueReportsView(UserMixin):
         return api_response(True, 200, data=serializer.data)
 
 
-def get_user_fatigue_data(user):
-    today = timezone.now().date()
-    first_report_date = (
-        EyeFatigueReport.objects.filter(user=user)
-        .earliest("created_on")
-        .created_on.date()
-    )
+GRAPH_TIME_INTERVALS = [
+    (time(6, 0), time(9, 0)),
+    (time(9, 0), time(12, 0)),
+    (time(12, 0), time(15, 0)),
+    (time(15, 0), time(18, 0)),
+]
 
-    def get_average_values(start_time, end_time):
-        start_datetime = datetime.combine(today, start_time)
-        end_datetime = datetime.combine(today, end_time)
+
+def current_day_user_graph(user, user_timezone):
+    user_tz = pytz.timezone(user_timezone)
+    current_day_date = (timezone.now().astimezone(user_tz)).date()
+
+    def get_average_values(day, start_time, end_time):
+        start_datetime = user_tz.localize(datetime.combine(day, start_time))
+        end_datetime = user_tz.localize(datetime.combine(day, end_time))
         reports = EyeFatigueReport.objects.filter(
             user=user, created_on__gte=start_datetime, created_on__lt=end_datetime
         )
@@ -210,30 +215,50 @@ def get_user_fatigue_data(user):
         total_score = sum(report.get_percent() for report in reports)
         return total_score / reports.count()
 
-    time_intervals = [
-        (time(6, 0), time(9, 0)),
-        (time(9, 0), time(12, 0)),
-        (time(12, 0), time(15, 0)),
-        (time(15, 0), time(18, 0)),
-    ]
-
-    first_day_data = {"date": first_report_date, "value": []}
-    current_day_data = {"date": today, "value": []}
-
-    for start_time, end_time in time_intervals:
-        first_day_avg_value = get_average_values(start_time, end_time)
-        current_day_avg_value = get_average_values(start_time, end_time)
-        first_day_data["value"].append(first_day_avg_value)
+    current_day_data = {"date": current_day_date, "value": []}
+    for start_time, end_time in GRAPH_TIME_INTERVALS:
+        current_day_avg_value = get_average_values(
+            current_day_date, start_time, end_time
+        )
         current_day_data["value"].append(current_day_avg_value)
 
-    return first_day_data, current_day_data
+    return current_day_data
+
+
+def first_day_user_graph(user, user_timezone):
+    user_tz = pytz.timezone(user_timezone)
+    first_report = EyeFatigueReport.objects.filter(user=user).earliest("created_on")
+    first_day_date = first_report.created_on.astimezone(user_tz).date()
+
+    def get_average_values(day, start_time, end_time):
+        start_datetime = user_tz.localize(datetime.combine(day, start_time))
+        end_datetime = user_tz.localize(datetime.combine(day, end_time))
+        reports = EyeFatigueReport.objects.filter(
+            user=user, created_on__gte=start_datetime, created_on__lt=end_datetime
+        )
+        if not reports.exists():
+            return 0
+        total_score = sum(report.get_percent() for report in reports)
+        return total_score / reports.count()
+
+    first_day_data = {"date": first_day_date, "value": []}
+    for start_time, end_time in GRAPH_TIME_INTERVALS:
+        first_day_avg_value = get_average_values(first_day_date, start_time, end_time)
+        first_day_data["value"].append(first_day_avg_value)
+
+    return first_day_data
 
 
 class EyeFatigueGraph(UserMixin):
     def get(self, request):
+        user_timezone = request.GET.get("user_timezone")
+
+        if not user_timezone:
+            return api_response(False, 400, message="user_timezone is required")
+
         try:
-            user = request.user
-            first_day_data, current_day_data = get_user_fatigue_data(user)
+            first_day_data = first_day_user_graph(request.user, user_timezone)
+            current_day_data = current_day_user_graph(request.user, user_timezone)
 
             eye_fatigue_count = EyeFatigueReport.objects.filter(
                 user=request.user
@@ -264,6 +289,7 @@ class EyeFatigueGraph(UserMixin):
                 eye_health_score=eye_health_score,
             )
         except Exception as e:
+            logger.error(str(e))
             return api_response(False, 500, message=str(e))
 
 
