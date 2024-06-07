@@ -1,3 +1,5 @@
+from django.db.models import Avg
+from datetime import datetime, time, timedelta
 from api.models.rewards import GlobalPointsModel
 from api.models.eye_health import EyeTestReport
 from core.logs import Logger
@@ -51,6 +53,7 @@ def blinks_report_details(token, data):
     )
     return response
 
+
 def take_user_selfie(token, data):
     headers = dict(Authorization=f"Bearer {token}")
     data["source_type"] = "app"
@@ -59,13 +62,17 @@ def take_user_selfie(token, data):
     )
     return response
 
+
 class TakeUserSelfie(UserMixin):
     def post(self, request):
-        response = take_user_selfie(request.headers.get("Customer-Access-Token"), request.data)
+        response = take_user_selfie(
+            request.headers.get("Customer-Access-Token"), request.data
+        )
         try:
             return Response(response.json(), response.status_code)
         except:
             return HttpResponse(response)
+
 
 class AddCustomer(UserMixin):
     def post(self, request):
@@ -184,47 +191,64 @@ class EyeFatigueReportsView(UserMixin):
         return api_response(True, 200, data=serializer.data)
 
 
+def get_user_fatigue_data(user):
+    today = timezone.now().date()
+    first_report_date = (
+        EyeFatigueReport.objects.filter(user=user)
+        .earliest("created_on")
+        .created_on.date()
+    )
+
+    def get_average_values(start_time, end_time):
+        start_datetime = datetime.combine(today, start_time)
+        end_datetime = datetime.combine(today, end_time)
+        reports = EyeFatigueReport.objects.filter(
+            user=user, created_on__gte=start_datetime, created_on__lt=end_datetime
+        )
+        if not reports.exists():
+            return 0
+        total_score = sum(report.get_percent() for report in reports)
+        return total_score / reports.count()
+
+    time_intervals = [
+        (time(6, 0), time(9, 0)),
+        (time(9, 0), time(12, 0)),
+        (time(12, 0), time(15, 0)),
+        (time(15, 0), time(18, 0)),
+    ]
+
+    first_day_data = {"date": first_report_date, "value": []}
+    current_day_data = {"date": today, "value": []}
+
+    for start_time, end_time in time_intervals:
+        first_day_avg_value = get_average_values(start_time, end_time)
+        current_day_avg_value = get_average_values(start_time, end_time)
+        first_day_data["value"].append(first_day_avg_value)
+        current_day_data["value"].append(current_day_avg_value)
+
+    return first_day_data, current_day_data
+
+
 class EyeFatigueGraph(UserMixin):
     def get(self, request):
-        query_set = EyeFatigueReport.objects.filter(user=request.user)
-        eye_fatigue_count = query_set.count()
-
-        from_date = request.GET.get("from_date")
-        to_date = request.GET.get("to_date")
-
         try:
-            if from_date and not to_date:
-                query_set = query_set.filter(created_on__date__gte=from_date)
-            elif to_date and not from_date:
-                query_set = query_set.filter(created_on__date__lte=to_date)
-            elif from_date and to_date:
-                query_set = query_set.filter(
-                    created_on__date__range=[from_date, to_date]
-                )
-            else:
-                query_set = query_set.filter(
-                    created_on__date__gte=(timezone.now() - timezone.timedelta(days=7))
-                )
+            user = request.user
+            first_day_data, current_day_data = get_user_fatigue_data(user)
 
-            data = [
-                {
-                    "date": report.created_on,
-                    "value": report.get_percent(),
-                    "is_fatigue_right": report.is_fatigue_right,
-                    "is_mild_tiredness_right": report.is_mild_tiredness_right,
-                    "is_fatigue_left": report.is_fatigue_left,
-                    "is_mild_tiredness_left": report.is_mild_tiredness_left,
-                }
-                for report in query_set
-            ]
+            eye_fatigue_count = EyeFatigueReport.objects.filter(
+                user=request.user
+            ).count()
+
             eye_test_count = EyeTestReport.objects.filter(
                 user_profile__user=request.user
             ).count()
+
             eye_health_score = EyeTestReport.objects.filter(
                 user_profile__user=request.user,
                 user_profile__full_name=request.user.get_full_name(),
                 user_profile__age=request.user.age(),
             )
+
             eye_health_score = (
                 eye_health_score.first().health_score if eye_health_score.first() else 0
             )
@@ -232,7 +256,8 @@ class EyeFatigueGraph(UserMixin):
             return api_response(
                 True,
                 200,
-                data=data,
+                first_day_data=first_day_data,
+                current_day_data=current_day_data,
                 no_of_eye_test=eye_test_count,
                 name=request.user.get_full_name(),
                 no_of_fatigue_test=eye_fatigue_count,

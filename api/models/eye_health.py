@@ -1,3 +1,4 @@
+from core.constants import FATIGUE_SUGGESTIONS_AND_HEALTH_SCORES
 from django.db.models import JSONField
 from .base import BaseModel, models, uuid4
 from api.models.accounts import UserModel
@@ -64,9 +65,6 @@ class EyeTestReport(BaseModel):
         )
 
 
-from core.constants import FATIGUE_SUGGESTIONS
-
-
 class EyeFatigueReport(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     user = models.ForeignKey(
@@ -94,19 +92,38 @@ class EyeFatigueReport(BaseModel):
         )
 
     def get_percent(self):
-        return (
-            (
-                4
-                - (
-                    self.is_fatigue_right
-                    + self.is_mild_tiredness_right
-                    + self.is_fatigue_left
-                    + self.is_mild_tiredness_left
-                )
-            )
-            * 100
-            / 4
-        )
+        score, _ = self.get_values()
+        return score
 
     def get_suggestions(self):
-        return FATIGUE_SUGGESTIONS.get(int(self.get_percent()))
+        _, suggestion = self.get_values()
+        return suggestion
+
+    def get_score_and_suggestions(
+        self,
+        is_fatigue_right,
+        is_mild_tiredness_right,
+        is_fatigue_left,
+        is_mild_tiredness_left,
+    ):
+        for condition in FATIGUE_SUGGESTIONS_AND_HEALTH_SCORES:
+            if (
+                condition["is_fatigue_right"] == is_fatigue_right
+                and condition["is_mild_tiredness_right"] == is_mild_tiredness_right
+                and condition["is_fatigue_left"] == is_fatigue_left
+                and condition["is_mild_tiredness_left"] == is_mild_tiredness_left
+            ):
+                return condition["health_score"], condition["suggestion"]
+
+        return (
+            0,
+            "Your condition does not match any predefined criteria. Please consult your eye doctor.",
+        )
+
+    def get_values(self):
+        return self.get_score_and_suggestions(
+            self.is_fatigue_right,
+            self.is_mild_tiredness_right,
+            self.is_fatigue_left,
+            self.is_mild_tiredness_left,
+        )
