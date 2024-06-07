@@ -1,6 +1,6 @@
 {% extends "base/side_bar.html" %}
 {% load static %}
-{% block title %} Prescription View {% endblock title %}
+{% block title %} Prescription View{% endblock title %}
 
 {% block page_name %}Prescription View{% endblock page_name %}
 
@@ -10,29 +10,52 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
-                <div class="col-md-4 f-name mt-4">
-                    <label for="title">User:</label>
-                    <textarea name="title" id="title" cols="30" rows="6" readonly>{{ prescription_obj.user.to_string }}</textarea>
+                <div class="col-md-12 f-lname d-flex view-status">
+                    <label class="me-2" for="status">Status: </label>
+                    {% if prescription_obj.status == "pending" %}<p class="pending" style="color:red; font-weight: bold;">{{ prescription_obj.status|title }}</p>{% else %}<p class="pending" style="color:green; font-weight: bold;">{{ prescription_obj.status|title }}</p>{% endif %}
+                </div>
+                <div class="col-md-8 f-name mt-4 d-flex label-bold">
+                    <div class="row w-100">
+
+                    {% comment %} <label for="title">User:</label>
+                    <div name="title" id="title" cols="30" rows="6" readonly>{{ prescription_obj.user.to_string }}</div> {% endcomment %}
+                    <div class="col-md-6 ">
+                        <label for="user-full_name">Full Name:</label>
+                    <p>Rajat Saini</p>
+                </div>
+                <div class="col-md-6">
+                    <label for="user-full_name">Email:</label>
+                    <p>testing@gmail.com</p>
+                </div>
+                    <div class="col-md-6 ">   
+                    <label for="user-full_name">Phone Numer:</label>
+                    <p>975813344</p>
+                </div>
+                <div class="col-md-6">
+                    <label for="user-full_name">Points:</label>
+                    <p>87</p>
+                </div>
+                    </div>
                 </div>
 
-                <div class="col-md-4 f-mail mt-4">
+                <div class="col-md-4 f-mail mt-4 file-img">
                     <label for="file">File <span id="required_star">*</span></label>
                     {% if prescription_obj.uploaded_file %}
-                    <img src="{{ prescription_obj.uploaded_file.url }}" class="img-fluid" alt="Uploaded File">
+                    <a class="view-img" href="{{ prescription_obj.uploaded_file.url }}" target="_blank">
+                        {% comment %} <img src="{{ prescription_obj.uploaded_file.url }}" class="img-fluid" alt="Uploaded File"> {% endcomment %}
+                        View File
+                    </a>
                     {% endif %}
                 </div>
                 
-                <div class="col-md-4 f-lname mt-4">
-                    <label for="status">Status: </label>
-                    {% if prescription_obj.status == "pending" %}<p style="color:red; font-weight: bold;">{{ prescription_obj.status|title }}</p>{% else %}<p style="color:green; font-weight: bold;">{{ prescription_obj.status|title }}</p>{% endif %}
-                </div>
+             
 
-                <div class="col-md-4 f-lname mt-4">
+                <div class="col-md-12 f-lname mt-4">
                     <label for="problem_faced">Problem Faced: </label>
                     <p>{% if prescription_obj.problem_faced %}{{ prescription_obj.problem_faced}} {% else %} No problems faced {% endif %}</p>
                 </div>
                 {% if prescription_obj.rejection_notes %}
-                    <div class="col-md-4 f-lname mt-4">
+                    <div class="col-md-12 f-lname mt-4">
                         <label for="problem_faced">Rejection Notes: </label>
                         <p>{{ prescription_obj.rejection_notes }}</p>
                     </div>
@@ -40,11 +63,11 @@
 
             </div>
             {% if prescription_obj.status == "pending" %}
-            <div class="d-flex"> 
-                <div class="Approve-btn mb-4 mt-5 me-2">
+            <div class="d-flex mb-4 mt-5 "> 
+                <div class="Approve-btn me-2">
                     <button type="button" id="approve-btn" class="btn btn-primary1 save-btn col-md-3">Approve</button>
                 </div>
-                <div class="Reject-btn mb-4 mt-5">
+                <div class="Reject-btn">
                     <button type="button" id="reject-btn" class="btn btn-primary1 save-btn col-md-3">Reject</button>
                 </div>
             </div>
