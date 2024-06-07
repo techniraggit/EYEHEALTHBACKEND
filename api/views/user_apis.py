@@ -20,6 +20,9 @@ from api.serializers.rewards import (
 from api.models.rewards import UserRedeemedOffers
 from api.models.accounts import UserPoints
 from api.models.eye_health import EyeFatigueReport, EyeTestReport
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Dashboard(UserMixin):
@@ -287,3 +290,13 @@ class UserRedeemedOffersView(UserMixin):
             )
         except Exception as e:
             return api_response(False, 500, ERROR_500_MSG, error=str(e))
+
+class UploadUserContactView(UserMixin):
+    def post(self, request):
+        logger.info(f"Upload contacts >> {request.data}")
+        return api_response(True, 200, "Contact successfully uploaded")
+        # serializer = StoreUserContactSerializer(data=request.data)
+        # if serializer.is_valid():
+        #     serializer.save()
+        #     return api_response(True, 201, data=serializer.data)
+        # return api_response(False, 400, data=serializer.errors)
