@@ -1,4 +1,4 @@
-from core.constants import POINTS_VALUE
+from api.models.rewards import GlobalPointsModel
 from django.db.models.functions import Concat
 from django.db.models import F, Value, Sum
 from core.utils import api_response, custom_404
@@ -164,7 +164,9 @@ class UserPrescriptionsView(UserMixin):
         ).aggregate(total=Sum("points"))["total"]
 
         total_points = total_points or 0  # Handle case where total_points is None
-        prescription_upload_points = POINTS_VALUE.get("prescription_upload", 0)
+        prescription_upload_points = GlobalPointsModel.objects.get(
+            event_type="prescription_upload"
+        ).value
 
         prescriptions = UserPrescriptions.objects.filter(user=request.user)
         serializer = UserPrescriptionsSerializer(prescriptions, many=True)
@@ -290,6 +292,7 @@ class UserRedeemedOffersView(UserMixin):
             )
         except Exception as e:
             return api_response(False, 500, ERROR_500_MSG, error=str(e))
+
 
 class UploadUserContactView(UserMixin):
     def post(self, request):
