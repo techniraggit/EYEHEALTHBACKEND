@@ -95,20 +95,24 @@ class EditOfferView(AdminLoginView):
             errors = offer_form.errors.as_json()
             return JsonResponse({"status": False, "errors": errors}, status=400)
 
-
+from utilities.utils import time_localize
 class OfferDetailedView(AdminLoginView):
     def get(self, request, id):
         try:
             offer_obj = Offers.objects.get(pk=id)
         except Offers.DoesNotExist:
-            messages.error(request, "Offer does not exist")
-            return redirect("offers_view")
-        offer_obj = Offers.objects.get(pk=id)
-        context = dict(
-            offer_obj=offer_obj,
-            is_offer=True,
+            return JsonResponse({"status": False, "message": "Offer does not exist"})
+
+        offer_data = dict(
+            offer_id = offer_obj.offer_id,
+            title = offer_obj.title,
+            image = offer_obj.image.url if offer_obj.image else "",
+            description = offer_obj.description,
+            expiry_date = time_localize(offer_obj.expiry_date).strftime("%Y-%m-%d"),
+            status = offer_obj.status,
+            required_points = offer_obj.required_points,
         )
-        return render(request, "offers/offer_view.html", context)
+        return JsonResponse(offer_data)
 
 
 class DeleteOfferView(AdminLoginView):

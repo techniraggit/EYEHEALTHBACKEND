@@ -12,26 +12,26 @@
             <div class="row">
                 <div class="col-md-12 f-lname d-flex view-status">
                     <label class="me-2" for="status">Status: </label>
-                    {% if prescription_obj.status == "pending" %}<p class="pending" style="color:red; font-weight: bold;">{{ prescription_obj.status|title }}</p>{% else %}<p class="pending" style="color:green; font-weight: bold;">{{ prescription_obj.status|title }}</p>{% endif %}
+                    <p class="pending-status {{ prescription_obj.status }}">{{ prescription_obj.status|title }}</p>
                 </div>
                 <div class="col-md-8 f-name mt-4 d-flex label-bold">
                     <div class="row w-100">
 
                     <div class="col-md-6 ">
                         <label for="user-full_name">Full Name:</label>
-                    <p>Rajat Saini</p>
+                    <p>{{ prescription_obj.user.get_full_name }}</p>
                 </div>
                 <div class="col-md-6">
                     <label for="user-full_name">Email:</label>
-                    <p>testing@gmail.com</p>
+                    <p>{{ prescription_obj.user.email }}</p>
                 </div>
                     <div class="col-md-6 ">   
                     <label for="user-full_name">Phone Numer:</label>
-                    <p>975813344</p>
+                    <p>{{ prescription_obj.user.phone_number }}</p>
                 </div>
                 <div class="col-md-6">
                     <label for="user-full_name">Points:</label>
-                    <p>87</p>
+                    <p>{{ prescription_obj.user.points }}</p>
                 </div>
                     </div>
                 </div>

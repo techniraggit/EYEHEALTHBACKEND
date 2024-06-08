@@ -914,7 +914,7 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
     border-radius: 7px;
 }
 
-p.pending {
+p.pending-status {
     /* align-items: center; */
     /* text-align: center; */
     margin: 0;
@@ -963,4 +963,34 @@ button.btn.btn-secondary {
     color: #fff;
     background-color: #5200a5 !important;
     /* border-color: #0a58ca; */
+}
+
+.pending{
+    color: orange;
+    font-weight: bold;
+}
+
+.approved {
+    color: green;
+    font-weight: bold;
+}
+
+.rejected {
+    color: red;
+    font-weight: bold;
+}
+
+.inactive {
+    color: orange;
+    font-weight: bold;
+}
+
+.active { 
+    color: green;
+    font-weight: bold;
+}
+
+.expired {
+    color: red;
+    font-weight: bold;
 }

@@ -47,14 +47,72 @@
             <td>{{ offer.title }}</td>
             <td>{{ offer.description }}</td>
             <td>{{ offer.expiry_date }}</td>
-            <td>{{ offer.status }}</td>
+            <td class="{{ offer.status }}" >{{ offer.status|title }}</td>
             <td>{{ offer.required_points }}</td>
             <td>
                 <a href="{% url "delete_offer_view" offer.offer_id %}"><i class="fa-solid fa-trash-can me-2"></i></a>
                 <a href="{% url "edit_offer_view" offer.offer_id %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="{% url "offer_detailed_view" offer.offer_id %}"> <i class="fa-regular fa-eye"></i></a>
+                <!--<a href="{% url "offer_detailed_view" offer.offer_id %}"> <i class="fa-regular fa-eye"></i></a> -->
+                <a href="#" class="view-offer-details" data-offer-id="{{ offer.offer_id }}"><i class="fa-regular fa-eye"></i></a>
             </td>
         </tr>
     {% endfor %}
 </table>
+
+<!-- Offer Detail Modal -->
+<div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="offerDetailModalLabel">Offer Details</h5>
+            </div>
+            <div class="modal-body">
+                <p><strong>Title:</strong> <span id="modal-title"></span></p>
+                <p><strong>Description:</strong> <span id="modal-description"></span></p>
+                <p><strong>Expiry Date:</strong> <span id="modal-expiry_date"></span></p>
+                <p><strong>Status:</strong> <span id="modal-status"></span></p>
+                <p><strong>Required Points:</strong> <span id="modal-required_points"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Offer Detail Modal -->
+
+<script>
+    $(document).ready(function() {
+        $('.view-offer-details').click(function(event) {
+            event.preventDefault();
+            var offerId = $(this).data('offer-id');
+            var modal = $('#offerDetailModal');
+
+            $.ajax({
+                url: '/offers/offer-detailed-view/' + offerId,
+                method: 'GET',
+                success: function(data) {
+                    modal.find('#modal-title').text(data.title);
+                    modal.find('#modal-description').text(data.description);
+                    modal.find('#modal-expiry_date').text(data.expiry_date);
+                    modal.find('#modal-status').text(data.status);
+                    modal.find('#modal-status').addClass(data.status)
+                    modal.find('#modal-required_points').text(data.required_points);
+                    modal.modal('show');
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error fetching offer details:", error);
+                    alert("An error occurred while fetching offer details. Please try again.");
+                }
+            });
+        });
+
+        $("#modal_dismis").on("click", function(e) {
+            e.preventDefault();
+            $('#offerDetailModal').modal('hide');
+        })
+    });
+    </script>
+    
+
 {% endblock table%}

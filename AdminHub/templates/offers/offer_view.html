@@ -11,27 +11,33 @@
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
                     <label for="title">Title</label>
-                    <input type="text" name="title" id="title" class="form-control" value="{{ offer_obj.title}}" readonly/>
+                    <p>{{ offer_obj.title}}</p>
+                    {% comment %} <input type="text" name="title" id="title" class="form-control" value="{{ offer_obj.title}}" readonly/> {% endcomment %}
                 </div>
                 <div class="col-md-4 f-lname mt-4">
                     <label for="description">Description</label>
-                    <input name="description" id="description" class="form-control" value="{{ offer_obj.description }}" readonly/>
+                    <p>{{ offer_obj.description }}</p>
+                    {% comment %} <input name="description" id="description" class="form-control" value="{{ offer_obj.description }}" readonly/> {% endcomment %}
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="image">Image</label>
-                    <input type="file" name="image" id="image" value="{{ offer_obj.image}}" class="form-control" readonly/>
+                    {% if offer_obj.image %} <img src="{{ offer_obj.image.url }}" alt="offer image">{% endif %}
+                    {% comment %} <input type="file" name="image" id="image" value="{{ offer_obj.image}}" class="form-control" readonly/> {% endcomment %}
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="expiry_date">Expiry Date</label>
-                    <input type="date" name="expiry_date" id="expiry_date" value="{{ offer_obj.expiry_date|date:'Y-m-d' }}" class="form-control" readonly/>
+                    <p>{{ offer_obj.expiry_date|date:'Y-m-d' }}</p>
+                    {% comment %} <input type="date" name="expiry_date" id="expiry_date" value="{{ offer_obj.expiry_date|date:'Y-m-d' }}" class="form-control" readonly/> {% endcomment %}
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="status">Status</label>
-                    <input type="text" name="status" id="status" value="{{ offer_obj.status }}" class="form-control" readonly/>
+                    <p class="{{ offer_obj.status }}">{{ offer_obj.status|title }}</p>
+                    {% comment %} <input type="text" name="status" id="status" value="{{ offer_obj.status }}" class="form-control" readonly/> {% endcomment %}
                 </div>
                 <div class="col-md-4 f-lname mt-4">
                     <label for="required_points">Required Points</label>
-                    <input type="number" name="required_points" id="required_points" value="{{ offer_obj.required_points}}" class="form-control" readonly/>
+                    <p>{{ offer_obj.required_points}}</p>
+                    {% comment %} <input type="number" name="required_points" id="required_points" value="{{ offer_obj.required_points}}" class="form-control" readonly/> {% endcomment %}
                 </div>
             </div>
         </form>
