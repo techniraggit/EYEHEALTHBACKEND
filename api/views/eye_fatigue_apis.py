@@ -197,6 +197,8 @@ GRAPH_TIME_INTERVALS = [
     (time(9, 0), time(12, 0)),
     (time(12, 0), time(15, 0)),
     (time(15, 0), time(18, 0)),
+    (time(18, 0), time(21, 0)),
+    (time(21, 0), time(23, 59)),
 ]
 
 
@@ -249,6 +251,36 @@ def first_day_user_graph(user, user_timezone):
     return first_day_data
 
 
+def get_percentile_graph(user_timezone):
+    STATIC_VALUES = [7, 6, 5, 4, 3, 4, 5]
+    """user_tz = pytz.timezone(user_timezone)
+    current_day_date = (timezone.now().astimezone(user_tz)).date()
+    percentile_graph_data = []
+    for start_time, end_time in GRAPH_TIME_INTERVALS:
+        percentile_graph_data.append(dict(
+            date=current_day_date,
+            value=STATIC_VALUES[GRAPH_TIME_INTERVALS.index((start_time, end_time))],
+            start_time=start_time,
+            end_time=end_time,
+        ))"""
+    return STATIC_VALUES
+
+
+def get_ideal_graph(user_timezone):
+    STATIC_VALUES = [10, 9, 8, 8, 7, 8, 8]
+    """user_tz = pytz.timezone(user_timezone)
+    current_day_date = (timezone.now().astimezone(user_tz)).date()
+    ideal_graph_data = []
+    for start_time, end_time in GRAPH_TIME_INTERVALS:
+        ideal_graph_data.append(dict(
+            date=current_day_date,
+            value=STATIC_VALUES[GRAPH_TIME_INTERVALS.index((start_time, end_time))],
+            start_time=start_time,
+            end_time=end_time,
+        ))"""
+    return STATIC_VALUES
+
+
 class EyeFatigueGraph(UserMixin):
     def get(self, request):
         user_timezone = request.GET.get("user_timezone")
@@ -287,6 +319,8 @@ class EyeFatigueGraph(UserMixin):
                 name=request.user.get_full_name(),
                 no_of_fatigue_test=eye_fatigue_count,
                 eye_health_score=eye_health_score,
+                get_percentile_graph=get_percentile_graph(user_timezone),
+                get_ideal_graph=get_ideal_graph(user_timezone),
             )
         except Exception as e:
             logger.error(str(e))
