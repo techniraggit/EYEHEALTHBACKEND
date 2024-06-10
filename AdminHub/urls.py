@@ -7,6 +7,7 @@ from .views.prescription import *
 from .views.notifications import *
 from .views.subscription import *
 from .views import settings
+from .views import eye_exam
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -57,6 +58,14 @@ settings_urls = [
     path("", settings.SettingsView.as_view(), name="settings_view"),
 ]
 
+eye_exam_urls = [
+    path("eye-test", eye_exam.EyeTestView.as_view(), name="eye_test_view"),
+    path("eye-test-detailed/<uuid:id>", eye_exam.EyeTestDetailedView.as_view(), name="eye_test_view"),
+    path("eye-test-export/<str:file_type>", eye_exam.EyeTestExportView.as_view(), name="eye_test_export_view"),
+    path("download-eye-test-report/<int:report_id>", eye_exam.DownloadEyeTestReportView.as_view(), name="download_eye_test_report_view"),
+    path("eye-fatigue", eye_exam.EyeFatigueView.as_view(), name="eye_fatigue_view"),
+]
+
 urlpatterns = [
     path("", include(auth_urls)),
     path("home/", include(home_urls)),
@@ -66,4 +75,5 @@ urlpatterns = [
     path("notification/", include(notification_urls)),
     path("subscription/", include(subscription_urls)),
     path("settings/", include(settings_urls)),
+    path("eye/", include(eye_exam_urls)),
 ]

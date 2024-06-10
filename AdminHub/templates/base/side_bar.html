@@ -58,17 +58,18 @@
                     {% endif %}
 
                     {% if is_eye_exam %}
-                    <li><a href="#" class="acive-link"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Exam</a></li>
+                    <li><a href="{% url "eye_test_view" %}" class="acive-link"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
                     {% else %}
-                    <li><a href="#"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Exam</a></li>
+                    <li><a href="{% url "eye_test_view" %}"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
                     {% endif %}
                     
                     {% if is_eye_fatigue %}
-                    <li><a href="#" class="acive-link"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
+                    <li><a href="{% url "eye_fatigue_view" %}" class="acive-link"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
                     {% else %}
-                    <li><a href="#"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
+                    <li><a href="{% url "eye_fatigue_view" %}"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
                     {% endif %}
                     
+
                     {% if is_settings %}
                     <li><a href="{% url "settings_view" %}" class="acive-link"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
                     {% else %}
