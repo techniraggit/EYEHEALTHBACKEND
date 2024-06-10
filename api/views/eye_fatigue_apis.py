@@ -247,11 +247,11 @@ def first_day_user_graph(user, user_timezone):
 
 
 def get_percentile_graph(user_timezone):
-    return [7.0, 6.0, 5.0, 4.0, 3.0, 4.0]
+    return [7.0, 6.0, 5.0, 4.0, 3.0, 4.0, 5.0]
 
 
 def get_ideal_graph(user_timezone):
-    return [10.0, 9.0, 8.0, 8.0, 7.0, 8.0]
+    return [10.0, 9.0, 8.0, 8.0, 7.0, 8.0, 8.0]
 
 
 def get_user_real_graph(user_timezone, user):
