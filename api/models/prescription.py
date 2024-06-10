@@ -21,7 +21,7 @@ class UserPrescriptions(BaseModel):
     prescription_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     uploaded_file = models.FileField(
         upload_to="user/prescriptions",
-        # validators=[FileExtensionValidator(allowed_extensions=image_extensions)],
+        validators=[FileExtensionValidator(allowed_extensions=image_extensions)],
     )
     status = models.CharField(
         max_length=50, choices=prescription_status, default="pending"
