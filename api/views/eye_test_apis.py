@@ -499,9 +499,7 @@ class GetGeneratedReport(UserMixin):
                 )
 
                 try:
-                    points = GlobalPointsModel.objects.get(
-                        event_type="eye_test"
-                    ).value
+                    points = GlobalPointsModel.objects.get(event_type="eye_test").value
                     usr_pnt = UserPoints.objects.create(
                         user=user_profile_obj.user,
                         event_type="eye_test",
@@ -543,11 +541,13 @@ class EyeTestReports(UserMixin):
         report_id = request.GET.get("report_id")
         if report_id:
             try:
-                data = EyeTestReport.objects.get(id=report_id)
+                data = EyeTestReport.objects.get(report_id=report_id)
                 serialized_data = EyeTestReportSerializer(data).data
                 return api_response(True, 200, data=serialized_data)
-            except:
+            except EyeTestReport.DoesNotExist:
                 return api_response(False, 404, "Report not found")
+            except Exception as e:
+                return api_response(False, 500, "Error processing report")
         data = EyeTestReport.objects.filter(user_profile__user=request.user)
         serialized_data = EyeTestReportSerializer(data, many=True).data
         return api_response(True, 200, data=serialized_data)
