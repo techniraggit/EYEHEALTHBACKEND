@@ -64,6 +64,7 @@ eye_exam_urls = [
     path("eye-test-export/<str:file_type>", eye_exam.EyeTestExportView.as_view(), name="eye_test_export_view"),
     path("download-eye-test-report/<int:report_id>", eye_exam.DownloadEyeTestReportView.as_view(), name="download_eye_test_report_view"),
     path("eye-fatigue", eye_exam.EyeFatigueView.as_view(), name="eye_fatigue_view"),
+    path("eye-fatigue-detailed/<uuid:id>", eye_exam.EyeFatigueDetailedView.as_view(), name="eye_fatigue_detailed_view"),
 ]
 
 urlpatterns = [

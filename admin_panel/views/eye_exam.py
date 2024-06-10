@@ -1,4 +1,3 @@
-
 from .base import AdminLoginView
 from django.shortcuts import render
 from api.models.eye_health import EyeTestReport, EyeFatigueReport
@@ -17,26 +16,30 @@ class EyeTestView(AdminLoginView):
         )
         return render(request, "eye_exam/eye_test.html", context)
 
+
 class EyeTestDetailedView(AdminLoginView):
     def get(self, request, id):
         try:
             eye_test_report_obj = EyeTestReport.objects.get(pk=id)
         except:
-            return JsonResponse({
-                "status": False,
-                "message": "Eye test report does not exist"
-            })
-        
-        return JsonResponse({
-            "status": True,
-            "eye_test_report": eye_test_report_obj.report(),
-        })
+            return JsonResponse(
+                {"status": False, "message": "Eye test report does not exist"}
+            )
+
+        return JsonResponse(
+            {
+                "status": True,
+                "eye_test_report": eye_test_report_obj.report(),
+            }
+        )
+
 
 from utilities.utils import time_localize
 from django.utils import timezone
 import csv
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
+
 
 class EyeTestExportView(AdminLoginView):
     current_timestamp = time_localize(timezone.datetime.now()).strftime("%Y%m%d%H%M%S")
@@ -59,17 +62,17 @@ class EyeTestExportView(AdminLoginView):
         writer = csv.writer(response)
         writer.writerow(
             [
-            "Report ID",
-            "User",
-            "Right SPH",
-            "Right CYL",
-            "Right AXIS",
-            "Right ADD",
-            "Left SPH",
-            "Left CYL",
-            "Left AXIS",
-            "Left ADD",
-            "Health Score"
+                "Report ID",
+                "User",
+                "Right SPH",
+                "Right CYL",
+                "Right AXIS",
+                "Right ADD",
+                "Left SPH",
+                "Left CYL",
+                "Left AXIS",
+                "Left ADD",
+                "Health Score",
             ]
         )
         for report in self.get_queryset():
@@ -104,7 +107,7 @@ class EyeTestExportView(AdminLoginView):
             "Left CYL",
             "Left AXIS",
             "Left ADD",
-            "Health Score"
+            "Health Score",
         ]
         workbook = Workbook()
         worksheet = workbook.active
@@ -117,17 +120,17 @@ class EyeTestExportView(AdminLoginView):
             left_eye = report.left_eye_obj()
             right_eye = report.right_eye_obj()
             row = [
-                    str(report.report_id),
-                    report.user_profile.user.get_full_name(),
-                    right_eye.get("sph"),
-                    right_eye.get("cyl"),
-                    right_eye.get("axis"),
-                    right_eye.get("add"),
-                    left_eye.get("sph"),
-                    left_eye.get("cyl"),
-                    left_eye.get("axis"),
-                    left_eye.get("add"),
-                    report.health_score,
+                str(report.report_id),
+                report.user_profile.user.get_full_name(),
+                right_eye.get("sph"),
+                right_eye.get("cyl"),
+                right_eye.get("axis"),
+                right_eye.get("add"),
+                left_eye.get("sph"),
+                left_eye.get("cyl"),
+                left_eye.get("axis"),
+                left_eye.get("add"),
+                report.health_score,
             ]
             worksheet.append(row)
 
@@ -144,7 +147,8 @@ class EyeTestExportView(AdminLoginView):
         response["Content-Type"] = "application/octet-stream"
         response.write(virtual_excel_file)
         return response
-    
+
+
 class DownloadEyeTestReportView(AdminLoginView):
     def get(self, request, report_id):
         try:
@@ -158,10 +162,7 @@ class DownloadEyeTestReportView(AdminLoginView):
             return response
 
         except EyeTestReport.DoesNotExist:
-            return JsonResponse({
-                "status": False,
-                "message": "Report not found"
-            })
+            return JsonResponse({"status": False, "message": "Report not found"})
 
 
 class EyeFatigueView(AdminLoginView):
@@ -172,3 +173,20 @@ class EyeFatigueView(AdminLoginView):
             is_eye_fatigue=True,
         )
         return render(request, "eye_exam/eye_fatigue.html", context)
+
+
+class EyeFatigueDetailedView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            eye_fatigue_report_obj = EyeFatigueReport.objects.get(pk=id)
+        except:
+            return JsonResponse(
+                {"status": False, "message": "Eye fatigue report does not exist"}
+            )
+
+        return JsonResponse(
+            {
+                "status": True,
+                "eye_fatigue_report": eye_fatigue_report_obj.to_json(),
+            }
+        )
