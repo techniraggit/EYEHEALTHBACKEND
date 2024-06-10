@@ -193,12 +193,12 @@ class EyeFatigueReportsView(UserMixin):
 
 
 GRAPH_TIME_INTERVALS = [
-    (time(6, 0), time(9, 0)),
-    (time(9, 0), time(12, 0)),
-    (time(12, 0), time(15, 0)),
-    (time(15, 0), time(18, 0)),
-    (time(18, 0), time(21, 0)),
-    (time(21, 0), time(23, 59)),
+    (time(6, 0), time(9, 0)), # 7:30
+    (time(9, 0), time(12, 0)), # 10:30
+    (time(12, 0), time(15, 0)), # 13:30
+    (time(15, 0), time(18, 0)), # 16:30
+    (time(18, 0), time(21, 0)), # 19:30
+    (time(21, 0), time(23, 59)), # 22:30
 ]
 
 
@@ -252,7 +252,7 @@ def first_day_user_graph(user, user_timezone):
 
 
 def get_percentile_graph(user_timezone):
-    STATIC_VALUES = [7, 6, 5, 4, 3, 4, 5]
+    STATIC_VALUES = [7.0, 6.0, 5.0, 4.0, 3.0, 4.0]
     """user_tz = pytz.timezone(user_timezone)
     current_day_date = (timezone.now().astimezone(user_tz)).date()
     percentile_graph_data = []
@@ -267,7 +267,7 @@ def get_percentile_graph(user_timezone):
 
 
 def get_ideal_graph(user_timezone):
-    STATIC_VALUES = [10, 9, 8, 8, 7, 8, 8]
+    STATIC_VALUES = [10.0, 9.0, 8.0, 8.0, 7.0, 8.0]
     """user_tz = pytz.timezone(user_timezone)
     current_day_date = (timezone.now().astimezone(user_tz)).date()
     ideal_graph_data = []
@@ -279,6 +279,23 @@ def get_ideal_graph(user_timezone):
             end_time=end_time,
         ))"""
     return STATIC_VALUES
+
+def get_user_real_graph(user_timezone, user):
+    USER_GRAPH_TIME = [
+    time(7, 30), time(10, 30), time(13, 30), time(16, 30), time(19, 30), time(22, 30)
+    ]
+    user_tz = pytz.timezone(user_timezone)
+    def get_average_values(day, start_time, end_time):
+        start_datetime = user_tz.localize(datetime.combine(day, start_time))
+        end_datetime = user_tz.localize(datetime.combine(day, end_time))
+        reports = EyeFatigueReport.objects.filter(
+            user=user, created_on__gte=start_datetime, created_on__lt=end_datetime
+        )
+        if not reports.exists():
+            return 0
+        total_score = sum(report.get_percent() for report in reports)
+        return total_score / reports.count()
+    return USER_GRAPH_TIME
 
 
 class EyeFatigueGraph(UserMixin):
@@ -321,6 +338,7 @@ class EyeFatigueGraph(UserMixin):
                 eye_health_score=eye_health_score,
                 get_percentile_graph=get_percentile_graph(user_timezone),
                 get_ideal_graph=get_ideal_graph(user_timezone),
+                get_user_real_graph=get_user_real_graph(user_timezone, request.user),
             )
         except Exception as e:
             logger.error(str(e))
