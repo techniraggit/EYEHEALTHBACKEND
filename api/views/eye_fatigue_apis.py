@@ -68,9 +68,8 @@ def take_user_selfie(token, data):
 
 class TakeUserSelfie(UserMixin):
     def post(self, request):
-        response = take_user_selfie(
-            request.headers.get("Customer-Access-Token"), request.data
-        )
+        data = request.data.copy()
+        response = take_user_selfie(request.headers.get("Customer-Access-Token"), data)
         try:
             return Response(response.json(), response.status_code)
         except:
@@ -105,15 +104,8 @@ class CalculateBlinkRate(SecureHeadersMixin):
             return HttpResponse(response)
 
 
-def convert_fatigue_data(data) -> dict:
-    data.pop("blink_status", None)
-    data.pop("full_name", None)
-    data.pop("age", None)
-
-    converted_bool_data = {
-        key: (str(value).lower == "yes") for key, value in data.items()
-    }
-    return converted_bool_data
+def convert_to_bool(value):
+    return value.lower() == "yes"
 
 
 class BlinkReportDetails(SecureHeadersMixin):
@@ -124,9 +116,14 @@ class BlinkReportDetails(SecureHeadersMixin):
         try:
             try:
                 json_data = response.json()["data"]
-                processed_data = convert_fatigue_data(json_data)
-                processed_data["user_id"] = request.user.id
-                processed_data["report_id"] = json_data.get("report_id")
+                processed_data = dict(
+                    user_id=request.user.id,
+                    report_id=json_data.get("report_id"),
+                    is_fatigue_right=convert_to_bool(json_data.get("is_fatigue_right")),
+                    is_mild_tiredness_right=convert_to_bool(json_data.get("is_mild_tiredness_right")),
+                    is_fatigue_left=convert_to_bool(json_data.get("is_fatigue_left")),
+                    is_mild_tiredness_left=convert_to_bool(json_data.get("is_mild_tiredness_left")),
+                )
 
                 if EyeFatigueReport.objects.filter(
                     report_id=processed_data["report_id"]
