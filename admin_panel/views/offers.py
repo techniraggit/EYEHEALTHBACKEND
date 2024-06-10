@@ -6,7 +6,7 @@ from django.urls import reverse
 from .base import AdminLoginView
 from django.shortcuts import render, redirect
 from api.models.rewards import Offers, UserRedeemedOffers
-from AdminHub.forms.offers import OffersForm
+from admin_panel.forms.offers import OffersForm
 from django.contrib import messages
 
 

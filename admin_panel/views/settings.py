@@ -2,7 +2,7 @@ import logging
 from django.http import JsonResponse
 from .base import AdminLoginView
 from django.shortcuts import render
-from AdminHub.forms.offers import GlobalPointsModel
+from admin_panel.forms.offers import GlobalPointsModel
 
 logger = logging.getLogger(__name__)
 

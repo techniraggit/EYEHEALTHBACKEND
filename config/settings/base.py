@@ -42,7 +42,7 @@ THIRD_APPS = [
 
 LOCAL_APPS = [
     "api",
-    "AdminHub",
+    "admin_panel",
 ]
 
 INSTALLED_APPS += THIRD_APPS + LOCAL_APPS
