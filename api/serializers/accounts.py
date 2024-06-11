@@ -13,6 +13,8 @@ from api.models.accounts import ( # Accounts models
     UserAddress,
     UserPoints,
 )
+from api.models.subscription import UserSubscription, SubscriptionPlan
+from django.utils import timezone
 from .base import BaseSerializer
 from datetime import datetime, timedelta
 from api.views.strip_apis import CreateCustomer
@@ -220,21 +222,17 @@ class UserSerializer(serializers.ModelSerializer):
         if device_token_data:
             DeviceInfo.objects.create(user=user, **device_token_data)
 
-        """
         plan = SubscriptionPlan.objects.get(plan_type="basic")
         end_date = timezone.now() + timezone.timedelta(days=plan.duration)
-        payment_method = "free"
-        paid_amount = 0
         UserSubscription.objects.create(
             user = user,
             plan = plan,
             end_date = end_date,
             is_active = True,
-            payment_method = payment_method,
-            paid_amount = paid_amount,
+            payment_method = "free",
+            paid_amount = 0,
             payment_status = "success"
         )
-        """
 
         return user
 

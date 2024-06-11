@@ -19,7 +19,10 @@
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="image">Image <span id="required_star">*</span></label>
-                    <input type="file" name="image" id="image" src="{% if offer_obj.image %}{{offer_obj.image.url}}{% else %}""{% endif %}" class="form-control"/>
+                    <input type="file" name="image" id="image" class="form-control" data-is-file-avail="{% if offer_obj.image %} true {% else %} false {% endif %}"/>
+                    {% if offer_obj.image %} 
+                    <p style="font-weight: bold;"> Current file: {{ offer_obj.image.name }} <a href="#" class="view-file-link" data-image-url="{{ offer_obj.image.url }}"> View File</a></p>
+                    {% endif %}
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="expiry_date">Expiry Date <span id="required_star">*</span></label>
@@ -28,9 +31,9 @@
                 <div class="col-md-4 f-name mt-4">
                     <label for="status">Status <span id="required_star">*</span></label>
                     <select name="status" id="status" class="form-control">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
-                        <option value="expired">Expired</option>
+                        <option value="active" {% if offer_obj.status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if offer_obj.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                        <option value="expired" {% if offer_obj.status == 'expired' %}selected{% endif %}>Expired</option>
                     </select>
                 </div>
                 <div class="col-md-4 f-lname mt-4">
@@ -42,15 +45,46 @@
                 </div>
             </div>
         </form>
+
+        <!-- Image Popup Modal -->
+        <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="imageModalLabel">View Image</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <img id="modalImage" src="#" alt="Image" style="max-width: 100%; max-height: 80vh;">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Image Popup Modal End-->
 </div>
 <script>
     $(document).ready(function() {
+         // Handle click on "View File" link to open modal
+        $(".view-file-link").click(function(e) {
+            e.preventDefault();
+            let imageUrl = $(this).data('image-url');
+            $("#modalImage").attr("src", imageUrl);
+            $("#imageModal").modal('show');
+        });
+
+
         $("#addOfferForm").submit(function(event) {
             event.preventDefault(); // Prevent the form from submitting via the browser
     
             // Perform client-side validation
             let isValid = true;
             $(".form-control").each(function() {
+
+                if ($(this).attr("id") === "image") {
+                    var current_file_val = $(this).data('is-file-avail');
+                    return current_file_val;
+                }
+
                 if ($(this).hasClass("optional")) {
                     return true;
                 }

@@ -127,9 +127,14 @@ class OffersView(UserMixin):
             offer_data = OffersSerializer(
                 offer_obj,
             ).data
+
             user_points = request.user.points
             required_points = offer_data.get("required_points", 0)
-            user_percentage = int((user_points / required_points) * 100)
+            user_percentage = (
+                min(100, int((user_points / required_points) * 100))
+                if required_points > 0
+                else 100
+            )
 
             return api_response(
                 True,
@@ -138,6 +143,7 @@ class OffersView(UserMixin):
                 user_points=user_points,
                 user_percentage=user_percentage,
             )
+
         offers = Offers.objects.all()
         serialized_data = OffersSerializer(offers, many=True).data
         eye_health_score = 300
@@ -272,24 +278,36 @@ class UserRedeemedOffersView(UserMixin):
             offer_obj = Offers.objects.get(offer_id=offer_id)
         except:
             return api_response(False, 404, "Offer does not exits")
+
+        user_obj = UserModel.objects.get(pk=request.user.pk)
+
+        offer_required_points = int(offer_obj.required_points)
+        if user_obj.points < offer_required_points:
+            return api_response(False, 400, "You don't have enough points")
+
         address_obj = None
         if address_id:
             try:
                 address_obj = UserAddress.objects.get(address_id=address_id)
             except:
                 return api_response(False, 404, "Address does not exits")
+
         data = {
             "user": request.user,
             "offer": offer_obj,
             "address": address_obj,
         }
+
         try:
             UserRedeemedOffers.objects.create(**data)
+            user_obj.decrease_points(offer_required_points)
+            user_obj.save()
             return api_response(
                 True,
                 201,
                 "Offer redeemed successfully. Please wait for an admin response.",
             )
+
         except Exception as e:
             return api_response(False, 500, ERROR_500_MSG, error=str(e))
 

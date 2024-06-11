@@ -548,7 +548,7 @@ class EyeTestReports(UserMixin):
                 return api_response(False, 404, "Report not found")
             except Exception as e:
                 return api_response(False, 500, "Error processing report")
-        data = EyeTestReport.objects.filter(user_profile__user=request.user)
+        data = EyeTestReport.objects.filter(user_profile__user=request.user).order_by("-created_on")
         serialized_data = EyeTestReportSerializer(data, many=True).data
         return api_response(True, 200, data=serialized_data)
 

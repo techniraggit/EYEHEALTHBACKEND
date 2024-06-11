@@ -186,7 +186,7 @@ class EyeFatigueReportsView(UserMixin):
             data = self.get_object(report_id)
             serializer = EyeFatigueReportSerializer(data, fields=self.fields)
             return api_response(True, 200, data=serializer.data)
-        reports = EyeFatigueReport.objects.filter(user=request.user)
+        reports = EyeFatigueReport.objects.filter(user=request.user).order_by("-created_on")
         serializer = EyeFatigueReportSerializer(reports, many=True, fields=self.fields)
         return api_response(True, 200, data=serializer.data)
 
