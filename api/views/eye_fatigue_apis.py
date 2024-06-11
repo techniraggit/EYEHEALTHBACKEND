@@ -328,8 +328,8 @@ class DownloadReportView(UserMixin):
         try:
             report = get_object_or_404(EyeFatigueReport, report_id=report_id)
             context = {
-                "name": report.user.get_full_name(),
-                "age": report.user.age(),
+                "name": report.full_name,
+                "age": report.age,
                 "suggestions": str(report.get_suggestions()).split("\n"),
                 "is_fatigue_right": report.is_fatigue_right,
                 "is_fatigue_left": report.is_fatigue_left,
