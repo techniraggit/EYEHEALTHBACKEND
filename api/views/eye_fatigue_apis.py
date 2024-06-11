@@ -115,16 +115,12 @@ class BlinkReportDetails(SecureHeadersMixin):
         )
         try:
             try:
-                json_data = response.json()["data"]
-                processed_data = dict(
-                    user_id=request.user.id,
-                    report_id=json_data.get("report_id"),
-                    is_fatigue_right=convert_to_bool(json_data.get("is_fatigue_right")),
-                    is_mild_tiredness_right=convert_to_bool(json_data.get("is_mild_tiredness_right")),
-                    is_fatigue_left=convert_to_bool(json_data.get("is_fatigue_left")),
-                    is_mild_tiredness_left=convert_to_bool(json_data.get("is_mild_tiredness_left")),
-                )
+                processed_data = {
+                    "user_id": request.user.id,
+                    **response.json()["data"],
+                }
 
+                blink_status = processed_data.pop("blink_status", None)
                 if EyeFatigueReport.objects.filter(
                     report_id=processed_data["report_id"]
                 ).exists():
@@ -308,15 +304,15 @@ class EyeFatigueGraph(UserMixin):
             return api_response(
                 True,
                 200,
-                first_day_data=first_day_data,
-                current_day_data=current_day_data,
                 no_of_eye_test=eye_test_count,
                 name=request.user.get_full_name(),
                 no_of_fatigue_test=eye_fatigue_count,
                 eye_health_score=eye_health_score,
+                first_day_data=first_day_data,
+                current_day_data=current_day_data,
                 get_percentile_graph=get_percentile_graph(user_timezone),
                 get_ideal_graph=get_ideal_graph(user_timezone),
-                get_user_real_graph=get_user_real_graph(user_timezone, request.user),
+                # get_user_real_graph=get_user_real_graph(user_timezone, request.user),
             )
         except Exception as e:
             logger.error(str(e))

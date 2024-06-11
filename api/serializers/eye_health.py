@@ -27,7 +27,7 @@ class EyeFatigueReportSerializer(BaseSerializer):
         fields = "__all__"
 
     def get_suggestion(self, object):
-        return object.get_suggestions()
+        return object.suggestion
 
     def get_percentage(self, object):
-        return object.get_percent()
+        return object.health_score

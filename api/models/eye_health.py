@@ -70,11 +70,15 @@ class EyeFatigueReport(BaseModel):
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="eye_fatigue_test_reports"
     )
+    full_name = models.CharField(max_length=255, default="")
+    age = models.CharField(max_length=255, default="")
     report_id = models.IntegerField(unique=True)
     is_fatigue_right = models.BooleanField()
     is_mild_tiredness_right = models.BooleanField()
     is_fatigue_left = models.BooleanField()
     is_mild_tiredness_left = models.BooleanField()
+    health_score = models.IntegerField(default=0)
+    suggestion = models.TextField(default="")
 
     def __str__(self) -> str:
         return self.user.get_full_name()
@@ -82,8 +86,8 @@ class EyeFatigueReport(BaseModel):
     def to_json(self):
         return dict(
             id=self.id,
-            full_name=self.user.get_full_name(),
-            age=self.user.age(),
+            full_name=self.full_name,
+            age=self.age,
             report_id=self.report_id,
             is_fatigue_right=self.is_fatigue_right,
             is_mild_tiredness_right=self.is_mild_tiredness_right,
@@ -92,38 +96,7 @@ class EyeFatigueReport(BaseModel):
         )
 
     def get_percent(self):
-        score, _ = self.get_values()
-        return score
+        return self.health_score
 
     def get_suggestions(self):
-        _, suggestion = self.get_values()
-        return suggestion
-
-    def get_score_and_suggestions(
-        self,
-        is_fatigue_right,
-        is_mild_tiredness_right,
-        is_fatigue_left,
-        is_mild_tiredness_left,
-    ):
-        for condition in FATIGUE_SUGGESTIONS_AND_HEALTH_SCORES:
-            if (
-                condition["is_fatigue_right"] == is_fatigue_right
-                and condition["is_mild_tiredness_right"] == is_mild_tiredness_right
-                and condition["is_fatigue_left"] == is_fatigue_left
-                and condition["is_mild_tiredness_left"] == is_mild_tiredness_left
-            ):
-                return condition["health_score"], condition["suggestion"]
-
-        return (
-            0,
-            "Your condition does not match any predefined criteria. Please consult your eye doctor.",
-        )
-
-    def get_values(self):
-        return self.get_score_and_suggestions(
-            self.is_fatigue_right,
-            self.is_mild_tiredness_right,
-            self.is_fatigue_left,
-            self.is_mild_tiredness_left,
-        )
+        return self.suggestion
