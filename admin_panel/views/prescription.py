@@ -1,3 +1,5 @@
+from utilities.services.email import send_email
+from utilities.services.notification import create_notification
 from django.http import JsonResponse
 from api.models.rewards import GlobalPointsModel
 from core.logs import Logger
@@ -57,6 +59,15 @@ class ChangePrescriptionStatusView(AdminLoginView):
         else:
             prescription_obj.rejection_notes = rejection_notes
         prescription_obj.save()
+
+        subject = f"Your Prescription was {status.title()}"
+        message = f"Your Prescription was {status.title()} uploaded on {prescription_obj.created_on.strftime('%Y-%m-%d')}"
+        send_email(
+            subject=subject, message=message, recipients=[prescription_obj.user.email]
+        )
+        create_notification(
+            user_ids=[prescription_obj.user.id], title=subject, message=message
+        )
         return JsonResponse(
             {"status": True, "message": f"Prescription {status} successfully"}
         )

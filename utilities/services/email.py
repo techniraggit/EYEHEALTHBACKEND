@@ -5,10 +5,10 @@ from django.conf import settings
 
 
 def send_email(
-    subject,
-    message,
-    recipients,
-    cc=None,
+    subject: str,
+    message: str,
+    recipients: list,
+    cc:list=None,
     attachment=None,
     file_type=None,
     file_name=None,

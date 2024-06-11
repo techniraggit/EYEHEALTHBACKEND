@@ -1,26 +1,11 @@
-import os
+from api.models.notifications import PushNotification, UserPushNotification, UserModel
 import requests
-from api.models.notifications import PushNotification, UserPushNotification
-from api.models.accounts import UserModel
-from core.logs import Logger
+import os
+import logging
 
-logger = Logger("notifications.logs")
+logger = logging.getLogger(__name__)
 
 FCM_SERVER_KEY = os.getenv("FCM_SERVER_KEY")
-
-
-# def send_push_notification(device_token, title, message):
-#     url = "https://fcm.googleapis.com/fcm/send"
-#     headers = {"Authorization": f"Key={FCM_SERVER_KEY}"}
-#     data = {
-#         "to": device_token,
-#         "notification": {
-#             "title": title,
-#             "body": message,
-#         },
-#     }
-#     response = requests.post(url, json=data, headers=headers)
-#     return response
 
 
 def send_firebase_notification(device_tokens: list, title: str, message: str):
@@ -42,6 +27,7 @@ def create_notification(user_ids: list, title: str, message: str):
         user_objs = UserModel.objects.filter(id__in=user_ids).prefetch_related(
             "device_info"
         )
+        print(user_objs)
         push_notification_obj = PushNotification.objects.create(
             title=title, message=message
         )
