@@ -64,33 +64,35 @@
 </div>
 <script>
     $(document).ready(function() {
-         // Handle click on "View File" link to open modal
+        // Handle click on "View File" link to open modal
         $(".view-file-link").click(function(e) {
             e.preventDefault();
             let imageUrl = $(this).data('image-url');
+            console.log("Image URL:", imageUrl); // Debugging log
             $("#modalImage").attr("src", imageUrl);
             $("#imageModal").modal('show');
         });
-
-
+    
+        // Handle form submission
         $("#addOfferForm").submit(function(event) {
             event.preventDefault(); // Prevent the form from submitting via the browser
     
             // Perform client-side validation
             let isValid = true;
             $(".form-control").each(function() {
-
                 if ($(this).attr("id") === "image") {
                     var current_file_val = $(this).data('is-file-avail');
-                    return current_file_val;
+                    console.log("Current file available:", current_file_val); // Debugging log
+                    return true; // Adjusted to continue loop, not return value
                 }
-
+    
                 if ($(this).hasClass("optional")) {
                     return true;
                 }
                 if ($(this).val().trim() === "") {
                     isValid = false;
                     $(this).addClass("is-invalid");
+                    console.log("Invalid input:", $(this).attr("id")); // Debugging log
                 } else {
                     $(this).removeClass("is-invalid");
                 }
@@ -100,9 +102,11 @@
                 showToaster("Please fill out all required fields.", "alert-error");
                 return;
             }
-            
+    
             // If valid, proceed with AJAX submission
             let formData = new FormData(this);
+    
+            console.log("Submitting form data..."); // Debugging log
     
             $.ajax({
                 url: "{% url 'edit_offer_view' offer_obj.pk %}",
@@ -114,22 +118,25 @@
                     "X-CSRFToken": "{{ csrf_token }}"
                 },
                 success: function(response) {
+                    console.log("Success response:", response); // Debugging log
                     if (response.status) {
                         showToaster(response.message, "alert-success");
                         setTimeout(function() {
                             window.location.href = "/offers/";
-                        },2000);
+                        }, 2000);
                     } else {
                         showToaster(response.message, "alert-error");
                     }
                 },
                 error: function(xhr, textStatus, errorThrown) {
-                    const response = xhr.responseJSON
+                    console.error("Error response:", xhr, textStatus, errorThrown); // Debugging log
+                    const response = xhr.responseJSON;
                     showToaster(response.message, "alert-error");
                 }
             });
         });
     });
+    
 </script>
 
 {% endblock table%}

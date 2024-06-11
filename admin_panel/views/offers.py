@@ -1,3 +1,4 @@
+from utilities.utils import time_localize
 from django.utils import timezone
 from utilities.services.email import send_email
 from django.http import JsonResponse
@@ -79,9 +80,7 @@ class EditOfferView(AdminLoginView):
         try:
             offer_obj = Offers.objects.get(pk=id)
         except Offers.DoesNotExist:
-            return JsonResponse(
-                {"status": False, "message": "Offer does not exist"}, status=404
-            )
+            return JsonResponse({"status": False, "message": "Offer does not exist"})
 
         offer_form = OffersForm(request.POST, request.FILES, instance=offer_obj)
         if offer_form.is_valid():
@@ -93,9 +92,15 @@ class EditOfferView(AdminLoginView):
             )
         else:
             errors = offer_form.errors.as_json()
-            return JsonResponse({"status": False, "errors": errors}, status=400)
+            parsed_data = json.loads(errors)
+            first_key = next(iter(parsed_data))
+            first_object = parsed_data[first_key][0]
+            message = (
+                f"{first_key.title().replace('_', ' ')}: {first_object['message']}"
+            )
+            return JsonResponse({"status": False, "message": message})
 
-from utilities.utils import time_localize
+
 class OfferDetailedView(AdminLoginView):
     def get(self, request, id):
         try:
@@ -104,13 +109,13 @@ class OfferDetailedView(AdminLoginView):
             return JsonResponse({"status": False, "message": "Offer does not exist"})
 
         offer_data = dict(
-            offer_id = offer_obj.offer_id,
-            title = offer_obj.title,
-            image = offer_obj.image.url if offer_obj.image else "",
-            description = offer_obj.description,
-            expiry_date = time_localize(offer_obj.expiry_date).strftime("%Y-%m-%d"),
-            status = offer_obj.status,
-            required_points = offer_obj.required_points,
+            offer_id=offer_obj.offer_id,
+            title=offer_obj.title,
+            image=offer_obj.image.url if offer_obj.image else "",
+            description=offer_obj.description,
+            expiry_date=time_localize(offer_obj.expiry_date).strftime("%Y-%m-%d"),
+            status=offer_obj.status,
+            required_points=offer_obj.required_points,
         )
         return JsonResponse(offer_data)
 
@@ -120,12 +125,15 @@ class DeleteOfferView(AdminLoginView):
         try:
             offer_obj = Offers.objects.get(pk=id)
         except Offers.DoesNotExist:
-            messages.error(request, "Offer does not exist")
-            return redirect("offers_view")
+            return JsonResponse({
+                "status": False,
+                "message": "Offer does not exist",
+                "redirect_url": reverse("offers_view"),
+            })
         offer_obj.delete()
-        messages.success(request, "Offer has been deleted successfully")
-        return redirect("offers_view")
-
+        return JsonResponse(
+            {"status": True, "message": "Offer has been deleted successfully", "redirect_url": reverse("offers_view"),}
+        )
 
 class RedeemedOffersView(AdminLoginView):
     def get(self, request):

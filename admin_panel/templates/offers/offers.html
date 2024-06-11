@@ -50,9 +50,8 @@
             <td class="{{ offer.status }}" >{{ offer.status|title }}</td>
             <td>{{ offer.required_points }}</td>
             <td>
-                <a href="{% url "delete_offer_view" offer.offer_id %}"><i class="fa-solid fa-trash-can me-2"></i></a>
+                <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
                 <a href="{% url "edit_offer_view" offer.offer_id %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <!--<a href="{% url "offer_detailed_view" offer.offer_id %}"> <i class="fa-regular fa-eye"></i></a> -->
                 <a href="#" class="view-offer-details" data-offer-id="{{ offer.offer_id }}"><i class="fa-regular fa-eye"></i></a>
             </td>
         </tr>
@@ -81,22 +80,79 @@
 </div>
 <!-- Offer Detail Modal -->
 
+<!-- offer delete popup -->
+<div id="dlt-btn-overlay" class="dlt-btn-overlay" style="display: none;">
+    <div class="dlt-popup">
+        <h2>Are you sure you want to delete this Offer?</h2>
+        <div class="dlt-buttons">
+            <button class="pop-confirm-btn" id="confirmDelete">Yes, delete it</button>
+            <button class="pop-confirm-btn" id="cancelDelete">No, keep it</button>
+        </div>
+    </div>
+</div>
+<!-- offer delete popup end -->
+
 <script>
     $(document).ready(function() {
+        // Delete the offer when the delete button is clicked
+        let deleteId = null;
+        $(document).on('click', '#deleteButton', function(event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'flex');
+            deleteId = $(this).data("offer-id");
+            console.log("Delete button clicked, offer ID:", deleteId);
+        });
+
+        // Delete the user when the confirm delete button is clicked
+        $('#confirmDelete').click(function(event) {
+            event.preventDefault();
+            console.log("Confirm delete clicked, deleting offer ID:", deleteId);
+            $('#dlt-btn-overlay').css('display', 'none');
+            $.ajax({
+                url: "delete-offer-view/" + deleteId,
+                type: 'GET',
+                success: function(data) {
+                    if(data.status){
+                        showToaster(data.message, "alert-success");
+                        setTimeout(function() {
+                            location.reload();
+                        }, 2000);
+                    }else{
+                        showToaster(data.message, "alert-error");
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error making GET request:', error);
+                    $('#dlt-btn-overlay').css('display', 'none');
+                    showToaster(error, "alert-error");
+                }
+            });
+        });
+
+        // Hide the delete button overlay when the cancel delete button is clicked
+        $('#cancelDelete').click(function(event) {
+            event.preventDefault();
+            console.log("Cancel delete clicked");
+            $('#dlt-btn-overlay').css('display', 'none');
+        });
+
+        // View offer details when the view offer details button is clicked
         $('.view-offer-details').click(function(event) {
             event.preventDefault();
             var offerId = $(this).data('offer-id');
             var modal = $('#offerDetailModal');
+            console.log("View offer details clicked, offer ID:", offerId);
 
             $.ajax({
                 url: '/offers/offer-detailed-view/' + offerId,
                 method: 'GET',
                 success: function(data) {
+                    console.log("Offer details fetched successfully:", data);
                     modal.find('#modal-title').text(data.title);
                     modal.find('#modal-description').text(data.description);
                     modal.find('#modal-expiry_date').text(data.expiry_date);
                     modal.find('#modal-status').text(data.status);
-                    modal.find('#modal-status').addClass(data.status)
+                    modal.find('#modal-status').addClass(data.status);
                     modal.find('#modal-required_points').text(data.required_points);
                     modal.modal('show');
                 },
@@ -107,12 +163,13 @@
             });
         });
 
-        $("#modal_dismis").on("click", function(e) {
-            e.preventDefault();
+        // Hide the modal when the dismiss button is clicked
+        $("#modal_dismis").on("click", function(event) {
+            event.preventDefault();
+            console.log("Modal dismiss clicked");
             $('#offerDetailModal').modal('hide');
-        })
+        });
     });
-    </script>
     
-
+</script>
 {% endblock table%}
