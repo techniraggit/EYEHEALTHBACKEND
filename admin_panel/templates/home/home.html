@@ -9,37 +9,33 @@
         <div class="col-4">
             <div class="list-box">
                 <div>
-                    <img class="me-4" src="{% static "icons/home/group.png" %}" />
+                    <img class="me-4" src="{% static 'icons/home/group.png' %}" />
                 </div>
                 <div>
                     <h4>{{ total_users }}</h4>
                     <span>Users</span>
                 </div>
-
             </div>
         </div>
         <div class="col-4">
             <div class="list-box">
                 <div>
-                    <img class="me-4" src="{% static "icons/home/discount.png" %}" />
+                    <img class="me-4" src="{% static 'icons/home/discount.png' %}" />
                 </div>
                 <div>
-                    <h4>{{ total_offers }}</h4>
-                    <span>Offers</span>
+                    <h4>{{ total_active_offers }}</h4>
+                    <span>Active Offers</span>
                 </div>
-
             </div>
         </div>
         <div class="col-4">
             <div class="list-box">
                 <div>
-                    <img class="me-4" src="{% static "icons/home/box.png" %}" />
+                    <img class="me-4" src="{% static 'icons/home/box.png' %}" />
                 </div>
                 <div>
                     <h4>{{ total_redeemed_offers }}</h4>
-                    <span>
-                        Redmeed Offers
-                    </span>
+                    <span>Redeemed Offers</span>
                 </div>
             </div>
         </div>
@@ -48,44 +44,83 @@
         <div class="col-4">
             <div class="list-box">
                 <div>
-                    <img class="me-4" src="{% static "icons/home/prescription.png" %}" />
+                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
                 </div>
                 <div>
-                    <h4>
-                        {{ total_prescriptions }}
-                    </h4>
-                    <span>
-                        Prescription Uploaded
-                    </span>
+                    <h4>{{ total_approved_prescriptions }}</h4>
+                    <span>Approved Prescription</span>
                 </div>
             </div>
         </div>
         <div class="col-4">
             <div class="list-box">
                 <div>
-                    <img class="me-4" src="{% static "icons/home/eye-exam.png" %}" />
+                    <img class="me-4" src="{% static 'icons/home/eye-exam.png' %}" />
                 </div>
                 <div>
                     <h4>{{ total_eye_tests }}</h4>
-                    <span>
-                        Eye Test
-                    </span>
+                    <span>Eye Test</span>
                 </div>
             </div>
         </div>
         <div class="col-4">
             <div class="list-box">
                 <div>
-                    <img class="me-4" src="{% static "icons/home/eye-test.png" %}" />
+                    <img class="me-4" src="{% static 'icons/home/eye-test.png' %}" />
                 </div>
                 <div>
                     <h4>{{ total_eye_fatigue_test }}</h4>
-                    <span>
-                        Fatigue Test
-                    </span>
+                    <span>Fatigue Test</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_pending_prescriptions }}</h4>
+                    <span>Pending Prescription</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_rejected_prescriptions }}</h4>
+                    <span>Rejected Prescription</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/discount.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_inactive_offers }}</h4>
+                    <span>Inactive Offers</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-4 mt-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/discount.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_expired_offers }}</h4>
+                    <span>Expired Offers</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 {% endblock table %}

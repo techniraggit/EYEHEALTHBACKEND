@@ -16,20 +16,40 @@ class HomeView(AdminLoginView):
         eye_fatigue_queryset = EyeFatigueReport.objects.all()
         eye_test_queryset = EyeTestReport.objects.all()
 
-        # Counts
+        # Counting starts here >>>>>>>>>>
+        # Users
         total_users = user_queryset.exclude(is_superuser=True).count()
-        total_offers = offers_queryset.count()
+
+        # Offers
+        total_active_offers = offers_queryset.filter(status="active").count()
+        total_inactive_offers = offers_queryset.filter(status="inactive").count()
+        total_expired_offers = offers_queryset.filter(status="expired").count()
+
+        # Redeemed Offers
         total_redeemed_offers = redeemed_offers_queryset.exclude(status="pending").count()
-        total_prescriptions = prescriptions_queryset.filter(status="approved").count()
+        
+        # Prescription 
+        total_approved_prescriptions = prescriptions_queryset.filter(status="approved").count()
+        total_pending_prescriptions = prescriptions_queryset.filter(status="pending").count()
+        total_rejected_prescriptions = prescriptions_queryset.filter(status="rejected").count()
+        
+        # Eye Test
         total_eye_tests = eye_fatigue_queryset.count()
+        
+        # Eye Fatigue
         total_eye_fatigue_test = eye_test_queryset.count()
+
         context = dict(
-            is_home=True,
-            total_users=total_users,
-            total_offers=total_offers,
-            total_redeemed_offers=total_redeemed_offers,
-            total_prescriptions=total_prescriptions,
-            total_eye_tests=total_eye_tests,
-            total_eye_fatigue_test=total_eye_fatigue_test,
+            is_home = True,
+            total_users = total_users,
+            total_active_offers = total_active_offers,
+            total_inactive_offers = total_inactive_offers,
+            total_expired_offers = total_expired_offers,
+            total_redeemed_offers = total_redeemed_offers,
+            total_approved_prescriptions = total_approved_prescriptions,
+            total_pending_prescriptions = total_pending_prescriptions,
+            total_rejected_prescriptions = total_rejected_prescriptions,
+            total_eye_tests = total_eye_tests,
+            total_eye_fatigue_test = total_eye_fatigue_test,
         )
         return render(request, "home/home.html", context)
