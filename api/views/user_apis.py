@@ -194,6 +194,7 @@ class UserPrescriptionsView(UserMixin):
                 data=serializer.data,
                 message="Prescription uploaded successfully, please wait for admin approval",
             )
+        print("Pres>>>>", serializer.errors)
         return api_response(False, 400, data=serializer.errors)
 
 

@@ -19,6 +19,8 @@ class UserPrescriptions(BaseModel):
         ("rejected", "rejected"),
     )
     prescription_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    doctor_name = models.CharField(max_length=255)
+    visit_date = models.DateField()
     uploaded_file = models.FileField(
         upload_to="user/prescriptions",
         validators=[FileExtensionValidator(allowed_extensions=image_extensions)],
