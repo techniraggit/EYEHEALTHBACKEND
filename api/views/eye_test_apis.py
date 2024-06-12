@@ -41,6 +41,8 @@ END_POINTS = {
     "calculate_distance": f"{BASE_URL}/calculate-distance/",
     "get_eye_access_token": f"{BASE_URL}/get-eye-access-token/",
     "counter_api": f"{BASE_URL}/counter-api/",
+    "reading_snellen_fraction": f"{BASE_URL}/reading-snellen-fraction/",
+    "random_word_Reading_test": f"{BASE_URL}/random-word-Reading-test/",
 }
 
 
@@ -228,6 +230,22 @@ def counter_api(params):
     headers = {"Authorization": settings.SNELLEN_FRACTION_STATIC_TOKEN}
     response = requests.get(
         END_POINTS.get("counter_api"), params=params, headers=headers
+    )
+    return response
+
+def reading_snellen_fraction(customer_id, params):
+    token =  get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
+    response = requests.get(
+        END_POINTS.get("reading_snellen_fraction"), params=params, headers=headers
+    )
+    return response
+
+def random_word_Reading_test(customer_id, data):
+    token = get_user_token(customer_id)
+    headers = dict(Authorization=f"Bearer {token}")
+    response = requests.post(
+        END_POINTS.get("random_word_Reading_test"), json=data, headers=headers
     )
     return response
 
@@ -577,6 +595,26 @@ class CounterApiView(UserMixin):
     def get(self, request):
         params = request.GET
         response = counter_api(params)
+        try:
+            return Response(response.json(), response.status_code)
+        except:
+            return HttpResponse(response)
+
+class ReadingSnellenFractionView(UserMixin):
+    def get(self, request):
+        params = request.GET
+        customer_id = request.headers.get("Customer-Id")
+        response = reading_snellen_fraction(customer_id, params)
+        try:
+            return Response(response.json(), response.status_code)
+        except:
+            return HttpResponse(response)
+
+class RandomWordReadingTestView(UserMixin):
+    def post(self, request):
+        data = request.data
+        customer_id = request.headers.get("Customer-Id")
+        response = random_word_Reading_test(customer_id, data)
         try:
             return Response(response.json(), response.status_code)
         except:

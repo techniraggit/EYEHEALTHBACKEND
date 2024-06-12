@@ -67,6 +67,8 @@ eye_health_apis = [
     path("reports", EyeTestReports.as_view()),
     path("download-reports", DownloadReportView.as_view()),
     path("counter-api", CounterApiView.as_view()),
+    path("reading-snellen-fraction", ReadingSnellenFractionView.as_view()),
+    path("random-word-Reading-test", RandomWordReadingTestView.as_view()),
 ]
 
 fatigue_apis = [
