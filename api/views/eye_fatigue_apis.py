@@ -280,9 +280,6 @@ class EyeFatigueGraph(UserMixin):
             return api_response(False, 400, message="user_timezone is required")
 
         try:
-            first_day_data = first_day_user_graph(request.user, user_timezone)
-            current_day_data = current_day_user_graph(request.user, user_timezone)
-
             eye_fatigue_count = EyeFatigueReport.objects.filter(
                 user=request.user
             ).count()
@@ -308,8 +305,8 @@ class EyeFatigueGraph(UserMixin):
                 name=request.user.get_full_name(),
                 no_of_fatigue_test=eye_fatigue_count,
                 eye_health_score=eye_health_score,
-                first_day_data=first_day_data,
-                current_day_data=current_day_data,
+                first_day_data=first_day_user_graph(request.user, user_timezone),
+                current_day_data=current_day_user_graph(request.user, user_timezone),
                 get_percentile_graph=get_percentile_graph(user_timezone),
                 get_ideal_graph=get_ideal_graph(user_timezone),
                 # get_user_real_graph=get_user_real_graph(user_timezone, request.user),
