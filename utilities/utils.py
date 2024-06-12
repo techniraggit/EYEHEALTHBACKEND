@@ -75,3 +75,7 @@ import pytz
 def time_localize(datetime_object: datetime):
     timezone = pytz.timezone("Asia/Kolkata")
     return datetime_object.astimezone(timezone)
+
+def dlt_value():
+    from uuid import uuid4
+    return f"+{str(uuid4()).split('-')[0]}"

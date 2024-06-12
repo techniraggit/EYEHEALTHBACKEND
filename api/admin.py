@@ -17,7 +17,7 @@ class UserModelAdmin(admin.ModelAdmin):
     list_display.append("deleted")
 
     def get_queryset(self, request):
-        return UserModel.all_objects.all()
+        return UserModel.all_objects.all().order_by("-created_on")
 
 
 @admin.register(UserPoints)

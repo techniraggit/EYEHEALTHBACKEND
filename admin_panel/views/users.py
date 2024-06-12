@@ -1,3 +1,7 @@
+from utilities.utils import dlt_value
+from admin_panel.forms.accounts import UserCreationForm
+import json
+from django.http import JsonResponse
 from utilities.utils import time_localize
 from openpyxl import Workbook
 from openpyxl.writer.excel import save_virtual_workbook
@@ -79,6 +83,31 @@ class UserEditView(AdminLoginView):
         return redirect(reverse("user_edit_view", kwargs={"id": user_obj.id}))
 
 
+class AddUserView(AdminLoginView):
+    def get(self, request):
+        context = dict(
+            is_user=True,
+        )
+        return render(request, "users/add_user.html", context)
+
+    def post(self, request):
+        user_creation_form = UserCreationForm(data=request.POST)
+        if user_creation_form.is_valid():
+            user_creation_form.save()
+            return JsonResponse({"status": True, "message": "User added successfully"})
+        errors = user_creation_form.errors.as_json()
+        parsed_data = json.loads(errors)
+        first_key = next(iter(parsed_data))
+        first_object = parsed_data[first_key][0]
+        message = f"{first_key.title().replace('_', ' ')}: {first_object['message']}"
+        return JsonResponse(
+            {
+                "status": False,
+                "message": message,
+            }
+        )
+
+
 class UserDeleteView(AdminLoginView):
     def get(self, request, id):
         try:
@@ -88,8 +117,8 @@ class UserDeleteView(AdminLoginView):
             return redirect("users_view")
         usr_phone = user_obj.phone_number
         usr_email = user_obj.email
-        user_obj.phone_number = usr_phone + "+deleted"
-        user_obj.email = usr_email + "+deleted"
+        user_obj.phone_number = usr_phone + dlt_value()
+        user_obj.email = usr_email + dlt_value()
         user_obj.save()
         user_obj.delete()
         OTPLog.objects.filter(Q(username=usr_phone) | Q(username=usr_email)).delete()

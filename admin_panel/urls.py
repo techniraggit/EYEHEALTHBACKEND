@@ -22,6 +22,7 @@ users_urls = [
     path("", UserView.as_view(), name="users_view"),
     path("user-view/<uuid:id>", UserDetailedView.as_view(), name="user_detailed_view"),
     path("user-edit/<uuid:id>", UserEditView.as_view(), name="user_edit_view"),
+    path("add-user", AddUserView.as_view(), name="add_user_view"),
     path("user-delete/<uuid:id>", UserDeleteView.as_view(), name="user_delete_view"),
     path("user-export/<str:file_type>", UserExportView.as_view(), name="user_export_view"),
 ]

@@ -1,0 +1,109 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %} Add User {% endblock title %}
+
+{% block page_name %}Add User{% endblock page_name %}
+{% block table %}
+<div class="right-table1">
+    <div class="edit-nav row">
+        <div class="profile col-4">
+            <input type="file" name="image" id="image">
+        </div>
+    </div>
+    <div class="form-main">
+        <form id="user-form" method="POST">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 f-name mt-4">
+                    <label>First Name</label>
+                    <input type="text" name="first_name" id="first_name"/>
+                    <span id="first_name_message" style="color:red; font-weight: bold;"></span>
+                </div>
+                <div class="col-md-4 f-lname mt-4">
+                    <label>Last Name</label>
+                    <input type="text" name="last_name" id="last_name"/>
+                    <span id="last_name_message" style="color:red; font-weight: bold;"></span>
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label>E-mail</label>
+                    <input type="email" name="email" id="email"/>
+                    <span id="email_message" style="color:red; font-weight: bold;"></span>
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label>Date Of Birth</label>
+                    <input type="date" name="dob" id="dob"/>
+                    <span id="dob_message" style="color:red; font-weight: bold;"></span>
+                </div>
+                <div class="col-md-4 f-name mt-4">
+                    <label>Phone Number</label>
+                    <input type="number" name="phone_number" id="phone_number"/>
+                    <span id="phone_number_message" style="color:red; font-weight: bold;"></span>
+                </div>
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#user-form').on('submit', function(event) {
+            event.preventDefault();
+            let isValid = true;
+            let formData = {
+                'first_name': $('#first_name').val(),
+                'last_name': $('#last_name').val(),
+                'email': $('#email').val(),
+                'dob': $('#dob').val(),
+                'phone_number': $('#phone_number').val(),
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+            };
+
+            if (!formData.first_name) {
+                $("#first_name_message").text("First Name is required");
+                isValid = false;
+            }
+            if (!formData.last_name) {
+                $("#last_name_message").text("Last Name is required");
+                isValid = false;
+            }
+            if (!formData.email) {
+                $("#email_message").text("Email is required");
+                isValid = false;
+            }
+            if (!formData.dob) {
+                $("#dob_message").text("Date of Birth is required");
+                isValid = false;
+            }
+            if (!formData.phone_number) {
+                $("#phone_number_message").text("Phone Number is required");
+                isValid = false;
+            }
+
+            if (isValid) {
+                $.ajax({
+                    url: '{% url "add_user_view" %}',
+                    type: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        if(response.status){
+                            showToaster(response.message, "alert-success");
+                            setTimeout(function() {
+                                window.location.href = "{% url 'users_view' %}";
+                            }, 2000);
+                        } else {
+                            showToaster(response.message, "alert-error");
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        alert('An error occurred: ' + error);
+                    }
+                });
+            } else {
+                showToaster("Required fields are missing", "alert-error");
+            }
+        });
+    });
+</script>
+{% endblock table %}

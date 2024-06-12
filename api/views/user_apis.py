@@ -1,3 +1,6 @@
+from utilities.utils import dlt_value
+from django.db.models import Q
+from api.models.accounts import OTPLog
 from api.models.rewards import GlobalPointsModel
 from django.db.models.functions import Concat
 from django.db.models import F, Value, Sum
@@ -313,10 +316,6 @@ class UserRedeemedOffersView(UserMixin):
             return api_response(False, 500, ERROR_500_MSG, error=str(e))
 
 
-from api.models.accounts import OTPLog
-from django.db.models import Q
-
-
 class UserAccountDeleteView(UserMixin):
     def get(self, request):
         try:
@@ -326,8 +325,8 @@ class UserAccountDeleteView(UserMixin):
 
         usr_phone = user_obj.phone_number
         usr_email = user_obj.email
-        user_obj.phone_number = usr_phone + "+deleted"
-        user_obj.email = usr_email + "+deleted"
+        user_obj.phone_number = usr_phone + dlt_value()
+        user_obj.email = usr_email + dlt_value()
         user_obj.save()
         user_obj.delete()
         OTPLog.objects.filter(Q(username=usr_phone) | Q(username=usr_email)).delete()
