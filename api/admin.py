@@ -13,6 +13,11 @@ from api.models.prescription import *
 class UserModelAdmin(admin.ModelAdmin):
     list_display = ["id", "first_name", "last_name", "email", "phone_number"]
     search_fields = ["email", "phone_number"]
+    list_filter = ["deleted"]
+    list_display.append("deleted")
+
+    def get_queryset(self, request):
+        return UserModel.all_objects.all()
 
 
 @admin.register(UserPoints)

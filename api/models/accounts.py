@@ -1,7 +1,7 @@
 from core.constants import EVENT_CHOICES
 from datetime import date
 from uuid import uuid4
-from .base import BaseModel
+from .base import BaseModel, SoftDeleteMixin
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -30,10 +30,13 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_("Superuser must have is_superuser=True."))
         return self.create_user(email, password, **extra_fields)
 
+    def get_queryset(self):
+        return super().get_queryset().filter(deleted__isnull=True)
 
-class UserModel(AbstractUser, BaseModel):
+
+class UserModel(AbstractUser, BaseModel, SoftDeleteMixin):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    phone_number = models.CharField(max_length=20, unique=True)
+    phone_number = models.CharField(max_length=50, unique=True)
     email = models.EmailField("Email address", unique=True)
     image = models.FileField(upload_to="profile_image", null=True, blank=True)
     dob = models.DateField(null=True)
@@ -45,6 +48,7 @@ class UserModel(AbstractUser, BaseModel):
 
     username = None
     objects = CustomUserManager()
+    all_objects  = models.Manager()
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name"]
 
@@ -53,6 +57,9 @@ class UserModel(AbstractUser, BaseModel):
         self.save()
 
     def age(self):
+        if not self.dob:
+            return 0
+
         today = date.today()
         age = (
             today.year

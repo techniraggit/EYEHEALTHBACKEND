@@ -46,6 +46,7 @@
         <th>Age</th>
         <th>Points</th>
         <th>Referral Code</th>
+        <th>Type</th>
         <th>Action</th>
     </tr>
     {% for user in users %}
@@ -58,6 +59,7 @@
             <td>{{ user.age }}</td>
             <td>{{ user.points }}</td>
             <td>{{ user.referral_code }}</td>
+            <td>{% if user.is_superuser %}Admin {% else %}User{% endif %}</td>
             <td>
                 <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-id="{{ user.id }}"></i></a>
                 <a href="{% url "user_edit_view" user.id %}"><i class="fa-solid fa-pen me-2"></i></a>

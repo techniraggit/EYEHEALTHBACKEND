@@ -8,11 +8,11 @@ from api.serializers.accounts import UserSerializer
 from django.urls import reverse
 from .base import AdminLoginView
 from django.shortcuts import render, redirect
-from django.contrib.auth import get_user_model
 from django.contrib import messages
 from django.db.models import Q
+from api.models.accounts import UserModel, OTPLog
 
-User = get_user_model()
+User = UserModel
 
 
 class UserView(AdminLoginView):
@@ -86,7 +86,13 @@ class UserDeleteView(AdminLoginView):
         except:
             messages.error(request, "User does not exist")
             return redirect("users_view")
-        # user_obj.delete()
+        usr_phone = user_obj.phone_number
+        usr_email = user_obj.email
+        user_obj.phone_number = usr_phone + "+deleted"
+        user_obj.email = usr_email + "+deleted"
+        user_obj.save()
+        user_obj.delete()
+        OTPLog.objects.filter(Q(username=usr_phone) | Q(username=usr_email)).delete()
         messages.success(request, "User deleted successfully")
         return redirect("users_view")
 

@@ -312,6 +312,27 @@ class UserRedeemedOffersView(UserMixin):
             return api_response(False, 500, ERROR_500_MSG, error=str(e))
 
 
+from api.models.accounts import OTPLog
+from django.db.models import Q
+
+
+class UserAccountDeleteView(UserMixin):
+    def get(self, request):
+        try:
+            user_obj = UserModel.objects.get(id=request.user.id)
+        except:
+            return api_response(False, 404, "User does not exist")
+
+        usr_phone = user_obj.phone_number
+        usr_email = user_obj.email
+        user_obj.phone_number = usr_phone + "+deleted"
+        user_obj.email = usr_email + "+deleted"
+        user_obj.save()
+        user_obj.delete()
+        OTPLog.objects.filter(Q(username=usr_phone) | Q(username=usr_email)).delete()
+        return api_response(True, 200, "Account deleted successfully.")
+
+
 class UploadUserContactView(UserMixin):
     def post(self, request):
         logger.info(f"Upload contacts >> {request.data}")
