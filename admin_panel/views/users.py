@@ -34,7 +34,7 @@ class UserView(AdminLoginView):
         else:
             users = User.objects.exclude(id=request.user.id)
         context = dict(
-            users=users,
+            users=users.order_by("-created_on"),
             is_user=True,
             search=search,
         )
