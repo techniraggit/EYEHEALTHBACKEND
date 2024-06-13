@@ -5,11 +5,17 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-
-        <div class="col-5">
+        <div class="col-8">
             <div class="input-wrapp">
-                <input type="text" placeholder="Search by names, type and value">
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <form action="{% url 'offers_view' %}" method="get" id="searchForm">
+                    <div>
+                        <input type="text" name="search" id="searchInput" placeholder="Search by Title, Description, and Required Points" value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div>
+                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <button type="button" id="clearButton">Clear</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -21,9 +27,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li class="mb-1"><a href="#">PDF</a></li>
-                        <li class="mb-1"><a href="#">Excel</a></li>
-                        <li><a href="#">CSV</a></li>
+                        <li><a class="dropdown-item" href="#">Excel</a></li>
+                        <li><a class="dropdown-item" href="#">CSV</a></li>
                     </ul>
                 </li>
             </ul>
@@ -97,6 +102,12 @@
 
 <script>
     $(document).ready(function() {
+        // Clear the search input value when the clear button is clicked
+        $('#clearButton').click(function(){
+            $('#searchInput').val('');
+            $('#searchForm').submit();
+        });
+
         // Delete the offer when the delete button is clicked
         let deleteId = null;
         $(document).on('click', '#deleteButton', function(event) {
