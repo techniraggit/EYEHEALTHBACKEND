@@ -1,0 +1,187 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% load custom_filters %}
+{% block title %} Trash {% endblock title %}
+
+{% block page_name %}Trash{% endblock page_name %}
+{% block nav_bar %}
+{% comment %} Nav Bar code goes here, if needed {% endcomment %}
+{% endblock nav_bar %}
+{% block table %}
+<div class="containers mt-5">
+    <ul class="nav nav-tabs customtabs">
+        <li class="nav-item">
+            <a class="nav-link active" id="offers-tab" data-toggle="tab" href="#offers" role="tab">Offers</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab">Users</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="plan-tab" data-toggle="tab" href="#plans" role="tab">Subscription Plan</a>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+        <div class="tab-pane fade show active" id="offers" role="tabpanel">
+            <table class="table" id="offer_table">
+                {% if trash_offers %}
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Expiry Date</th>
+                            <th>Status</th>
+                            <th>Required Points</th>
+                            <th>Deleted At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for offer in trash_offers %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ offer.title }}</td>
+                            <td>{{ offer.description }}</td>
+                            <td>{{ offer.expiry_date }}</td>
+                            <td>{{ offer.status }}</td>
+                            <td>{{ offer.required_points }}</td>
+                            <td>{{ offer.deleted|format_datetime }}</td>
+                            <td data-id="{{ offer.pk }}" data-type="offer" class="restore"><a href="#"><i class="fa-solid fa-trash-can-arrow-up"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                {% else %}
+                    <div id="offer_table" class="text-center"><img src="{% static "icons/no-results.png" %}" alt="no-results-img"></div>
+                {% endif %}
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="users" role="tabpanel">
+            <table class="table hide-table" id="user_table">
+                {% if trash_users %}
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>E-mail</th>
+                            <th>Phone Number</th>
+                            <th>Deleted At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in trash_users %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ user.first_name }}</td>
+                            <td>{{ user.last_name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone_number }}</td>
+                            <td>{{ user.deleted|format_datetime }}</td>
+                            <td data-id="{{ user.pk }}" data-type="user" class="restore"><a href="#"><i class="fa-solid fa-trash-can-arrow-up"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                {% else %}
+                    <div id="user_table" class="text-center"><img src="{% static "icons/no-results.png" %}" alt="no-results-img"></div>
+                {% endif %}
+            </table>
+        </div>
+
+        <div class="tab-pane fade" id="plans" role="tabpanel">
+            <table class="table hide-table" id="plan_table">
+                {% if trash_plans %}
+                    <thead>
+                        <tr>
+                            <th>Sr.No</th>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Plan Type</th>
+                            <th>Duration (In Days)</th>
+                            <th>Deleted At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for plan in trash_plans %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ plan.name }}</td>
+                            <td>{{ plan.description }}</td>
+                            <td>{{ plan.price }}</td>
+                            <td>{{ plan.plan_type }}</td>
+                            <td>{{ plan.duration }}</td>
+                            <td>{{ plan.deleted|format_datetime }}</td>
+                            <td data-id="{{ plan.pk }}" data-type="plan" class="restore"><a href="#"><i class="fa-solid fa-trash-can-arrow-up"></i></a></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                {% else %}
+                    <div id="plan_table" class="text-center"><img src="{% static "icons/no-results.png" %}" alt="no-results-img"></div>
+                {% endif %}
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Tab switching logic
+        $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+            var target = $(e.target).attr("href");
+            $(".tab-pane").removeClass("show active");
+            $(target).addClass("show active");
+
+            // Show/hide corresponding tables
+            if (target === "#offers") {
+                $("#offer_table").removeClass("hide-table");
+                $("#user_table").addClass("hide-table");
+                $("#plan_table").addClass("hide-table");
+            } else if (target === "#users") {
+                $("#offer_table").addClass("hide-table");
+                $("#user_table").removeClass("hide-table");
+                $("#plan_table").addClass("hide-table");
+            } else if (target === "#plans") {
+                $("#offer_table").addClass("hide-table");
+                $("#user_table").addClass("hide-table");
+                $("#plan_table").removeClass("hide-table");
+            }
+        });
+
+        // Restore item logic
+        $('.restore').click(function(){
+            var $row = $(this).closest('tr');
+            var id = $(this).data('id');
+            var type = $(this).data('type');
+            var url = "";
+
+            if (type === 'user') {
+                url = "/trash/restore-user/" + id;
+            } else if (type === 'offer') {
+                url = "/trash/restore-offer/" + id;
+            } else if (type === 'plan') {
+                url = "/trash/restore-subscription-plan/" + id;
+            }
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                success: function(response){
+                    if (response.status){
+                        showToaster(response.message, "alert-success");
+                        $row.remove();
+                    } else {
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function(error){
+                    alert('Error restoring item');
+                }
+            });
+        });
+    });
+</script>
+{% endblock table %}

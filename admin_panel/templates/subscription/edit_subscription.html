@@ -1,0 +1,142 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %} Edit Subscription Plan {% endblock title %}
+
+{% block page_name %}Edit Subscription Plan{% endblock page_name %}
+{% block table %}
+<div class="right-table1">
+    <div class="form-main">
+        <form method="POST" id="planForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 f-name mt-4">
+                    <label for="name">Name <span id="required_star">*</span></label>
+                    <input type="text" name="name" id="name" value="{{ plan_obj.name }}">
+                    <span id="name_message" style="color: red; font-weight: bold"></span>
+                </div>
+
+                <div class="col-md-4 f-mail mt-4">
+                    <label for="price">Price <span id="required_star">*</span></label>
+                    <input type="number" name="price" id="price" value="{{ plan_obj.price }}">
+                    <span id="price_message" style="color: red; font-weight: bold"></span>
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="plan_type">Plan Type <span id="required_star">*</span></label>
+                    <select name="plan_type" id="plan_type" class="form-control">
+                        <option value="basic" {% if plan_obj.plan_type == 'basic' %}selected{% endif %}>Basic</option>
+                        <option value="monthly" {% if plan_obj.plan_type == 'monthly' %}selected{% endif %}>Monthly</option>
+                        <option value="quarterly" {% if plan_obj.plan_type == 'quarterly' %}selected{% endif %}>Quarterly</option>
+                        <option value="yearly" {% if plan_obj.plan_type == 'yearly' %}selected{% endif %}>Yearly</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label>Is Active</label>
+                    <label class="radio">
+                        <input type="radio" name="is_active" id="is_active_yes" value="true" {% if plan_obj.is_active %}checked{% endif %}> Yes
+                    </label>
+                    <label class="radio">
+                        <input type="radio" name="is_active" id="is_active_no" value="false" {% if not plan_obj.is_active %}checked{% endif %}> No
+                    </label>
+                </div>
+
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="duration">Duration <span id="required_star">*</span></label>
+                    <input type="number" name="points" id="duration" value="{{ plan_obj.duration }}">
+                    <span id="duration_message" style="color: red; font-weight: bold"></span>
+                </div>
+
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="description">Description <span id="required_star">*</span></label>
+                    <textarea name="description" id="description" cols="30" rows="6">{{ plan_obj.description }}</textarea>
+                    <span id="description_message" style="color: red; font-weight: bold"></span>
+                </div>
+
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('#planForm').submit(function(event) {
+            event.preventDefault();
+
+            let isValid = true;
+            const name = $('#name').val().trim();
+            const price = $('#price').val().trim();
+            const plan_type = $('#plan_type').val();
+            const is_active = $('input[name="is_active"]:checked').val();
+            const duration = $('#duration').val().trim();
+            const description = $('#description').val().trim();
+
+            console.log("name == ", name)
+            console.log("price == ", price)
+            console.log("plan_type == ", plan_type)
+            console.log("is_active == ", is_active)
+            console.log("duration == ", duration)
+            console.log("description == ", description)
+
+            if (!name) {
+                isValid = false;
+                $("#name_message").text("Name is required");
+            }
+            if (!price || isNaN(price) || price <= 0) {
+                isValid = false;
+                $("#price_message").text("Valid price is required");
+            }
+            if (!plan_type) {
+                isValid = false;
+
+                alert('Plan type is required');
+            }
+            if (!is_active) {
+                isValid = false;
+                alert('Please select if the plan is active');
+            }
+            if (!duration || isNaN(duration) || duration <= 0) {
+                isValid = false;
+                $("#duration_message").text("Valid duration is required")
+            }
+            if (!description) {
+                isValid = false;
+                $("#description_message").text("Description is required")
+            }
+
+            if (isValid) {
+                $.ajax({
+                    url: "{% url 'edit_subscription_view' plan_obj.pk %}",
+                    method: "POST",
+                    data: {
+                        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+                        name: name,
+                        price: price,
+                        plan_type: plan_type,
+                        is_active: is_active,
+                        duration: duration,
+                        description: description
+                    },
+                    success: function(response) {
+                        if (response.status){
+                            showToaster(response.message, "alert-success")
+                            setTimeout(function() {
+                                window.location.href = "{% url 'subscription_view' %}";
+                            }, 2000);
+                        }else{
+                            showToaster(response.message, "alert-error")
+                        }
+                    },
+                    error: function(response) {
+                        alert('An error occurred while updating the plan');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock table %}

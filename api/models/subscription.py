@@ -1,11 +1,11 @@
-from .base import BaseModel
+from .base import BaseModel, SoftDeleteMixin, SoftDeleteManager
 from django.db import models
 from .accounts import UserModel
 from uuid import uuid4
 from django.utils import timezone
 
 
-class SubscriptionPlan(BaseModel):
+class SubscriptionPlan(BaseModel, SoftDeleteMixin):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     plan_type_choice = (
         ("basic", "basic"),
@@ -19,6 +19,9 @@ class SubscriptionPlan(BaseModel):
     plan_type = models.CharField(max_length=30, choices=plan_type_choice)
     is_active = models.BooleanField(default=True)
     duration = models.IntegerField(help_text="Duration in days")
+
+    objects = SoftDeleteManager()
+    all_objects = models.Manager()
 
 
 class UserSubscription(BaseModel):

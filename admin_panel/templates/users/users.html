@@ -93,11 +93,14 @@
             $('#searchForm').submit();
         });
 
+        let $row = null;
+
         // Delete the user when the delete button is clicked
         let deleteId = null;
         $(document).on('click', '#deleteButton', function () {
             $('#dlt-btn-overlay').css('display', 'flex');
             deleteId = $(this).data('id');
+            $row = $(this).closest('tr');
         });
 
         // Delete the user when the confirm delete button is clicked
@@ -108,9 +111,7 @@
                 success: function (data) {
                     $('#dlt-btn-overlay').css('display', 'none');
                     showToaster('User deleted successfully!', "alert-success");
-                    setTimeout(function () {
-                        location.reload();
-                    }, 2000)
+                    $row.remove();
                 },
                 error: function (xhr, status, error) {
                     console.error('Error making GET request:', error);

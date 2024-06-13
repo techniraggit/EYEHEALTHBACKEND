@@ -301,6 +301,8 @@ class LoginSerializer(serializers.Serializer):
             user_obj = UserModel.objects.get(phone_number=username)
         else:
             user_obj = UserModel.objects.get(email=username)
+            user_obj.last_login = timezone.now()
+            user_obj.save()
         access_token, refresh_token = get_tokens_for_user(user_obj)
         tokens = dict(access_token=access_token, refresh_token=refresh_token)
         DeviceInfo.objects.get_or_create(

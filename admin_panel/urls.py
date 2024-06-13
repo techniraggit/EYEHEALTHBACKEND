@@ -8,6 +8,7 @@ from .views.notifications import *
 from .views.subscription import *
 from .views import settings
 from .views import eye_exam
+from .views import trash
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -52,6 +53,9 @@ notification_urls = [
 
 subscription_urls = [
     path("", SubscriptionView.as_view(), name="subscription_view"),
+    path("edit-subscription/<uuid:id>", SubscriptionEditView.as_view(), name="edit_subscription_view"),
+    path("delete-subscription/<uuid:id>", SubscriptionDeleteView.as_view(), name="delete_subscription_view"),
+    path("add-subscription", SubscriptionAddView.as_view(), name="add_subscription_view"),
     path("user-subscription-plans", UserSubscriptionView.as_view(), name="user_subscription_plans_view"),
 ]
 
@@ -69,6 +73,13 @@ eye_exam_urls = [
     path("eye-fatigue-export/<str:file_type>", eye_exam.EyeFatigueExportView.as_view(), name="eye_fatigue_export_view"),
 ]
 
+trash_urls = [
+    path("", trash.TrashView.as_view(), name="trash_view"),
+    path("restore-user/<uuid:id>", trash.RestoreUserView.as_view(), name="restore_user"),
+    path("restore-offer/<uuid:id>", trash.RestoreOfferView.as_view(), name="restore_offer"),
+    path("restore-subscription-plan/<uuid:id>", trash.RestoreSubscriptionPlanView.as_view(), name="restore_subscription_plan"),
+]
+
 urlpatterns = [
     path("", include(auth_urls)),
     path("home/", include(home_urls)),
@@ -79,4 +90,5 @@ urlpatterns = [
     path("subscription/", include(subscription_urls)),
     path("settings/", include(settings_urls)),
     path("eye/", include(eye_exam_urls)),
+    path("trash/", include(trash_urls)),
 ]

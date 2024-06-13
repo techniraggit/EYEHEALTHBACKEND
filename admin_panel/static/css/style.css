@@ -35,7 +35,8 @@ ul {
     font-size: 23px;
 }
 
-.un, .pass {
+.un,
+.pass {
     width: 76% !important;
     color: rgb(38, 50, 56) !important;
     font-weight: 700;
@@ -47,14 +48,15 @@ ul {
     border-radius: 20px;
     outline: none !important;
     box-sizing: border-box;
-    border: 2px solid rgba(0, 0, 0, 0.02)!important;
+    border: 2px solid rgba(0, 0, 0, 0.02) !important;
     margin-bottom: 27px;
     margin-left: 46px;
     text-align: center;
     font-family: 'Ubuntu', sans-serif;
 }
 
-.un:focus, .pass:focus {
+.un:focus,
+.pass:focus {
     border: 2px solid rgba(0, 0, 0, 0.18) !important;
 }
 
@@ -215,7 +217,7 @@ form.form1 {
     justify-content: end;
 }
 
-.add-btn  a {
+.add-btn a {
     background-color: #5200a5;
     border: none;
     text-align: center;
@@ -229,9 +231,12 @@ form.form1 {
     justify-content: center;
     align-items: center;
 }
-.add-btn  a span , .add-btn i{
+
+.add-btn a span,
+.add-btn i {
     color: #fff;
 }
+
 .export>ul {
     text-align: end;
     display: flex;
@@ -448,6 +453,7 @@ button {
     padding: 10px 24px;
     background-color: #5200a5;
 }
+
 .custom-button-1 {
     width: 15%;
     display: flex;
@@ -732,9 +738,11 @@ td {
     border: none;
     font-size: 14px;
 }
+
 .profile {
     text-align: left;
 }
+
 .form-main label {
     font-weight: 500;
 }
@@ -752,6 +760,7 @@ td {
 form#searchForm {
     display: flex;
 }
+
 .side-list ul li a img {
     height: 18px;
 }
@@ -769,6 +778,7 @@ form#searchForm {
     justify-content: center;
     align-items: center;
 }
+
 .dlt-popup {
     background: white;
     padding: 20px;
@@ -781,7 +791,7 @@ form#searchForm {
     margin-top: 20px;
 }
 
-.pop-confirm-btn{
+.pop-confirm-btn {
     padding: 10px 20px;
     margin: 5px;
     border: none;
@@ -802,35 +812,40 @@ form#searchForm {
 /* delete popup end */
 
 /* required_star */
-#required_star{
+#required_star {
     color: red;
 }
+
 /* required_star end */
 i#deleteButton {
     color: #0d6efd;
 }
+
 /* approve-reject prescription */
-.Approve-btn{
+.Approve-btn {
     /* background-color: green; */
     color: #fff;
     /* border-radius: 7px; */
 }
 
-.Reject-btn{
+.Reject-btn {
     /* background-color: red; */
     color: #fff;
     /* border-radius: 7px; */
 }
-.btn-primary1{
+
+.btn-primary1 {
     /* background-color: green; */
     color: #FFF !important;
 }
+
 /* approve-reject prescription end*/
 .btn-primary:hover {
     color: #fff;
     /* background-color: #0b5ed7; */
     /* border-color: #0a58ca; */
 }
+
 .dropdown-toggle::after {
     display: none !important;
 }
@@ -858,6 +873,7 @@ li.nav-item.dropdown {
 .show-file-btn:hover {
     background-color: #ffffff;
 }
+
 /* show file button in prescription */
 
 .description_box {
@@ -881,9 +897,11 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
     display: block;
     width: 100%;
 }
+
 .Reject-btn button {
     background-color: red;
 }
+
 .right-bar .card {
     margin-bottom: 25px;
 }
@@ -940,7 +958,7 @@ a.view-img :hover {
     color: white;
 }
 
-.right-table  .modal-footer {
+.right-table .modal-footer {
     flex-direction: row;
     flex-wrap: unset;
 }
@@ -955,7 +973,7 @@ button.btn.btn-secondary {
     border: none;
 }
 
-.right-table  textarea#rejection-notes {
+.right-table textarea#rejection-notes {
     height: 150px;
 }
 
@@ -965,7 +983,7 @@ button.btn.btn-secondary {
     /* border-color: #0a58ca; */
 }
 
-.pending{
+.pending {
     color: orange;
     font-weight: bold;
 }
@@ -985,7 +1003,7 @@ button.btn.btn-secondary {
     font-weight: bold;
 }
 
-.active { 
+.active {
     color: green;
     font-weight: bold;
 }
@@ -993,4 +1011,60 @@ button.btn.btn-secondary {
 .expired {
     color: red;
     font-weight: bold;
+}
+
+.hide-table {
+    display: none;
+}
+
+ul.nav.nav-tabs.customtabs {
+    border-bottom: 0px;
+    margin-bottom: 30px;
+}
+ul.nav.nav-tabs.customtabs li.nav-item > a {
+    background-color: #f5f8fa;
+    margin-right: 10px;
+    padding: 10px 13px;
+    color: #004c91;
+    font-weight: 600;
+    max-width: 100%;
+    width: 200px;
+    text-align: center;
+    border-radius: 6px;
+}
+.tab-content h3 {
+    color: #000;
+}
+ul.nav.nav-tabs.customtabs li.nav-item > a.nav-link.active {
+    background-color: #5200a5;
+    color: #fff;
+    font-weight: 500;
+}
+div#users, div#subscription {
+    padding: 0px 45px;
+}
+table.table {
+    margin-top: 15px;
+}
+table.table  tbody {
+    border: 1px solid #e8e8e8;
+    border-top: 0px;
+}
+table.table  thead {
+    border: 1px solid #e8e8e8;
+}
+table.table th {
+    background-color: #f5f8fa;
+    padding: 14px 12px;
+    color: #521ca2;
+    border-bottom: 0;
+    font-size: 18px;
+}
+
+table.table tbody td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #e8e8e8;
+    color: #000;
+    font-weight: 500;
+    font-size: 16px;
 }

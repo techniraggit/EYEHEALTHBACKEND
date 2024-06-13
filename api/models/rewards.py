@@ -1,12 +1,12 @@
 from core.constants import EVENT_CHOICES
-from .base import BaseModel
+from .base import BaseModel, SoftDeleteMixin, SoftDeleteManager, models
 from django.db import models
 from api.models.accounts import UserModel, UserAddress
 from uuid import uuid4
 from django.utils import timezone
 
 
-class Offers(BaseModel):
+class Offers(BaseModel, SoftDeleteMixin):
     offer_status = (
         ("active", "active"),
         ("inactive", "inactive"),
@@ -23,6 +23,9 @@ class Offers(BaseModel):
         UserModel, null=True, on_delete=models.SET_NULL, related_name="offers_created"
     )
     updated_by = models.ForeignKey(UserModel, null=True, on_delete=models.SET_NULL)
+
+    objects = SoftDeleteManager()
+    all_objects = models.Manager()
 
     def get_expiry_time(self):
         current_time = timezone.now()

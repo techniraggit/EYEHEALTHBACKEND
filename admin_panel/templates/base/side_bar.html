@@ -76,6 +76,12 @@
                     <li><a href="{% url "settings_view" %}"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
                     {% endif %}
 
+                    {% if is_trash %}
+                    <li><a href="{% url "trash_view" %}" class="acive-link"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
+                    {% else %}
+                    <li><a href="{% url "trash_view" %}"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
+                    {% endif %}
+
                 </ul>
                 <div class="logout-wrap">
                     <a href="{% url "logout_view" %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
