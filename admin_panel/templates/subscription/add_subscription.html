@@ -1,7 +1,5 @@
 {% extends "base/side_bar.html" %}
-{% load static %}
 {% block title %} Add Subscription Plan {% endblock title %}
-
 {% block page_name %}Add Subscription Plan{% endblock page_name %}
 {% block table %}
 <div class="right-table1">
@@ -46,7 +44,7 @@
 
                 <div class="col-md-4 f-lname mt-4">
                     <label for="duration">Duration <span id="required_star">*</span></label>
-                    <input type="number" name="points" id="duration">
+                    <input type="number" name="duration" id="duration">
                     <span id="duration_message" style="color: red; font-weight: bold"></span>
                 </div>
 
@@ -65,21 +63,21 @@
 </div>
 
 <script>
-    CKEDITOR.replace('description', {
-        toolbar: [
-            { name: 'paragraph', items: ['BulletedList'] }
-        ],
-        startupFocus: true
-    });
-
-    CKEDITOR.on('instanceReady', function (event) {
-        var editor = event.editor;
-        setTimeout(function () {
-            editor.execCommand('bulletedlist');
-        }, 100);
-    });
-
     $(document).ready(function () {
+        CKEDITOR.replace('description', {
+            toolbar: [
+                { name: 'paragraph', items: ['BulletedList'] }
+            ],
+            startupFocus: true
+        });
+
+        CKEDITOR.on('instanceReady', function (event) {
+            var editor = event.editor;
+            setTimeout(function () {
+                editor.execCommand('bulletedlist');
+            }, 100);
+        });
+
         $('#planForm').submit(function (event) {
             event.preventDefault();
 
@@ -89,7 +87,9 @@
             const plan_type = $('#plan_type').val();
             const is_active = $('input[name="is_active"]:checked').val();
             const duration = $('#duration').val().trim();
-            const description = $('#description').val().trim();
+            const description = CKEDITOR.instances.description.getData().trim();
+
+            $('#name_message, #price_message, #plan_type_message, #is_active_mesage, #duration_message, #description_message').text('');
 
             if (!name) {
                 isValid = false;
@@ -102,7 +102,6 @@
             if (!plan_type) {
                 $("#plan_type_message").text("Select valid plan type");
                 isValid = false;
-
             }
             if (!is_active) {
                 isValid = false;
@@ -140,8 +139,8 @@
                             showToaster(response.message, "alert-error")
                         }
                     },
-                    error: function (response) {
-                        alert('An error occurred while updating the plan');
+                    error: function () {
+                        showToaster("An error occurred while updating the plan", "alert-error");
                     }
                 });
             }
