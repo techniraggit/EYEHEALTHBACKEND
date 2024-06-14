@@ -24,24 +24,22 @@
                 <div class="col-md-4 f-name mt-4">
                     <label for="plan_type">Plan Type <span id="required_star">*</span></label>
                     <select name="plan_type" id="plan_type" class="form-control">
-                        <option value="basic" {% if plan_obj.plan_type=='basic' %}selected{% endif %}>Basic</option>
-                        <option value="monthly" {% if plan_obj.plan_type=='monthly' %}selected{% endif %}>Monthly
+                        <option value="basic" {% if plan_obj.plan_type == 'basic' %}selected{% endif %}>Basic</option>
+                        <option value="monthly" {% if plan_obj.plan_type == 'monthly' %}selected{% endif %}>Monthly
                         </option>
-                        <option value="quarterly" {% if plan_obj.plan_type=='quarterly' %}selected{% endif %}>Quarterly
+                        <option value="quarterly" {% if plan_obj.plan_type == 'quarterly' %}selected{% endif %}>Quarterly
                         </option>
-                        <option value="yearly" {% if plan_obj.plan_type=='yearly' %}selected{% endif %}>Yearly</option>
+                        <option value="yearly" {% if plan_obj.plan_type == 'yearly' %}selected{% endif %}>Yearly</option>
                     </select>
                 </div>
 
                 <div class="col-md-4 f-name mt-4">
                     <label>Is Active</label>
                     <label class="radio">
-                        <input type="radio" name="is_active" id="is_active_yes" value="true" {% if plan_obj.is_active
-                            %}checked{% endif %}> Yes
+                        <input type="radio" name="is_active" id="is_active_yes" value="true" {% if plan_obj.is_active %}checked{% endif %}> Yes
                     </label>
                     <label class="radio">
-                        <input type="radio" name="is_active" id="is_active_no" value="false" {% if not
-                            plan_obj.is_active %}checked{% endif %}> No
+                        <input type="radio" name="is_active" id="is_active_no" value="false" {% if not plan_obj.is_active %}checked{% endif %}> No
                     </label>
                 </div>
 
