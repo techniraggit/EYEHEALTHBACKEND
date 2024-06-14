@@ -24,3 +24,9 @@ def replace_underscore(value, separator: str = " "):
 @register.filter(name="replace_comma")
 def replace_comma(value, separator: str):
     return value.replace(",", separator)
+
+@register.filter
+def truncate_chars(value, max_length=75):
+    if len(value) > max_length:
+        return value[:max_length] + '...'
+    return value

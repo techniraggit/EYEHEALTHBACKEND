@@ -1,5 +1,6 @@
 {% extends "base/side_bar.html" %}
 {% block title %} Offers {% endblock title %}
+{% load custom_filters %}
 
 {% block page_name %}Offers{% endblock page_name %}
 {% block nav_bar %}
@@ -55,7 +56,7 @@
     <tr>
         <td>{{ forloop.counter }}</td>
         <td>{{ offer.title }}</td>
-        <td>{{ offer.description }}</td>
+        <td>{{ offer.description|truncate_chars }}</td>
         <td>{{ offer.expiry_date }}</td>
         <td><img class="thumbnail-img" src="{{ offer.image.url }}" alt="" height="100" width="80"></td>
         <td class="{{ offer.status }}">{{ offer.status|title }}</td>
@@ -63,7 +64,7 @@
         <td>
             <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
             <a href="{% url "edit_offer_view" offer.offer_id %}"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#" class="view-offer-details" data-offer-id="{{ offer.offer_id }}"><iclass="fa-regular fa-eye"></i></a>
+            <a href="#" class="view-offer-details" data-offer-id="{{ offer.offer_id }}"><i class="fa-regular fa-eye"></i></a>
         </td>
     </tr>
     {% endfor %}
