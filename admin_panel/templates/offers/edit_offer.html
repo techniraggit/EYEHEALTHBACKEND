@@ -84,12 +84,6 @@
             $("#addOfferForm").submit(function (event) {
                 event.preventDefault(); // Prevent the form from submitting via the browser
 
-                // Update all CKEditor instances
-                for (const instanceName in CKEDITOR.instances) {
-                    CKEDITOR.instances[instanceName].updateElement();
-                }
-
-
                 // Perform client-side validation
                 let isValid = true;
                 $(".form-control").each(function () {
