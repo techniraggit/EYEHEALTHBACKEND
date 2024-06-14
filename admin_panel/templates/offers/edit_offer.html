@@ -1,5 +1,6 @@
 {% extends "base/side_bar.html" %}
 {% load static %}
+{% load custom_filters %}
 {% block title %} Edit Offer {% endblock title %}
 
 {% block page_name %}Edit Offer{% endblock page_name %}
@@ -11,34 +12,40 @@
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
                     <label for="title">Title <span id="required_star">*</span></label>
-                    <input type="text" name="title" id="title" class="form-control" value="{{ offer_obj.title}}"/>
+                    <input type="text" name="title" id="title" class="form-control" value="{{ offer_obj.title}}" />
                 </div>
                 <div class="col-md-4 f-lname mt-4">
                     <label for="description">Description <span id="required_star">*</span></label>
-                    <input type="text" name="description" id="description" class="form-control" value="{{ offer_obj.description }}"/>
+                    <textarea name="description" id="description" cols="30" rows="10"
+                        class="form-control">{{ offer_obj.description }}</textarea>
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="image">Image <span id="required_star">*</span></label>
-                    <input type="file" name="image" id="image" class="form-control" data-is-file-avail="{% if offer_obj.image %} true {% else %} false {% endif %}"/>
-                    {% if offer_obj.image %} 
-                    <p style="font-weight: bold;"> Current file: {{ offer_obj.image.name }} <a href="#" class="view-file-link" data-image-url="{{ offer_obj.image.url }}"> View File</a></p>
+                    <input type="file" name="image" id="image" class="form-control"
+                        data-is-file-avail="{% if offer_obj.image %} true {% else %} false {% endif %}" />
+                    {% if offer_obj.image %}
+                    <p style="font-weight: bold;"> Current file: {{ offer_obj.image.name }} <a href="#"
+                            class="view-file-link" data-image-url="{{ offer_obj.image.url }}"> View File</a></p>
                     {% endif %}
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label for="expiry_date">Expiry Date <span id="required_star">*</span></label>
-                    <input type="date" name="expiry_date" id="expiry_date" value="{{ offer_obj.expiry_date|date:'Y-m-d' }}" class="form-control"/>
+                    <input type="date" name="expiry_date" id="expiry_date"
+                        value="{{ offer_obj.expiry_date|date:'Y-m-d' }}" class="form-control" />
                 </div>
                 <div class="col-md-4 f-name mt-4">
                     <label for="status">Status <span id="required_star">*</span></label>
                     <select name="status" id="status" class="form-control">
-                        <option value="active" {% if offer_obj.status == 'active' %}selected{% endif %}>Active</option>
-                        <option value="inactive" {% if offer_obj.status == 'inactive' %}selected{% endif %}>Inactive</option>
-                        <option value="expired" {% if offer_obj.status == 'expired' %}selected{% endif %}>Expired</option>
+                        <option value="active" {% if offer_obj.status=='active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if offer_obj.status=='inactive' %}selected{% endif %}>Inactive
+                        </option>
+                        <option value="expired" {% if offer_obj.status=='expired' %}selected{% endif %}>Expired</option>
                     </select>
                 </div>
                 <div class="col-md-4 f-lname mt-4">
                     <label for="required_points">Required Points <span id="required_star">*</span></label>
-                    <input type="number" name="required_points" id="required_points" value="{{ offer_obj.required_points}}" class="form-control"/>
+                    <input type="number" name="required_points" id="required_points"
+                        value="{{ offer_obj.required_points}}" class="form-control" />
                 </div>
                 <div class="col-md-3 cancel-btn mb-4 mt-5">
                     <button type="submit" class="btn btn-primary save-btn">Save</button>
@@ -61,82 +68,93 @@
             </div>
         </div>
         <!-- Image Popup Modal End-->
-</div>
-<script>
-    $(document).ready(function() {
-        // Handle click on "View File" link to open modal
-        $(".view-file-link").click(function(e) {
-            e.preventDefault();
-            let imageUrl = $(this).data('image-url');
-            console.log("Image URL:", imageUrl); // Debugging log
-            $("#modalImage").attr("src", imageUrl);
-            $("#imageModal").modal('show');
+    </div>
+    <script>
+        CKEDITOR.replace('description', {
+            toolbar: [
+                { name: 'paragraph', items: ['BulletedList'] },
+            ]
         });
-    
-        // Handle form submission
-        $("#addOfferForm").submit(function(event) {
-            event.preventDefault(); // Prevent the form from submitting via the browser
-    
-            // Perform client-side validation
-            let isValid = true;
-            $(".form-control").each(function() {
-                if ($(this).attr("id") === "image") {
-                    var current_file_val = $(this).data('is-file-avail');
-                    console.log("Current file available:", current_file_val); // Debugging log
-                    return true; // Adjusted to continue loop, not return value
-                }
-    
-                if ($(this).hasClass("optional")) {
-                    return true;
-                }
-                if ($(this).val().trim() === "") {
-                    isValid = false;
-                    $(this).addClass("is-invalid");
-                    console.log("Invalid input:", $(this).attr("id")); // Debugging log
-                } else {
-                    $(this).removeClass("is-invalid");
-                }
+
+        $(document).ready(function () {
+
+            // Handle click on "View File" link to open modal
+            $(".view-file-link").click(function (e) {
+                e.preventDefault();
+                let imageUrl = $(this).data('image-url');
+                console.log("Image URL:", imageUrl); // Debugging log
+                $("#modalImage").attr("src", imageUrl);
+                $("#imageModal").modal('show');
             });
-    
-            if (!isValid) {
-                showToaster("Please fill out all required fields.", "alert-error");
-                return;
-            }
-    
-            // If valid, proceed with AJAX submission
-            let formData = new FormData(this);
-    
-            console.log("Submitting form data..."); // Debugging log
-    
-            $.ajax({
-                url: "{% url 'edit_offer_view' offer_obj.pk %}",
-                type: "POST",
-                data: formData,
-                processData: false,  // Important!
-                contentType: false,  // Important!
-                headers: {
-                    "X-CSRFToken": "{{ csrf_token }}"
-                },
-                success: function(response) {
-                    console.log("Success response:", response); // Debugging log
-                    if (response.status) {
-                        showToaster(response.message, "alert-success");
-                        setTimeout(function() {
-                            window.location.href = "/offers/";
-                        }, 2000);
+
+            // Handle form submission
+            $("#addOfferForm").submit(function (event) {
+                event.preventDefault(); // Prevent the form from submitting via the browser
+
+                // Update all CKEditor instances
+                for (const instanceName in CKEDITOR.instances) {
+                    CKEDITOR.instances[instanceName].updateElement();
+                }
+
+
+                // Perform client-side validation
+                let isValid = true;
+                $(".form-control").each(function () {
+                    if ($(this).attr("id") === "image") {
+                        var current_file_val = $(this).data('is-file-avail');
+                        console.log("Current file available:", current_file_val); // Debugging log
+                        return true; // Adjusted to continue loop, not return value
+                    }
+
+                    if ($(this).hasClass("optional")) {
+                        return true;
+                    }
+                    if ($(this).val().trim() === "") {
+                        isValid = false;
+                        $(this).addClass("is-invalid");
+                        console.log("Invalid input:", $(this).attr("id")); // Debugging log
                     } else {
+                        $(this).removeClass("is-invalid");
+                    }
+                });
+
+                if (!isValid) {
+                    showToaster("Please fill out all required fields.", "alert-error");
+                    return;
+                }
+
+                // If valid, proceed with AJAX submission
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: "{% url 'edit_offer_view' offer_obj.pk %}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,  // Important!
+                    contentType: false,  // Important!
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    success: function (response) {
+                        console.log("Success response:", response); // Debugging log
+                        if (response.status) {
+                            showToaster(response.message, "alert-success");
+                            setTimeout(function () {
+                                window.location.href = "/offers/";
+                            }, 2000);
+                        } else {
+                            showToaster(response.message, "alert-error");
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.error("Error response:", xhr, textStatus, errorThrown); // Debugging log
+                        const response = xhr.responseJSON;
                         showToaster(response.message, "alert-error");
                     }
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.error("Error response:", xhr, textStatus, errorThrown); // Debugging log
-                    const response = xhr.responseJSON;
-                    showToaster(response.message, "alert-error");
-                }
+                });
             });
         });
-    });
-    
-</script>
 
-{% endblock table%}
+    </script>
+
+    {% endblock table%}

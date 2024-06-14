@@ -7,3 +7,17 @@ function showToaster(message, type) {
         toaster.remove();
     }, 2000); // 2 seconds
 }
+
+
+// this is ckeditor code for the future use and reference
+// CKEDITOR.replace('description', {
+//     toolbar: [
+//         { name: 'paragraph', items: ['BulletedList'] },
+        //{ name: 'basicstyles', items: ['Bold', 'Italic'] },
+        //{ name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
+        //{ name: 'links', items: ['Link', 'Unlink'] },
+        //{ name: 'insert', items: ['Image', 'Table'] },
+        //{ name: 'styles', items: ['Format', 'Font', 'FontSize'] },
+        //{ name: 'colors', items: ['TextColor', 'BGColor'] }
+//     ]
+// });
