@@ -9,14 +9,22 @@ from django.shortcuts import render, redirect
 from api.models.rewards import Offers, UserRedeemedOffers
 from admin_panel.forms.offers import OffersForm
 from django.contrib import messages
+from django.db.models import Q
 
 
 class OffersView(AdminLoginView):
     def get(self, request):
-        offers = Offers.objects.all().order_by("-created_on")
+        search = str(request.GET.get('search', None)).strip()
+        if search:
+            offers = Offers.objects.filter(
+                Q(title__icontains=search) | Q(description__icontains=search) | Q(status=str(search).lower())
+            ).order_by("-created_on")
+        else:
+            offers = Offers.objects.all().order_by("-created_on")
         context = dict(
             offers=offers,
             is_offer=True,
+            search=search if search else "",
         )
         return render(request, "offers/offers.html", context)
 
