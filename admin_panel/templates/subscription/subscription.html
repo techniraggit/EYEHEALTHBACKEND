@@ -61,7 +61,7 @@
             <td>
                 <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-plan_id="{{ plan.pk }}"></i></a>
                 <a href="{% url "edit_subscription_view" plan.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="#"> <i class="fa-regular fa-eye"></i></a>
+                <a href="#" class="view-subscription_plan-details" data-plan_id="{{ plan.pk }}"><i class="fa-regular fa-eye"></i></a>
             </td>
         </tr>
     {% endfor %}
@@ -75,6 +75,32 @@
         </div>
     </div>
 </div>
+
+<!-- Offer Detail Modal -->
+<div class="modal fade" id="subscriptionPlanDetailModal" tabindex="-1" role="dialog" aria-labelledby="subscriptionPlanDetailModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="subscriptionPlanDetailModalLabel">Offer Details</h5>
+            </div>
+            <div class="modal-body">
+                
+
+                <p><strong>Name:</strong> <span id="modal-name"></span></p>
+                <p><strong>Description:</strong> <span id="modal-description"></span></p>
+                <p><strong>Price:</strong> <span id="modal-price"></span></p>
+                <p><strong>Currently Active:</strong> <span id="modal-status"></span></p>
+                <p><strong>Plan Type:</strong> <span id="modal-plan_type"></span></p>
+                <p><strong>Duration:</strong> <span id="modal-duration"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Offer Detail Modal -->
 
 <script>
     $(document).ready(function () {
@@ -121,6 +147,44 @@
         // Hide the delete button overlay when the cancel delete button is clicked
         $('#cancelDelete').click(function () {
             $('#dlt-btn-overlay').css('display', 'none');
+        });
+
+        // View offer details when the view offer details button is clicked
+        $('.view-subscription_plan-details').click(function (event) {
+            event.preventDefault();
+            var subscription_plan_id = $(this).data('plan_id');
+            var modal = $('#subscriptionPlanDetailModal');
+
+            $.ajax({
+                url: '/subscription/detailed-subscription/' + subscription_plan_id,
+                method: 'GET',
+                success: function (data) {
+                    data = data.plan
+                    modal.find('#modal-name').text(data.name);
+                    modal.find('#modal-description').text(data.description);
+                    modal.find('#modal-price').text(data.price);
+                    status_val = ""
+                    if(data.is_active){
+                        status_val = "Yes"
+                    }else{
+                        status_val = "No"
+                    }
+                    modal.find('#modal-status').text(status_val);
+                    modal.find('#modal-plan_type').text(data.plan_type);
+                    modal.find('#modal-duration').text(data.duration);
+                    modal.modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching offer details:", error);
+                    alert("An error occurred while fetching offer details. Please try again.");
+                }
+            });
+        });
+
+        // Hide the modal when the dismiss button is clicked
+        $("#modal_dismis").on("click", function (event) {
+            event.preventDefault();
+            $('#subscriptionPlanDetailModal').modal('hide');
         });
     });
 </script>

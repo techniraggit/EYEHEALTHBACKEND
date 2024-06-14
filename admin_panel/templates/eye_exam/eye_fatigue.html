@@ -90,8 +90,6 @@
                 method: 'GET',
                 success: function(data) {
                     var report_data = data.eye_fatigue_report
-                    console.log(report_data.full_name);
-                    console.log(report_data.age);
                     modal.find("#modal-name").text(report_data.full_name)
                     modal.find("#modal-age").text(report_data.age)
                     modal.find("#modal-is_fatigue_right").text(report_data.is_fatigue_right === true ? 'Yes' : 'No')

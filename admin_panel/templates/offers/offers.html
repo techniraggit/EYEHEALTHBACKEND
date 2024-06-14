@@ -120,13 +120,11 @@
             event.preventDefault();
             $('#dlt-btn-overlay').css('display', 'flex');
             deleteId = $(this).data("offer-id");
-            console.log("Delete button clicked, offer ID:", deleteId);
         });
 
         // Delete the user when the confirm delete button is clicked
         $('#confirmDelete').click(function (event) {
             event.preventDefault();
-            console.log("Confirm delete clicked, deleting offer ID:", deleteId);
             $('#dlt-btn-overlay').css('display', 'none');
             $.ajax({
                 url: "delete-offer-view/" + deleteId,
@@ -152,7 +150,6 @@
         // Hide the delete button overlay when the cancel delete button is clicked
         $('#cancelDelete').click(function (event) {
             event.preventDefault();
-            console.log("Cancel delete clicked");
             $('#dlt-btn-overlay').css('display', 'none');
         });
 
@@ -161,13 +158,11 @@
             event.preventDefault();
             var offerId = $(this).data('offer-id');
             var modal = $('#offerDetailModal');
-            console.log("View offer details clicked, offer ID:", offerId);
 
             $.ajax({
                 url: '/offers/offer-detailed-view/' + offerId,
                 method: 'GET',
                 success: function (data) {
-                    console.log("Offer details fetched successfully:", data);
                     modal.find('#modal-title').text(data.title);
                     modal.find('#modal-description').html(data.description);
                     modal.find('#modal-expiry_date').text(data.expiry_date);
@@ -187,7 +182,6 @@
         // Hide the modal when the dismiss button is clicked
         $("#modal_dismis").on("click", function (event) {
             event.preventDefault();
-            console.log("Modal dismiss clicked");
             $('#offerDetailModal').modal('hide');
         });
     });

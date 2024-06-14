@@ -54,6 +54,7 @@ notification_urls = [
 
 subscription_urls = [
     path("", SubscriptionView.as_view(), name="subscription_view"),
+    path("detailed-subscription/<uuid:id>", SubscriptionPlanDetailedView.as_view(), name="detailed_view"),
     path("edit-subscription/<uuid:id>", SubscriptionEditView.as_view(), name="edit_subscription_view"),
     path("delete-subscription/<uuid:id>", SubscriptionDeleteView.as_view(), name="delete_subscription_view"),
     path("add-subscription", SubscriptionAddView.as_view(), name="add_subscription_view"),

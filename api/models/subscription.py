@@ -23,6 +23,17 @@ class SubscriptionPlan(BaseModel, SoftDeleteMixin):
     objects = SoftDeleteManager()
     all_objects = models.Manager()
 
+    def to_json(self):
+        return dict(
+            id=self.id,
+            name=self.name,
+            description=self.description,
+            price=self.price,
+            plan_type=self.plan_type,
+            is_active=self.is_active,
+            duration=self.duration,
+        )
+
 
 class UserSubscription(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)

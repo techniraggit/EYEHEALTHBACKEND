@@ -14,6 +14,21 @@ class SubscriptionView(AdminLoginView):
         )
         return render(request, "subscription/subscription.html", context)
 
+class SubscriptionPlanDetailedView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            plan_obj = SubscriptionPlan.objects.get(pk=id)
+        except:
+            return JsonResponse(
+                {"status": False, "message": "Subscription Plan does not exist"}
+            )
+        return JsonResponse(
+            {
+                "status": True,
+                "plan": plan_obj.to_json(),
+            }
+        )
+
 from admin_panel.forms.subscription import SubscriptionPlanForm
 import json
 class SubscriptionEditView(AdminLoginView):

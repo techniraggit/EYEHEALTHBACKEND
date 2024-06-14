@@ -75,12 +75,11 @@
         $('#confirmDelete').click(function (event) {
             var href_console = $('#confirmDelete').attr('href');
             $('#dlt-btn-overlay').css('display', 'none');
-            console.log(href_console);
+
             $.ajax({
                 url: "www.google.com",
                 type: 'GET',
                 success: function (data) {
-                    console.log('GET request successful');
                     // Handle success response if needed
                 },
                 error: function (xhr, status, error) {
