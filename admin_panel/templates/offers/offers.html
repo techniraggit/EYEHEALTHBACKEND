@@ -45,6 +45,7 @@
         <th>Title</th>
         <th>Description</th>
         <th>Expiry Date</th>
+        <th>Thumbnail</th>
         <th>Status</th>
         <th>Required Points</th>
         <th>Action</th>
@@ -55,6 +56,7 @@
             <td>{{ offer.title }}</td>
             <td>{{ offer.description }}</td>
             <td>{{ offer.expiry_date }}</td>
+            <td><img class="thumbnail-img" src="{{ offer.image.url }}" alt="" height="100" width="80"></td>
             <td class="{{ offer.status }}" >{{ offer.status|title }}</td>
             <td>{{ offer.required_points }}</td>
             <td>
@@ -79,6 +81,7 @@
                 <p><strong>Expiry Date:</strong> <span id="modal-expiry_date"></span></p>
                 <p><strong>Status:</strong> <span id="modal-status"></span></p>
                 <p><strong>Required Points:</strong> <span id="modal-required_points"></span></p>
+                {% comment %} <img id="modal-img" src="" alt="" width="80" height="100"> {% endcomment %}
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
@@ -163,11 +166,12 @@
                 success: function(data) {
                     console.log("Offer details fetched successfully:", data);
                     modal.find('#modal-title').text(data.title);
-                    modal.find('#modal-description').text(data.description);
+                    modal.find('#modal-description').html(data.description);
                     modal.find('#modal-expiry_date').text(data.expiry_date);
-                    modal.find('#modal-status').text(data.status);
+                    modal.find('#modal-status').text(data.status.toUpperCase());
                     modal.find('#modal-status').addClass(data.status);
                     modal.find('#modal-required_points').text(data.required_points);
+                    //modal.find('#modal-img').attr("src", data.image);
                     modal.modal('show');
                 },
                 error: function(xhr, status, error) {
