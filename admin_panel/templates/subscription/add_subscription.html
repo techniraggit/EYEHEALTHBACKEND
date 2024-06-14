@@ -39,7 +39,7 @@
                         <input type="radio" name="is_active" id="is_active_yes" value="true"> Yes
                     </label>
                     <label class="radio">
-                        <input type="radio" name="is_active" id="is_active_no" value="false" > No
+                        <input type="radio" name="is_active" id="is_active_no" value="false"> No
                     </label>
                     <span id="is_active_mesage" style="color: red; font-weight: bold"></span>
                 </div>
@@ -65,8 +65,22 @@
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#planForm').submit(function(event) {
+    CKEDITOR.replace('description', {
+        toolbar: [
+            { name: 'paragraph', items: ['BulletedList'] }
+        ],
+        startupFocus: true
+    });
+
+    CKEDITOR.on('instanceReady', function (event) {
+        var editor = event.editor;
+        setTimeout(function () {
+            editor.execCommand('bulletedlist');
+        }, 100);
+    });
+
+    $(document).ready(function () {
+        $('#planForm').submit(function (event) {
             event.preventDefault();
 
             let isValid = true;
@@ -76,13 +90,6 @@
             const is_active = $('input[name="is_active"]:checked').val();
             const duration = $('#duration').val().trim();
             const description = $('#description').val().trim();
-
-            console.log("name == ", name)
-            console.log("price == ", price)
-            console.log("plan_type == ", plan_type)
-            console.log("is_active == ", is_active)
-            console.log("duration == ", duration)
-            console.log("description == ", description)
 
             if (!name) {
                 isValid = false;
@@ -95,7 +102,7 @@
             if (!plan_type) {
                 $("#plan_type_message").text("Select valid plan type");
                 isValid = false;
-                
+
             }
             if (!is_active) {
                 isValid = false;
@@ -123,17 +130,17 @@
                         duration: duration,
                         description: description
                     },
-                    success: function(response) {
-                        if (response.status){
+                    success: function (response) {
+                        if (response.status) {
                             showToaster(response.message, "alert-success")
-                            setTimeout(function() {
+                            setTimeout(function () {
                                 window.location.href = "{% url 'subscription_view' %}";
                             }, 2000);
-                        }else{
+                        } else {
                             showToaster(response.message, "alert-error")
                         }
                     },
-                    error: function(response) {
+                    error: function (response) {
                         alert('An error occurred while updating the plan');
                     }
                 });

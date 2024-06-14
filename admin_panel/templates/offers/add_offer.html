@@ -45,20 +45,6 @@
         </form>
     </div>
     <script>
-        CKEDITOR.replace('description', {
-            toolbar: [
-                { name: 'paragraph', items: ['BulletedList'] }
-            ],
-            startupFocus: true
-        });
-
-        CKEDITOR.on('instanceReady', function (event) {
-            var editor = event.editor;
-            setTimeout(function () {
-                editor.execCommand('bulletedlist');
-            }, 100);
-        });
-
         $(document).ready(function () {
             $("#addOfferForm").submit(function (event) {
                 event.preventDefault(); // Prevent the form from submitting via the browser
