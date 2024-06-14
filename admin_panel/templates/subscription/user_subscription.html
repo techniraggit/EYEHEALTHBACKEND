@@ -71,4 +71,13 @@
         </tr>
     {% endfor %}
 </table>
+<script>
+    $(document).ready(function () {
+        // Clear the search input value when the clear button is clicked
+        $('#clearButton').click(function(){
+            $('#searchInput').val('');
+            $('#searchForm').submit();
+        });
+    });
+</script>
 {% endblock table%}
