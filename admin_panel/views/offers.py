@@ -14,7 +14,7 @@ from django.db.models import Q
 
 class OffersView(AdminLoginView):
     def get(self, request):
-        search = str(request.GET.get('search', None)).strip()
+        search = str(request.GET.get('search', "")).strip()
         if search:
             offers = Offers.objects.filter(
                 Q(title__icontains=search) | Q(description__icontains=search) | Q(status=str(search).lower())
