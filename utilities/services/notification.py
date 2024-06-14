@@ -1,9 +1,9 @@
 from api.models.notifications import PushNotification, UserPushNotification, UserModel
 import requests
 import os
-import logging
+from core.logs import Logger
 
-logger = logging.getLogger(__name__)
+logger = Logger("notification.log")
 
 FCM_SERVER_KEY = os.getenv("FCM_SERVER_KEY")
 
