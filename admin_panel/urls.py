@@ -38,6 +38,7 @@ offers_urls = [
     path("edit-redeemed-offer-view/<uuid:id>", EditRedeemedOffer.as_view(), name="edit_redeemed_offer_view"),
     path("offer-dispatch", OfferDispatchView.as_view(), name="offer_dispatch_view"),
     path("offer-email", OfferEmailView.as_view(), name="offer_email_view"),
+    path("offer-export/<str:file_type>", OfferExportView.as_view(), name="offer_export_view"),
 ]
 
 prescription_urls = [

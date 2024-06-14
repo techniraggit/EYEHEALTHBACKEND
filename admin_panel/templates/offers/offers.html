@@ -9,7 +9,9 @@
             <div class="input-wrapp">
                 <form action="{% url 'offers_view' %}" method="get" id="searchForm">
                     <div>
-                        <input type="text" name="search" id="searchInput" placeholder="Search by Title, Description, and Required Points" value="{% if search %}{{ search }}{% endif %}">
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Title, Description, and Status"
+                            value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div>
                         <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -27,8 +29,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="#">Excel</a></li>
-                        <li><a class="dropdown-item" href="#">CSV</a></li>
+                        <li><a class="dropdown-item" href="{% url 'offer_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" href="{% url 'offer_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
@@ -36,7 +38,6 @@
 
     </div>
 </div>
-
 {% endblock nav_bar %}
 {% block table %}
 <table>
@@ -51,25 +52,26 @@
         <th>Action</th>
     </tr>
     {% for offer in offers %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ offer.title }}</td>
-            <td>{{ offer.description }}</td>
-            <td>{{ offer.expiry_date }}</td>
-            <td><img class="thumbnail-img" src="{{ offer.image.url }}" alt="" height="100" width="80"></td>
-            <td class="{{ offer.status }}" >{{ offer.status|title }}</td>
-            <td>{{ offer.required_points }}</td>
-            <td>
-                <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
-                <a href="{% url "edit_offer_view" offer.offer_id %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="#" class="view-offer-details" data-offer-id="{{ offer.offer_id }}"><i class="fa-regular fa-eye"></i></a>
-            </td>
-        </tr>
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ offer.title }}</td>
+        <td>{{ offer.description }}</td>
+        <td>{{ offer.expiry_date }}</td>
+        <td><img class="thumbnail-img" src="{{ offer.image.url }}" alt="" height="100" width="80"></td>
+        <td class="{{ offer.status }}">{{ offer.status|title }}</td>
+        <td>{{ offer.required_points }}</td>
+        <td>
+            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
+            <a href="{% url "edit_offer_view" offer.offer_id %}"><i class="fa-solid fa-pen me-2"></i></a>
+            <a href="#" class="view-offer-details" data-offer-id="{{ offer.offer_id }}"><iclass="fa-regular fa-eye"></i></a>
+        </td>
+    </tr>
     {% endfor %}
 </table>
 
 <!-- Offer Detail Modal -->
-<div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel" aria-hidden="true">
+<div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -104,16 +106,16 @@
 <!-- offer delete popup end -->
 
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Clear the search input value when the clear button is clicked
-        $('#clearButton').click(function(){
+        $('#clearButton').click(function () {
             $('#searchInput').val('');
             $('#searchForm').submit();
         });
 
         // Delete the offer when the delete button is clicked
         let deleteId = null;
-        $(document).on('click', '#deleteButton', function(event) {
+        $(document).on('click', '#deleteButton', function (event) {
             event.preventDefault();
             $('#dlt-btn-overlay').css('display', 'flex');
             deleteId = $(this).data("offer-id");
@@ -121,24 +123,24 @@
         });
 
         // Delete the user when the confirm delete button is clicked
-        $('#confirmDelete').click(function(event) {
+        $('#confirmDelete').click(function (event) {
             event.preventDefault();
             console.log("Confirm delete clicked, deleting offer ID:", deleteId);
             $('#dlt-btn-overlay').css('display', 'none');
             $.ajax({
                 url: "delete-offer-view/" + deleteId,
                 type: 'GET',
-                success: function(data) {
-                    if(data.status){
+                success: function (data) {
+                    if (data.status) {
                         showToaster(data.message, "alert-success");
-                        setTimeout(function() {
+                        setTimeout(function () {
                             location.reload();
                         }, 2000);
-                    }else{
+                    } else {
                         showToaster(data.message, "alert-error");
                     }
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error('Error making GET request:', error);
                     $('#dlt-btn-overlay').css('display', 'none');
                     showToaster(error, "alert-error");
@@ -147,14 +149,14 @@
         });
 
         // Hide the delete button overlay when the cancel delete button is clicked
-        $('#cancelDelete').click(function(event) {
+        $('#cancelDelete').click(function (event) {
             event.preventDefault();
             console.log("Cancel delete clicked");
             $('#dlt-btn-overlay').css('display', 'none');
         });
 
         // View offer details when the view offer details button is clicked
-        $('.view-offer-details').click(function(event) {
+        $('.view-offer-details').click(function (event) {
             event.preventDefault();
             var offerId = $(this).data('offer-id');
             var modal = $('#offerDetailModal');
@@ -163,7 +165,7 @@
             $.ajax({
                 url: '/offers/offer-detailed-view/' + offerId,
                 method: 'GET',
-                success: function(data) {
+                success: function (data) {
                     console.log("Offer details fetched successfully:", data);
                     modal.find('#modal-title').text(data.title);
                     modal.find('#modal-description').html(data.description);
@@ -174,7 +176,7 @@
                     //modal.find('#modal-img').attr("src", data.image);
                     modal.modal('show');
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("Error fetching offer details:", error);
                     alert("An error occurred while fetching offer details. Please try again.");
                 }
@@ -182,12 +184,12 @@
         });
 
         // Hide the modal when the dismiss button is clicked
-        $("#modal_dismis").on("click", function(event) {
+        $("#modal_dismis").on("click", function (event) {
             event.preventDefault();
             console.log("Modal dismiss clicked");
             $('#offerDetailModal').modal('hide');
         });
     });
-    
+
 </script>
 {% endblock table%}
