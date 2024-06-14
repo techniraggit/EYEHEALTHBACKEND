@@ -27,8 +27,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="#">Excel</a></li>
-                        <li><a class="dropdown-item" href="#">CSV</a></li>
+                        <li><a class="dropdown-item" href="{% url "subscription_export_view" 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" href="{% url "subscription_export_view" 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>

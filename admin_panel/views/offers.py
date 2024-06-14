@@ -1,3 +1,8 @@
+from openpyxl import Workbook
+import csv
+from django.http import HttpResponse
+from datetime import datetime
+from openpyxl.writer.excel import save_virtual_workbook
 from utilities.utils import time_localize
 from django.utils import timezone
 from utilities.services.email import send_email
@@ -14,10 +19,12 @@ from django.db.models import Q
 
 class OffersView(AdminLoginView):
     def get(self, request):
-        search = str(request.GET.get('search', "")).strip()
+        search = str(request.GET.get("search", "")).strip()
         if search:
             offers = Offers.objects.filter(
-                Q(title__icontains=search) | Q(description__icontains=search) | Q(status=str(search).lower())
+                Q(title__icontains=search)
+                | Q(description__icontains=search)
+                | Q(status=str(search).lower())
             ).order_by("-created_on")
         else:
             offers = Offers.objects.all().order_by("-created_on")
@@ -133,15 +140,22 @@ class DeleteOfferView(AdminLoginView):
         try:
             offer_obj = Offers.objects.get(pk=id)
         except Offers.DoesNotExist:
-            return JsonResponse({
-                "status": False,
-                "message": "Offer does not exist",
-                "redirect_url": reverse("offers_view"),
-            })
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Offer does not exist",
+                    "redirect_url": reverse("offers_view"),
+                }
+            )
         offer_obj.delete()
         return JsonResponse(
-            {"status": True, "message": "Offer has been deleted successfully", "redirect_url": reverse("offers_view"),}
+            {
+                "status": True,
+                "message": "Offer has been deleted successfully",
+                "redirect_url": reverse("offers_view"),
+            }
         )
+
 
 class RedeemedOffersView(AdminLoginView):
     def get(self, request):
@@ -243,11 +257,7 @@ class OfferEmailView(AdminLoginView):
         except UserRedeemedOffers.DoesNotExist:
             return None
 
-from openpyxl import Workbook
-from openpyxl.writer.excel import save_virtual_workbook
-from datetime import datetime
-from django.http import HttpResponse
-import csv
+
 class OfferExportView(AdminLoginView):
     def get(self, request, file_type):
         print("file_type: ", file_type)
@@ -289,7 +299,9 @@ class OfferExportView(AdminLoginView):
 
     def csv_export(self, request):
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = f'attachment; filename="{self.get_file_name()}.csv"'
+        response["Content-Disposition"] = (
+            f'attachment; filename="{self.get_file_name()}.csv"'
+        )
         writer = csv.writer(response)
         writer.writerow(self.get_headers())
         for user in self.get_queryset():
@@ -318,7 +330,9 @@ class OfferExportView(AdminLoginView):
         worksheet.column_dimensions["G"].width = 10
 
         virtual_excel_file = save_virtual_workbook(workbook)
-        response["Content-Disposition"] = f"attachment; filename={self.get_file_name()}.xlsx"
+        response["Content-Disposition"] = (
+            f"attachment; filename={self.get_file_name()}.xlsx"
+        )
         response["Content-Type"] = "application/octet-stream"
         response.write(virtual_excel_file)
         return response

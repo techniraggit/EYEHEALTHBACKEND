@@ -113,3 +113,83 @@ class UserSubscriptionView(AdminLoginView):
             is_user_subscription = True,
         )
         return render(request, "subscription/user_subscription.html", context)
+
+from openpyxl import Workbook
+from openpyxl.writer.excel import save_virtual_workbook
+from datetime import datetime
+from django.http import HttpResponse
+import csv
+from utilities.utils import time_localize
+
+class SubscriptionExportView(AdminLoginView):
+    def get(self, request, file_type):
+        print("file_type: ", file_type)
+        if file_type == "csv":
+            return self.csv_export(request)
+        elif file_type == "excel":
+            return self.excel_export(request)
+        else:
+            return HttpResponse("Invalid file type")
+
+    def get_file_name(self):
+        current_timestamp = time_localize(datetime.now()).strftime("%Y%m%d%H%M%S")
+        return f"subscription_plans-{current_timestamp}"
+
+    def get_headers(self):
+        return [
+            "Name",
+            "Description",
+            "Price",
+            "Plan Type",
+            "Is Active",
+            "Duration (days)",
+        ]
+
+    def get_queryset(self):
+        return SubscriptionPlan.objects.all()
+
+    def get_data_row(self, object):
+        return [
+            object.name,
+            object.description,
+            object.price,
+            object.plan_type.title(),
+            "Yes" if object.is_active else "No",
+            object.duration,
+        ]
+
+    def csv_export(self, request):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = f'attachment; filename="{self.get_file_name()}.csv"'
+        writer = csv.writer(response)
+        writer.writerow(self.get_headers())
+        for user in self.get_queryset():
+            row = self.get_data_row(user)
+            writer.writerow(row)
+        return response
+
+    def excel_export(self, request):
+        workbook = Workbook()
+        worksheet = workbook.active
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+        worksheet.append(self.get_headers())
+        for user in self.get_queryset():
+            row = self.get_data_row(user)
+            worksheet.append(row)
+
+        worksheet.column_dimensions["A"].width = 10
+        worksheet.column_dimensions["B"].width = 15
+        worksheet.column_dimensions["C"].width = 15
+        worksheet.column_dimensions["D"].width = 15
+        worksheet.column_dimensions["E"].width = 20
+        worksheet.column_dimensions["F"].width = 20
+        worksheet.column_dimensions["G"].width = 10
+
+        virtual_excel_file = save_virtual_workbook(workbook)
+        response["Content-Disposition"] = f"attachment; filename={self.get_file_name()}.xlsx"
+        response["Content-Type"] = "application/octet-stream"
+        response.write(virtual_excel_file)
+        return response
