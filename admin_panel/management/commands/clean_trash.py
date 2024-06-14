@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from api.models.subscription import SubscriptionPlan, UserModel
+from api.models.subscription import SubscriptionPlan
 from api.models.rewards import Offers
 from core.logs import Logger
 
@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         current_date = (timezone.now() - timezone.timedelta(days=90)).date()
 
-        models = [SubscriptionPlan, Offers, UserModel]
+        models = [SubscriptionPlan, Offers] # List of Models 
         for model in models:
             self.clean_trash(model, current_date)
 
