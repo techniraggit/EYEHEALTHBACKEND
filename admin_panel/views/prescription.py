@@ -5,10 +5,9 @@ from api.models.rewards import GlobalPointsModel
 from core.logs import Logger
 from api.models.accounts import UserPoints
 from .base import AdminLoginView
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from api.models.prescription import UserPrescriptions
-from django.contrib import messages
-from django.urls import reverse
+from django.core.paginator import Paginator
 
 logger = Logger("prescription.logs")
 
@@ -16,11 +15,14 @@ logger = Logger("prescription.logs")
 class PrescriptionView(AdminLoginView):
     def get(self, request):
         prescriptions = UserPrescriptions.objects.all()
+        paginator = Paginator(prescriptions, 10)
+        page_number = request.GET.get("page")
+        paginated_offers = paginator.get_page(page_number)
         context = dict(
-            prescriptions=prescriptions,
+            prescriptions=paginated_offers,
             is_prescription=True,
         )
-        return render(request, "prescription/eye_test_report.html", context)
+        return render(request, "prescription/prescription.html", context)
 
 
 class PrescriptionDetailView(AdminLoginView):

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+</head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+    * {
+        font-family: "Roboto", sans-serif;
+    }
+
+    .inner-wrap-log {
+        max-width: 595px;
+        margin: 0 auto;
+        padding: 20px 20px;
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    .logo-wrap a h4 {
+        color: #301168;
+        font-size: 28px;
+        text-align: center;
+        margin: 0;
+    }
+
+    .logo-wrap a h4 strong {
+        color: #00bed4;
+    }
+
+    .bottom-wrapper {
+        padding: 10px 10px 20px;
+        background-color: #fff;
+        margin-top: 20px;
+        border-radius: 3px;
+    }
+
+    .pt-text h5 {
+        font-weight: 700;
+        font-size: 22px;
+        text-align: center;
+        margin: 0;
+    }
+
+    .detail-text {
+        font-weight: 400;
+        font-size: 17px;
+        color: #1F1F1F;
+        text-align: center;
+    }
+
+    p.desc-text {
+        font-weight: 500;
+        color: #211a3d;
+        font-size: 17px;
+        text-align: center;
+    }
+
+    .description-warp table {
+        width: 100%;
+        border-radius: 7px;
+        border-spacing: 0px;
+    }
+
+    .detail-wrap table {
+        width: 100%;
+        border-spacing: 0px;
+    }
+
+    .detail-wrap table td,
+    th,
+    .description-warp table td {
+        padding: 5px 8px;
+        text-align: center;
+        font-size: 15px;
+    }
+
+    .description-warp table td {
+        border-left: 0px;
+        border-bottom: 0px;
+        text-align: start;
+    }
+
+    .description-warp table td:last-child {
+        border-right: 0px;
+    }
+
+    .description-warp tr th {
+        border-left: 0px;
+    }
+
+    .disclaimer-wrap {
+        margin-top: 23px;
+    }
+
+    .disclaimer-wrap h6 {
+        color: #214A8C;
+        font-weight: 500;
+        font-size: 18px;
+        margin: 0 0px 13px;
+    }
+
+    .disclaimer-wrap p {
+        color: #214A8C;
+        font-weight: 400;
+        line-height: 23px;
+        margin: 0 0px 5px;
+        font-size: 14px;
+    }
+
+    .description-warp table {
+        width: 100%;
+        border-spacing: 0px;
+    }
+
+    .description-warp tr th {
+        border-bottom: 0px;
+        border-top: 0px;
+        text-align: start;
+    }
+
+    .detail-wrap table th {
+        border-bottom: 0px;
+        text-align: start;
+    }
+
+    .detail-wrap table th:last-child,
+    .detail-wrap table td:last-child {
+        border-left: 0px;
+    }
+
+    .description-warp tr th:last-child {
+        border-left: 0px;
+        border-right: 0px;
+    }
+
+    td.green-text {
+        color: #46B881;
+        font-weight: 600;
+    }
+
+    td.red-text {
+        color: #F64C4C;
+        font-weight: 600;
+    }
+
+    .description-warp {
+        border: 1px solid #E9E9E9;
+        padding: 20px 30px;
+        border-radius: 7px;
+    }
+
+    .description-warp p {
+        padding-left: 8px;
+        color: #6200EE;
+    }
+
+    .linewrap span {
+        display: block;
+        border: 1px solid #E9E9E9;
+        max-width: 309px;
+        margin: 14px auto;
+    }
+
+    .suggestions-main h6 {
+        color: #4600A9;
+        font-weight: 500;
+        font-size: 18px;
+        margin: 20px 0px 13px;
+    }
+
+    ul.suggestions-main {
+        padding: 0px;
+    }
+
+    .suggestions-main li {
+        font-size: 14px;
+        line-height: 23px;
+    }
+</style>
+
+<body>
+    <section class="report-screen-kt">
+        <div class="inner-wrap-log">
+            <div class="logo-wrap text-center">
+                <a href="#">
+                    <h4>Company <strong>Invoice</strong></h4>
+                    <p class="mb-0 detail-text text-center">Invoice Details</p>
+                </a>
+            </div>
+            <div class="bottom-wrapper">
+                <div class="description-warp">
+                    <div class="detail-wrap">
+                        <p>Invoice Information</p>
+                        <table class="mt-1">
+                            <tr>
+                                <th>Invoice Number</th>
+                                <th>Invoice Date</th>
+                            </tr>
+                            <tr>
+                                <td>#12345</td>
+                                <td>2024-06-17</td>
+                            </tr>
+                        </table>
+                        <div class="linewrap">
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="detail-wrap">
+                        <p>Billing Details</p>
+                        <table class="mt-1">
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Address</th>
+                            </tr>
+                            <tr>
+                                <td>John Doe</td>
+                                <td>123 Street, City, Country</td>
+                            </tr>
+                        </table>
+                        <div class="linewrap">
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="detail-wrap">
+                        <p>Order Summary</p>
+                        <table class="mt-1">
+                            <tr>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total</th>
+                            </tr>
+                            <tr>
+                                <td>Item 1</td>
+                                <td>2</td>
+                                <td><i class="fa fa-inr"></i>10.00</td>
+                                <td><i class="fa fa-inr"></i>20.00</td>
+                            </tr>
+                            <tr>
+                                <td>Item 2</td>
+                                <td>1</td>
+                                <td><i class="fa fa-inr"></i>15.00</td>
+                                <td><i class="fa fa-inr"></i>15.00</td>
+                            </tr>
+                        </table>
+                        <div class="linewrap">
+                            <span></span>
+                        </div>
+                        <table class="mt-1">
+                            <tr>
+                                <th>Subtotal</th>
+                                <td><i class="fa fa-inr"></i>35.00</td>
+                            </tr>
+                            <tr>
+                                <th>Tax (10%)</th>
+                                <td><i class="fa fa-inr"></i>3.50</td>
+                            </tr>
+                            <tr>
+                                <th>Total</th>
+                                <td><i class="fa fa-inr"></i>38.50</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="disclaimer-wrap">
+                    <h6>Notes:</h6>
+                    <p class="mb-0">Thank you for your business. If you have any questions regarding this invoice, please contact us.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+
+</html>

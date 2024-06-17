@@ -52,9 +52,9 @@
         <th>Required Points</th>
         <th>Action</th>
     </tr>
-    {% for offer in offers %}
+    {% for offer in paginated_offers %}
     <tr>
-        <td>{{ forloop.counter }}</td>
+        <td>{{ forloop.counter0|add:paginated_offers.start_index|default:forloop.counter }}</td>
         <td>{{ offer.title }}</td>
         <td>{{ offer.description|truncate_chars }}</td>
         <td>{{ offer.expiry_date }}</td>
@@ -69,6 +69,7 @@
     </tr>
     {% endfor %}
 </table>
+{% include "base/pagination.html" with paginated_data=paginated_offers %}
 
 <!-- Offer Detail Modal -->
 <div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel"

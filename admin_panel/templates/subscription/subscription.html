@@ -51,7 +51,7 @@
     </tr>
     {% for plan in plans %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ forloop.counter0|add:plans.start_index|default:forloop.counter }}</td>
             <td>{{ plan.name|title }}</td>
             <td>{{ plan.description }}</td>
             <td>{{ plan.price }}</td>
@@ -102,6 +102,8 @@
 </div>
 <!-- Offer Detail Modal -->
 
+</table>
+{% include "base/pagination.html" with paginated_data=plans %}
 <script>
     $(document).ready(function () {
         
@@ -188,6 +190,5 @@
         });
     });
 </script>
-</table>
 {% endblock table%}
 

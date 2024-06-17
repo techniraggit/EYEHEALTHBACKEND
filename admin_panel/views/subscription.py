@@ -11,13 +11,17 @@ from .base import AdminLoginView
 from django.shortcuts import render
 from api.models.subscription import SubscriptionPlan, UserSubscription
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 
 
 class SubscriptionView(AdminLoginView):
     def get(self, request):
         plans = SubscriptionPlan.objects.all()
+        paginator = Paginator(plans, 10)
+        page_number = request.GET.get("page")
+        paginated_plans = paginator.get_page(page_number)
         context = dict(
-            plans=plans,
+            plans=paginated_plans,
             is_subscription=True,
         )
         return render(request, "subscription/subscription.html", context)
@@ -122,8 +126,12 @@ class UserSubscriptionView(AdminLoginView):
             )
         else:
             user_plans = UserSubscription.objects.all()
+
+        paginator = Paginator(user_plans, 10)
+        page_number = request.GET.get("page")
+        paginated_user_plans = paginator.get_page(page_number)
         context = dict(
-            user_plans=user_plans,
+            user_plans=paginated_user_plans,
             is_user_subscription=True,
             search=search if search else "",
         )
