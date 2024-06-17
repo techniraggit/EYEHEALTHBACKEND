@@ -32,9 +32,6 @@
 {% endblock nav_bar %}
 {% block table %}
 <table>
-    
-
-
     <tr>
         <th>Sr.No</th>
         <th>User</th>
@@ -44,7 +41,7 @@
     </tr>
     {% for prescription in prescriptions %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ forloop.counter0|add:prescriptions.start_index|default:forloop.counter }}</td>
             <td>{{ prescription.user }}</td>
             <td>{{ prescription.status|title }}</td>
             <td>{{ prescription.created_on }}</td>
@@ -54,4 +51,5 @@
         </tr>
     {% endfor %}
 </table>
+{% include "base/pagination.html" with paginated_data=prescriptions %}
 {% endblock table%}
