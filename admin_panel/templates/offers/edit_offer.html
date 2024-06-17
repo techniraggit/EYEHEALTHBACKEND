@@ -14,17 +14,13 @@
                     <label for="title">Title <span id="required_star">*</span></label>
                     <input type="text" name="title" id="title" class="form-control" value="{{ offer_obj.title}}" />
                 </div>
-                <div class="col-md-4 f-lname mt-4">
-                    <label for="description">Description <span id="required_star">*</span></label>
-                    <textarea name="description" id="description" cols="30" rows="10"
-                        class="form-control">{{ offer_obj.description }}</textarea>
-                </div>
+               
                 <div class="col-md-4 f-mail mt-4">
                     <label for="image">Image <span id="required_star">*</span></label>
                     <input type="file" name="image" id="image" class="form-control"
                         data-is-file-avail="{% if offer_obj.image %} true {% else %} false {% endif %}" />
                     {% if offer_obj.image %}
-                    <p style="font-weight: bold;"> Current file: {{ offer_obj.image.name }} <a href="#"
+                    <p class="mt-2" style="font-weight: bold;"> Current file: {{ offer_obj.image.name }}  <a href="#"
                             class="view-file-link" data-image-url="{{ offer_obj.image.url }}"> View File</a></p>
                     {% endif %}
                 </div>
@@ -46,6 +42,11 @@
                     <label for="required_points">Required Points <span id="required_star">*</span></label>
                     <input type="number" name="required_points" id="required_points"
                         value="{{ offer_obj.required_points}}" class="form-control" />
+                </div>
+                <div class="col-md-12 f-lname mt-4">
+                    <label for="description">Description <span id="required_star">*</span></label>
+                    <textarea name="description" id="description" cols="30" rows="10"
+                        class="form-control">{{ offer_obj.description }}</textarea>
                 </div>
                 <div class="col-md-3 cancel-btn mb-4 mt-5">
                     <button type="submit" class="btn btn-primary save-btn">Save</button>

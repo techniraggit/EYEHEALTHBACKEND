@@ -255,6 +255,7 @@ li.ex-li:hover ul.dropdown-content {
     position: relative;
     padding: 8px 12px;
     list-style: none;
+    color: black;
     border: 2px solid;
     border-color: #5200a5;
 }
@@ -288,6 +289,8 @@ li.ex-li:hover ul.dropdown-content {
 
 .input-wrapp {
     position: relative;
+    width: 100%;
+    max-width: 450px;
 }
 
 .input-wrapp>i {
@@ -627,6 +630,7 @@ button.export-btn:hover ul.dropdown-content {
     font-size: 15px;
     font-weight: 500;
     outline: none;
+    height: 42px;
     width: 100%;
     color: #000;
 }
@@ -789,6 +793,7 @@ form#searchForm {
 
 .dlt-buttons {
     margin-top: 20px;
+    display: flex;
 }
 
 .pop-confirm-btn {
@@ -1079,3 +1084,10 @@ table.table tbody td {
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
     }
 /* Thumbnail end */
+.filter-main > button {
+    padding: 6px 35px;
+    /* font-size: 14px !important; */
+    font-weight: 600;
+    border-radius: 36px !important;
+    height: 42px;
+}
