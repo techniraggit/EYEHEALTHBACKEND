@@ -332,7 +332,7 @@ class DownloadReportView(UserMixin):
                 "is_fatigue_left": report.is_fatigue_left,
             }
 
-            buffer = generate_pdf("reports/fatigue.html", context)
+            buffer = generate_pdf("reports/fatigue_test_report.html", context)
             response = HttpResponse(buffer, content_type="application/pdf")
             response["Content-Disposition"] = (
                 f'attachment; filename="fatigue_report_{report_id}.pdf"'

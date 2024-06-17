@@ -290,7 +290,7 @@ li.ex-li:hover ul.dropdown-content {
 .input-wrapp {
     position: relative;
     width: 100%;
-    max-width: 450px;
+    max-width: 100%;
 }
 
 .input-wrapp>i {
@@ -453,10 +453,9 @@ button {
     font-size: 16px !important;
     font-weight: 500;
     color: #FFFFFF;
-    padding: 10px 24px;
+    padding: 6px 24px;
     background-color: #5200a5;
 }
-
 .custom-button-1 {
     width: 15%;
     display: flex;
@@ -1090,4 +1089,32 @@ table.table tbody td {
     font-weight: 600;
     border-radius: 36px !important;
     height: 42px;
+}
+
+
+.filter-dropdown {
+    max-width: 140px;
+    width: 100%;
+}
+
+.filter-dropdown label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+
+.filter-dropdown select {
+    width: 100%;
+    padding: 8px 12px;
+    border-color: aliceblue;
+    border-radius: 33px;
+    background-color: #f5f8fa;
+}
+
+
+label.radio {
+    background-color: #f8f8f8;
+    padding: 1px 12px;
+    text-align: center;
+    border-radius: 6px;
 }
