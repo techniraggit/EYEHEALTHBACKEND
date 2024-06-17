@@ -57,7 +57,7 @@
     </tr>
     {% for user in users %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ forloop.counter0|add:users.start_index|default:forloop.counter }}</td>
             <td>{{ user.first_name }}</td>
             <td>{{ user.last_name }}</td>
             <td>{{ user.email }}</td>
@@ -74,6 +74,7 @@
         </tr>
     {% endfor %}
 </table>
+{% include "base/pagination.html" with paginated_data=users %}
 
 <div id="dlt-btn-overlay" class="dlt-btn-overlay" style="display: none;">
     <div class="dlt-popup">

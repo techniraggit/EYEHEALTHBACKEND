@@ -15,6 +15,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.db.models import Q
 from api.models.accounts import UserModel, OTPLog
+from django.core.paginator import Paginator
 
 User = UserModel
 
@@ -30,11 +31,14 @@ class UserView(AdminLoginView):
                 | Q(phone_number__icontains=search)
                 | Q(referral_code__icontains=search)
                 | Q(points__icontains=search)
-            )
+            ).order_by("-created_on")
         else:
-            users = User.objects.exclude(id=request.user.id)
+            users = User.objects.exclude(id=request.user.id).order_by("-created_on")
+        paginator = Paginator(users, 10)
+        page_number = request.GET.get("page")
+        paginated_users = paginator.get_page(page_number)
         context = dict(
-            users=users.order_by("-created_on"),
+            users=paginated_users,
             is_user=True,
             search=search,
         )
