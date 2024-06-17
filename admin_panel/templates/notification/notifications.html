@@ -2,6 +2,7 @@
 {% load custom_filters %}
 {% block title %} Notification {% endblock title %}
 
+
 {% block page_name %}Notification{% endblock page_name %}
 {% block nav_bar %}
 <div class="bottomwrap">
@@ -44,7 +45,7 @@
     </tr>
     {% for notification in notifications %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ forloop.counter0|add:notifications.start_index|default:forloop.counter }}</td>
             <td>{{ notification.title }}</td>
             <td>{{ notification.message }}</td>
             <td>{{ notification.created_on|format_datetime }}</td>
@@ -56,4 +57,5 @@
         </tr>
     {% endfor %}
 </table>
+{% include "base/pagination.html" with paginated_data=notifications %}
 {% endblock table%}
