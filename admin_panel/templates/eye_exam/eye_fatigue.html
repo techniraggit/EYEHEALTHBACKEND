@@ -5,27 +5,38 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-        <div class="col-5">
+        <div class="col-8">
             <div class="input-wrapp">
-                <input type="text" placeholder="Search by names,type and value">
-                <!-- <button>Search</button> -->
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <form action="{% url 'users_view' %}" method="get" id="searchForm">
+                    <div> 
+                        <input type="text" name="search" id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div>
+                        <button type="submit">Apply</button>
+                        <button type="button" id="clearButton">Clear</button>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="col-3"></div>
+
         <div class="export col-4">
             <ul>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Export<i class="fa-solid fa-file-export ms-2"></i></a>
-                    <ul class="dropdown-menu mt-2">
-                    <li><a class="dropdown-item" href="{% url 'eye_fatigue_export_view' 'excel' %}">Excel</a></li>
-                    <li><a class="dropdown-item" href="{% url 'eye_fatigue_export_view' 'csv' %}">CSV</a></li>
+                <li class="add-btn me-3">
+                    <a href="{% url 'add_user_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                </li>
+                <li class="ex-li">
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <ul class="dropdown-content">
+                        <li><a class="dropdown-item" href="{% url 'user_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
+
     </div>
 </div>
+
 {% endblock nav_bar %}
 {% block table %}
 <table>
