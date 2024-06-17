@@ -20,7 +20,7 @@ class PrescriptionView(AdminLoginView):
             prescriptions=prescriptions,
             is_prescription=True,
         )
-        return render(request, "prescription/eye_test_report.html", context)
+        return render(request, "prescription/prescription.html", context)
 
 
 class PrescriptionDetailView(AdminLoginView):

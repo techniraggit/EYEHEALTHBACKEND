@@ -172,7 +172,7 @@ class EyeFatigueView(AdminLoginView):
             eye_fatigue_reports=eye_fatigue_reports,
             is_eye_fatigue=True,
         )
-        return render(request, "eye_exam/eye_fatigue_test_report.html", context)
+        return render(request, "eye_exam/eye_fatigue.html", context)
 
 
 class EyeFatigueDetailedView(AdminLoginView):
