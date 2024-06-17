@@ -163,8 +163,11 @@ class DeleteOfferView(AdminLoginView):
 class RedeemedOffersView(AdminLoginView):
     def get(self, request):
         redeemed_offers = UserRedeemedOffers.objects.all().order_by("-created_on")
+        paginator = Paginator(redeemed_offers, 10)
+        page_number = request.GET.get("page")
+        paginated_redeemed_offers = paginator.get_page(page_number)
         context = dict(
-            redeemed_offers=redeemed_offers,
+            redeemed_offers=paginated_redeemed_offers,
             is_redeemed_offers=True,
         )
         return render(request, "offers/redeemed_offers.html", context)

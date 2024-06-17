@@ -43,7 +43,7 @@
     </tr>
     {% for redeemed_offer in redeemed_offers %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ forloop.counter0|add:redeemed_offers.start_index|default:forloop.counter }}</td>
             <td>{{ redeemed_offer.user }}</td>
             <td>{{ redeemed_offer.offer.title }}</td>
             <td>{{ redeemed_offer.status|title }}</td>
@@ -56,4 +56,5 @@
         </tr>
     {% endfor %}
 </table>
+{% include "base/pagination.html" with paginated_data=redeemed_offers %}
 {% endblock table%}
