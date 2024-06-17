@@ -31,16 +31,7 @@
                     <span id="plan_type_message" style="color: red; font-weight: bold"></span>
                 </div>
 
-                <div class="col-md-4 f-name mt-4">
-                    <label>Is Active</label>
-                    <label class="radio">
-                        <input type="radio" name="is_active" id="is_active_yes" value="true"> Yes
-                    </label>
-                    <label class="radio">
-                        <input type="radio" name="is_active" id="is_active_no" value="false"> No
-                    </label>
-                    <span id="is_active_mesage" style="color: red; font-weight: bold"></span>
-                </div>
+              
 
                 <div class="col-md-4 f-lname mt-4">
                     <label for="duration">Duration <span id="required_star">*</span></label>
@@ -48,7 +39,21 @@
                     <span id="duration_message" style="color: red; font-weight: bold"></span>
                 </div>
 
-                <div class="col-md-4 f-lname mt-4">
+                <div class="col-md-4 f-name mt-4">
+                    <label>Is Active</label>
+                    <div class="yes-no">
+                        <label class="radio">
+                            <input type="radio" name="is_active" id="is_active_yes" value="true"> Yes
+                        </label>
+                        <label class="radio">
+                            <input type="radio" name="is_active" id="is_active_no" value="false"> No
+                        </label>
+                    </div>
+                    
+                    <span id="is_active_mesage" style="color: red; font-weight: bold"></span>
+                </div>
+
+                <div class="col-md-12 f-lname mt-4">
                     <label for="description">Description <span id="required_star">*</span></label>
                     <textarea name="description" id="description" cols="30" rows="6"></textarea>
                     <span id="description_message" style="color: red; font-weight: bold"></span>
