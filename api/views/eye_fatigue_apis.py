@@ -234,9 +234,12 @@ def current_day_user_graph(user, user_timezone):
 
 def first_day_user_graph(user, user_timezone):
     user_tz = pytz.timezone(user_timezone)
-    first_report = EyeFatigueReport.objects.filter(user=user).earliest("created_on")
-    first_day_date = first_report.created_on.astimezone(user_tz).date()
-    return get_day_data(user, user_tz, first_day_date)
+    try:
+        first_report = EyeFatigueReport.objects.filter(user=user).earliest("created_on")
+        first_day_date = first_report.created_on.astimezone(user_tz).date()
+        return get_day_data(user, user_tz, first_day_date)
+    except EyeFatigueReport.DoesNotExist:
+            return {"date": None, "value": []}
 
 
 def get_percentile_graph(user_timezone):
@@ -312,6 +315,7 @@ class EyeFatigueGraph(UserMixin):
                 # get_user_real_graph=get_user_real_graph(user_timezone, request.user),
             )
         except Exception as e:
+            raise e
             logger.error(str(e))
             return api_response(False, 500, message=str(e))
 
