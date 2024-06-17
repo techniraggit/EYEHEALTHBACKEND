@@ -315,7 +315,6 @@ class EyeFatigueGraph(UserMixin):
                 # get_user_real_graph=get_user_real_graph(user_timezone, request.user),
             )
         except Exception as e:
-            raise e
             logger.error(str(e))
             return api_response(False, 500, message=str(e))
 
