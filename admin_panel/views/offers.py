@@ -16,7 +16,7 @@ from admin_panel.forms.offers import OffersForm
 from django.contrib import messages
 from django.db.models import Q
 
-
+from django.core.paginator import Paginator
 class OffersView(AdminLoginView):
     def get(self, request):
         search = str(request.GET.get("search", "")).strip()
@@ -28,8 +28,11 @@ class OffersView(AdminLoginView):
             ).order_by("-created_on")
         else:
             offers = Offers.objects.all().order_by("-created_on")
+        paginator = Paginator(offers, 10)
+        page_number = request.GET.get("page")
+        paginated_offers = paginator.get_page(page_number)
         context = dict(
-            offers=offers,
+            paginated_offers=paginated_offers,
             is_offer=True,
             search=search if search else "",
         )
