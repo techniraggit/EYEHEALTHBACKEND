@@ -54,7 +54,7 @@
     </tr>
     {% for user_plan in user_plans %}
         <tr>
-            <td>{{ forloop.counter }}</td>
+            <td>{{ forloop.counter0|add:user_plans.start_index|default:forloop.counter }}</td>
             <td>{{ user_plan.user }}</td>
             <td>{{ user_plan.plan.title }}</td>
             <td>{{ user_plan.start_date }}</td>
@@ -71,6 +71,7 @@
         </tr>
     {% endfor %}
 </table>
+{% include "base/pagination.html" with paginated_data=paginated_offers %}
 <script>
     $(document).ready(function () {
         // Clear the search input value when the clear button is clicked

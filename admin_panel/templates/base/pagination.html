@@ -46,12 +46,12 @@
 <div class="pagination">
     <span class="step-links">
         {% if paginated_data.has_previous %}
-        <a href="?page=1" class="pagination-link first">&laquo; First</a>
-        <a id="prevPage" href="?page={{ paginated_data.previous_page_number }}" class="pagination-link">Previous</a>
+            <a href="?page=1" class="pagination-link first">&laquo; First</a>
+            <a id="prevPage" href="?page={{ paginated_data.previous_page_number }}" class="pagination-link">Previous</a>
         {% endif %}
 
         <span class="current">
-            Page {{ paginated_data.number }} of {{ paginated_data.paginator.num_pages }}.
+            Page {{ paginated_data.number|default:"0" }} of {{ paginated_data.paginator.num_pages|default:"0" }}.
         </span>
 
         {% if paginated_data.has_next %}
