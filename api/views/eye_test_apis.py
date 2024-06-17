@@ -580,7 +580,7 @@ class DownloadReportView(UserMixin):
         try:
             report = get_object_or_404(EyeTestReport, report_id=report_id)
 
-            buffer = generate_pdf("reports/prescription.html", report.report())
+            buffer = generate_pdf("reports/eye_test_report.html", report.report())
             response = HttpResponse(buffer, content_type="application/pdf")
             response["Content-Disposition"] = (
                 f'attachment; filename="prescription_{report_id}.pdf"'
