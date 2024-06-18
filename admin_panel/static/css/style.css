@@ -10,7 +10,7 @@ a {
 
 ul {
     padding-left: 0;
-    margin-bottom: 0;
+    margin-bottom: 0 !important;
     list-style: none;
 }
 
@@ -254,7 +254,9 @@ li.ex-li:hover ul.dropdown-content {
     border-radius: 12px 12px 12px 12px;
     position: relative;
     padding: 8px 12px;
+    display: block;
     list-style: none;
+    height: 42px;
     color: black;
     border: 2px solid;
     border-color: #5200a5;
@@ -762,6 +764,8 @@ td {
 
 form#searchForm {
     display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .side-list ul li a img {
@@ -1093,10 +1097,10 @@ table.table tbody td {
 
 
 .filter-dropdown {
-    max-width: 140px;
+    max-width: 145px;
     width: 100%;
+    position: relative;
 }
-
 .filter-dropdown label {
     display: block;
     margin-bottom: 6px;
@@ -1105,9 +1109,10 @@ table.table tbody td {
 
 .filter-dropdown select {
     width: 100%;
-    padding: 8px 12px;
+    padding: 13px 12px;
     border-color: aliceblue;
     border-radius: 33px;
+    height: 42px;
     outline: none;
     background-color: #f5f8fa;
 }
@@ -1127,4 +1132,28 @@ label.radio {
 .slidecontainer {
     width: 200px;
     max-width: 100%;
+}
+
+.filter-dropdown select {
+    font-size: 14px;
+}
+
+
+.filter-dropdown label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #f5f8fa;
+    width: 90px;
+}
+
+.filter-dropdown input::-webkit-datetime-edit-year-field:not([aria-valuenow]),
+.filter-dropdown input::-webkit-datetime-edit-month-field:not([aria-valuenow]),
+.filter-dropdown input::-webkit-datetime-edit-day-field:not([aria-valuenow]) {
+    color: transparent;
+}
+
+.search-box.row {
+    align-items: start;
 }
