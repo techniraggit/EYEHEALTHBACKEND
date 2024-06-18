@@ -1157,3 +1157,14 @@ label.radio {
 .search-box.row {
     align-items: start;
 }
+/* SPAN ERROR/SUCCESS MESSAGE START */
+.span-error-message{
+    font-weight: bold;
+    color: red;
+}
+
+.span-success-message{
+    font-weight: bold;
+    color: green;
+}
+/* SPAN ERROR/SUCCESS MESSAGE END */
