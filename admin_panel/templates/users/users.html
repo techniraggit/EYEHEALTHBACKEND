@@ -10,8 +10,11 @@
         <div class="col-8">
             <div class="input-wrapp">
                 <form action="{% url 'users_view' %}" method="get" id="searchForm">
-                    <div> 
-                        <input type="text" name="search" id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{ search }}{% endif %}">
+                    {% csrf_token %}
+                    <div>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Names, Email, Phone Number and Referral Code"
+                            value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div>
                         <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
@@ -23,18 +26,20 @@
 
         <div class="export col-4">
             <ul>
+                <li>
+                    <button class="bulk-delete-btn me-2" id="bulkDeleteButton">Bulk Delete</button>
+                </li>
                 <li class="add-btn me-3">
                     <a href="{% url 'add_user_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
                 </li>
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url 'user_export_view' 'excel' %}">Excel</a></li>
-                        <li><a class="dropdown-item" href="{% url 'user_export_view' 'csv' %}">CSV</a></li>
+                        <li><a class="dropdown-item user_export_file" data-file-type="excel"
+                                href="{% url 'user_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item user_export_file" data-file-type="csv"
+                                href="{% url 'user_export_view' 'csv' %}">CSV</a></li>
                     </ul>
-                </li>
-                <li>
-                    <button class="bulk-delete-btn" id="bulkDeleteButton">Bulk Delete</button>
                 </li>
             </ul>
         </div>
@@ -58,23 +63,23 @@
         <th>Action</th>
     </tr>
     {% for user in users %}
-        <tr>
-            <td><input type="checkbox" class="user-checkbox" data-id="{{ user.id }}"></td>
-            <td>{{ forloop.counter0|add:users.start_index|default:forloop.counter }}</td>
-            <td>{{ user.first_name }}</td>
-            <td>{{ user.last_name }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.phone_number }}</td>
-            <td>{{ user.age }}</td>
-            <td>{{ user.points }}</td>
-            <td>{{ user.referral_code }}</td>
-            <td>{% if user.is_superuser %}Admin {% else %}User{% endif %}</td>
-            <td>
-                <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-id="{{ user.id }}"></i></a>
-                <a href="{% url "user_edit_view" user.id %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="{% url "user_detailed_view" user.id %}"><i class="fa-regular fa-eye"></i></a>
-            </td>
-        </tr>
+    <tr>
+        <td><input type="checkbox" class="user-checkbox" data-id="{{ user.id }}"></td>
+        <td>{{ forloop.counter0|add:users.start_index|default:forloop.counter }}</td>
+        <td>{{ user.first_name }}</td>
+        <td>{{ user.last_name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.phone_number }}</td>
+        <td>{{ user.age }}</td>
+        <td>{{ user.points }}</td>
+        <td>{{ user.referral_code }}</td>
+        <td>{% if user.is_superuser %}Admin {% else %}User{% endif %}</td>
+        <td>
+            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-id="{{ user.id }}"></i></a>
+            <a href="{% url "user_edit_view" user.id %}"><i class="fa-solid fa-pen me-2"></i></a>
+            <a href="{% url "user_detailed_view" user.id %}"><i class="fa-regular fa-eye"></i></a>
+        </td>
+    </tr>
     {% endfor %}
 </table>
 {% include "base/pagination.html" with paginated_data=users %}
@@ -83,7 +88,7 @@
 <script>
     $(document).ready(function () {
         // Clear the search input value when the clear button is clicked
-        $('#clearButton').click(function(){
+        $('#clearButton').click(function () {
             $('#searchInput').val('');
             $('#searchForm').submit();
         });
@@ -124,7 +129,7 @@
 
         // Function to update the visibility of the bulk delete button
         function updateBulkDeleteButton() {
-            if ($('.user-checkbox:checked').length > 0) {
+            if ($('.user-checkbox:checked').length > 1) {
                 $('#bulkDeleteButton').show();
             } else {
                 $('#bulkDeleteButton').hide();
@@ -141,7 +146,7 @@
         });
 
         // Update bulk delete button visibility when individual checkboxes are clicked
-        $(document).on('change', '.user-checkbox', function() {
+        $(document).on('change', '.user-checkbox', function () {
             if (!$(this).prop('checked')) {
                 $('#selectAll').prop('checked', false);
             } else if ($('.user-checkbox:checked').length === $('.user-checkbox').length) {
@@ -149,6 +154,69 @@
             }
             updateBulkDeleteButton();
         });
+
+        $(".user_export_file").click(function (event) {
+            event.preventDefault();
+
+            var file_type = $(this).data('file-type');
+            let selectedIds = [];
+            $('.user-checkbox:checked').each(function () {
+                selectedIds.push($(this).data('id'));
+            });
+
+            let formData = {
+                'selected_ids': selectedIds,
+                'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+            };
+
+            $.ajax({
+                url: "user-export/" + file_type,
+                type: 'POST',
+                data: formData,
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data, status, xhr) {
+                    var filename = "";
+                    var disposition = xhr.getResponseHeader('Content-Disposition');
+                    if (disposition && disposition.indexOf('attachment') !== -1) {
+                        var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+                        var matches = filenameRegex.exec(disposition);
+                        if (matches != null && matches[1]) filename = matches[1].replace(/['"]/g, '');
+                    }
+
+                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                        window.navigator.msSaveBlob(data, filename);
+                    } else {
+                        var URL = window.URL || window.webkitURL;
+                        var downloadUrl = URL.createObjectURL(data);
+
+                        if (filename) {
+                            var a = document.createElement("a");
+                            if (typeof a.download === 'undefined') {
+                                window.location.href = downloadUrl;
+                            } else {
+                                a.href = downloadUrl;
+                                a.download = filename;
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                        } else {
+                            window.location.href = downloadUrl;
+                        }
+
+                        setTimeout(function () { URL.revokeObjectURL(downloadUrl); }, 100); // cleanup
+                    }
+                    $('#dlt-btn-overlay').css('display', 'none');
+                    showToaster('Users exported successfully!', "alert-success");
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error making POST request:', error);
+                    $('#dlt-btn-overlay').css('display', 'none');
+                    showToaster(error, "alert-error");
+                }
+            })
+        })
 
         // Bulk delete users when the bulk delete button is clicked
         $('#bulkDeleteButton').click(function () {
@@ -161,16 +229,24 @@
                 $('#dlt-btn-overlay').css('display', 'flex');
 
                 $('#confirmDelete').off('click').on('click', function (event) {
+                    $('#dlt-btn-overlay').css('display', 'none');
+                    let formData = {
+                        'selected_ids': selectedIds,
+                        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+                    };
+
                     $.ajax({
-                        url: "bulk-delete/",
+                        url: "/users/user-bulk-delete-view",
                         type: 'POST',
-                        data: JSON.stringify({ ids: selectedIds }),
-                        contentType: 'application/json',
+                        data: formData,
                         success: function (data) {
-                            $('#dlt-btn-overlay').css('display', 'none');
-                            showToaster('Users deleted successfully!', "alert-success");
-                            $('.user-checkbox:checked').closest('tr').remove();
-                            updateBulkDeleteButton();
+                            if (data.status) {
+                                showToaster(data.message, "alert-success");
+                                $('.user-checkbox:checked').closest('tr').remove();
+                                updateBulkDeleteButton();
+                            }else{
+                                showToaster(data.message, "alert-error")
+                            }
                         },
                         error: function (xhr, status, error) {
                             console.error('Error making POST request:', error);
