@@ -12,9 +12,11 @@
                         <input type="text" name="search" id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown ms-2">
+                        <label>From Date</label>
                         <input type="date" name="start_date" placeholder="Start Date">
                     </div>
                     <div class="filter-dropdown ms-2">
+                        <label>To Date</label>
                         <input type="date" name="end_date" placeholder="End Date">
                     </div>
                     <div class="filter-dropdown ms-2">
@@ -160,6 +162,9 @@
             $('#reportDetailModal').modal('hide');
         })
     });
+    $(".filter-dropdown input").click(function(){
+        $(".filter-dropdown label").hide();
+      });
     </script>
     
 
