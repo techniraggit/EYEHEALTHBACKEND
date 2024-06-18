@@ -1,0 +1,99 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %}Send Notification{% endblock title %}
+{% block page_name %}Send Notification{% endblock page_name %}
+{% block table %}
+
+<div class="right-table1">
+    <div class="form-main">
+        <form id="send_notification" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="title">Title <span id="required_star">*</span></label>
+                    <input type="text" name="title" id="title" class="form-control" />
+                    <span id="title_message"></span>
+                </div>
+
+                <div class="col-md-4 f-lname mt-4">
+                    <label for="message">Message <span id="required_star">*</span></label>
+                    <textarea name="message" id="message" class="form-control" rows="5" cols="10"></textarea>
+                    <span id="msg_message"></span>
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label>Select Users:</label><br>
+                    {% for user in users %}
+                        <input type="checkbox" name="users" value="{{ user.id }}"> {{ user.email }}<br>
+                    {% endfor %}
+                    <span id="user_message"></span>
+                </div>
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit" class="btn btn-primary save-btn">Send</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#send_notification').on('submit', function (e) {
+            e.preventDefault(); // Prevent the default form submission
+            
+            // Perform form validation
+            var isValid = true;
+            var title = $('#title').val().trim();
+            var message = $('#message').val().trim();
+            var selectedUsers = $('input[name="users"]:checked').length;
+            
+            if (title === '') {
+                $("#title_message").text("Title is required").addClass('span-error-message');
+                isValid = false;
+            }
+            
+            if (message === '') {
+                $("#msg_message").text("Message is required").addClass('span-error-message');
+                isValid = false;
+            }
+            
+            if (selectedUsers === 0) {
+                $("#user_message").text("At least one user must be selected").addClass('span-error-message');
+                isValid = false;
+            }
+            
+            if (isValid) {
+                // If the form is valid, submit it via AJAX
+                var formData = new FormData(this);
+                
+                $.ajax({
+                    url: "{% url 'add_notification_view' %}",
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
+                    },
+                    success: function (response) {
+                        if(response.status){
+                            showToaster(response.message, "alert-success");
+                            setTimeout(function () {
+                                window.location.href = "/notification/";
+                            }, 2000);
+                        }else{
+                            showToaster(response.message, "alert-error");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        // Handle error response
+                        alert('An error occurred while sending the notification');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+
+{% endblock table %}

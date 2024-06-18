@@ -50,6 +50,7 @@ prescription_urls = [
 
 notification_urls = [
     path("", NotificationView.as_view(), name="notification_view"),
+    path("add-notificatioin", NewNotificationView.as_view(), name="add_notification_view"),
 ]
 
 

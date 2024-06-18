@@ -1128,3 +1128,15 @@ label.radio {
     width: 200px;
     max-width: 100%;
 }
+
+/* SPAN ERROR/SUCCESS MESSAGE START */
+.span-error-message{
+    font-weight: bold;
+    color: red;
+}
+
+.span-success-message{
+    font-weight: bold;
+    color: green;
+}
+/* SPAN ERROR/SUCCESS MESSAGE END */
