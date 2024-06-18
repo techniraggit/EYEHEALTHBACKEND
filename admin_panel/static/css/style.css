@@ -1119,3 +1119,7 @@ label.radio {
     text-align: center;
     border-radius: 6px;
 }
+
+#bulkDeleteButton {
+    display: none;
+}

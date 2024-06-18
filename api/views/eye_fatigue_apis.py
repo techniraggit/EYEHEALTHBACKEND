@@ -239,7 +239,7 @@ def first_day_user_graph(user, user_timezone):
         first_day_date = first_report.created_on.astimezone(user_tz).date()
         return get_day_data(user, user_tz, first_day_date)
     except EyeFatigueReport.DoesNotExist:
-            return {"date": None, "value": []}
+        return {"date": None, "value": [0, 0, 0, 0, 0, 0, 0]}
 
 
 def get_percentile_graph(user_timezone):

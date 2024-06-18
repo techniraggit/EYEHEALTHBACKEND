@@ -4,7 +4,6 @@
 
 {% block page_name %}Users{% endblock page_name %}
 
-
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
@@ -34,9 +33,11 @@
                         <li><a class="dropdown-item" href="{% url 'user_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
+                <li>
+                    <button class="bulk-delete-btn" id="bulkDeleteButton">Bulk Delete</button>
+                </li>
             </ul>
         </div>
-
     </div>
 </div>
 
@@ -44,6 +45,7 @@
 {% block table %}
 <table>
     <tr>
+        <th><input type="checkbox" id="selectAll"></th>
         <th>Sr.No</th>
         <th>First Name</th>
         <th>Last Name</th>
@@ -57,6 +59,7 @@
     </tr>
     {% for user in users %}
         <tr>
+            <td><input type="checkbox" class="user-checkbox" data-id="{{ user.id }}"></td>
             <td>{{ forloop.counter0|add:users.start_index|default:forloop.counter }}</td>
             <td>{{ user.first_name }}</td>
             <td>{{ user.last_name }}</td>
@@ -76,16 +79,7 @@
 </table>
 {% include "base/pagination.html" with paginated_data=users %}
 
-<div id="dlt-btn-overlay" class="dlt-btn-overlay" style="display: none;">
-    <div class="dlt-popup">
-        <h4>Are you sure you want to delete this User?</h4>
-        <div class="dlt-buttons">
-            <button class="pop-confirm-btn" id="confirmDelete">Yes, delete it</button>
-            <button class="pop-confirm-btn" id="cancelDelete">No, keep it</button>
-        </div>
-    </div>
-</div>
-
+{% include "base/delete_popup.html" with msg='Are you sure you want to delete this User?' %}
 <script>
     $(document).ready(function () {
         // Clear the search input value when the clear button is clicked
@@ -126,6 +120,73 @@
         // Hide the delete button overlay when the cancel delete button is clicked
         $('#cancelDelete').click(function () {
             $('#dlt-btn-overlay').css('display', 'none');
+        });
+
+        // Function to update the visibility of the bulk delete button
+        function updateBulkDeleteButton() {
+            if ($('.user-checkbox:checked').length > 0) {
+                $('#bulkDeleteButton').show();
+            } else {
+                $('#bulkDeleteButton').hide();
+            }
+        }
+
+        // Initial call to hide the bulk delete button if no checkboxes are checked
+        updateBulkDeleteButton();
+
+        // Select all checkboxes when the select all checkbox is clicked
+        $('#selectAll').click(function () {
+            $('.user-checkbox').prop('checked', $(this).prop('checked'));
+            updateBulkDeleteButton();
+        });
+
+        // Update bulk delete button visibility when individual checkboxes are clicked
+        $(document).on('change', '.user-checkbox', function() {
+            if (!$(this).prop('checked')) {
+                $('#selectAll').prop('checked', false);
+            } else if ($('.user-checkbox:checked').length === $('.user-checkbox').length) {
+                $('#selectAll').prop('checked', true);
+            }
+            updateBulkDeleteButton();
+        });
+
+        // Bulk delete users when the bulk delete button is clicked
+        $('#bulkDeleteButton').click(function () {
+            let selectedIds = [];
+            $('.user-checkbox:checked').each(function () {
+                selectedIds.push($(this).data('id'));
+            });
+
+            if (selectedIds.length > 0) {
+                $('#dlt-btn-overlay').css('display', 'flex');
+
+                $('#confirmDelete').off('click').on('click', function (event) {
+                    $.ajax({
+                        url: "bulk-delete/",
+                        type: 'POST',
+                        data: JSON.stringify({ ids: selectedIds }),
+                        contentType: 'application/json',
+                        success: function (data) {
+                            $('#dlt-btn-overlay').css('display', 'none');
+                            showToaster('Users deleted successfully!', "alert-success");
+                            $('.user-checkbox:checked').closest('tr').remove();
+                            updateBulkDeleteButton();
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Error making POST request:', error);
+                            $('#dlt-btn-overlay').css('display', 'none');
+                            showToaster(error, "alert-error");
+                        }
+                    });
+                    event.preventDefault();
+                });
+
+                $('#cancelDelete').click(function () {
+                    $('#dlt-btn-overlay').css('display', 'none');
+                });
+            } else {
+                showToaster('No users selected for deletion!', "alert-error");
+            }
         });
     });
 </script>
