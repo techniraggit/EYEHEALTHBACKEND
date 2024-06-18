@@ -1108,6 +1108,7 @@ table.table tbody td {
     padding: 8px 12px;
     border-color: aliceblue;
     border-radius: 33px;
+    outline: none;
     background-color: #f5f8fa;
 }
 
