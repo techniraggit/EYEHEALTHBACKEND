@@ -649,11 +649,11 @@ button.export-btn:hover ul.dropdown-content {
 }
 
 .search-box {
-    padding: 24px 0px;
+    padding: 24px 0px 0px 0px;
     width: 100%;
     display: flex;
     align-items: center;
-}
+}   
 
 .list-box {
     display: flex;
@@ -1122,4 +1122,9 @@ label.radio {
 
 #bulkDeleteButton {
     display: none;
+}
+
+.slidecontainer {
+    width: 200px;
+    max-width: 100%;
 }
