@@ -57,31 +57,41 @@
                 </li>
             </ul>
         </div>
+       
         
-        <div class="mt-2 d-flex">
-            <div>
-                <button type="submit">Apply</button>
-                <button type="button" id="clearButton">Clear</button>
+        <div class="mt-2">
+            <div class="slidecontainer">
+                <label>
+                    Health Score
+                </label>
+                <input type="range" >
+              </div>
+                    
+                </div>
             </div>
-         
-            <div class="filter-dropdown ms-2">
-                <select placeholder="Filter">
-                    <option>nitin</option>
-                    <option>rajat</option>
-                    <option>shivam</option>
-                    <option>naman</option>
-                </select>
+            <div class="d-flex mb-2">
+
+                <div>
+                    <button type="submit">Apply</button>
+                    <button type="button" id="clearButton">Clear</button>
+                </div>
+             
+                <div class="filter-dropdown ms-2">
+                    <select placeholder="Filter">
+                        <option>nitin</option>
+                        <option>rajat</option>
+                        <option>shivam</option>
+                        <option>naman</option>
+                    </select>
+                </div>
+
             </div>
+            
 
 
         </div> 
 
-<div class="slidecontainer">
-    <input type="range" min="1" max="100" value="50">
-  </div>
-        
-    </div>
-</div>
+
 
 {% endblock nav_bar %}
 {% block table %}
