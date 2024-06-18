@@ -8,46 +8,37 @@
         <div class="col-9">
             <div class="input-wrapp">
                 <form action="{% url 'users_view' %}" method="get" id="searchForm">
-                    <div> 
+                    <div>
                         <input type="text" name="search" id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <select placeholder="Filter">
-                            <option>nitin</option>
-                            <option>rajat</option>
-                            <option>shivam</option>
-                            <option>naman</option>
-                        </select>
+                        <input type="date" name="start_date" placeholder="Start Date">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <select placeholder="Filter">
-                            <option>nitin</option>
-                            <option>rajat</option>
-                            <option>shivam</option>
-                            <option>naman</option>
-                        </select>
+                        <input type="date" name="end_date" placeholder="End Date">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <select placeholder="Filter">
-                            <option>nitin</option>
-                            <option>rajat</option>
-                            <option>shivam</option>
-                            <option>naman</option>
+                        <select name="health_score" placeholder="Filter">
+                            <option value="">Health Score</option>
+                            <option value="6.5">6.5</option>
+                            <option value="6.6">6.6</option>
+                            <option value="6.7">6.7</option>
+                            <option value="6.8">6.8</option>
+                            <option value="6.9">6.9</option>
+                            <option value="7">7</option>
                         </select>
                     </div>
-                   {% comment %} <div>
-                        <button type="submit">Apply</button>
-                        <button type="button" id="clearButton">Clear</button>
-                    </div>  {% endcomment %}
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
-
         <div class="export col-3">
             <ul>
-                <li class="add-btn me-3">
-                    <a href="{% url 'add_user_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
-                </li>
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
@@ -57,26 +48,8 @@
                 </li>
             </ul>
         </div>
-        
-        <div class="mt-2 d-flex">
-            <div>
-                <button type="submit">Apply</button>
-                <button type="button" id="clearButton">Clear</button>
-            </div>
-         
-            <div class="filter-dropdown ms-2">
-                <select placeholder="Filter">
-                    <option>nitin</option>
-                    <option>rajat</option>
-                    <option>shivam</option>
-                    <option>naman</option>
-                </select>
-            </div>
-        </div> 
-        
     </div>
 </div>
-
 {% endblock nav_bar %}
 {% block table %}
 <table>

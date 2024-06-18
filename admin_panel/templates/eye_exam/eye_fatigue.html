@@ -8,46 +8,51 @@
         <div class="col-9">
             <div class="input-wrapp">
                 <form action="{% url 'users_view' %}" method="get" id="searchForm">
-                    <div> 
+                    <div>
                         <input type="text" name="search" id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <select placeholder="Filter">
-                            <option>nitin</option>
-                            <option>rajat</option>
-                            <option>shivam</option>
-                            <option>naman</option>
+                        <input type="date" name="start_date" placeholder="Start Date">
+                    </div>
+                    <div class="filter-dropdown ms-2">
+                        <input type="date" name="end_date" placeholder="End Date">
+                    </div>
+                    <div class="filter-dropdown ms-2">
+                        <select name="health_score" placeholder="Filter">
+                            <option value="">Health Score</option>
+                            <option value="6.5">6.5</option>
+                            <option value="6.6">6.6</option>
+                            <option value="6.7">6.7</option>
+                            <option value="6.8">6.8</option>
+                            <option value="6.9">6.9</option>
+                            <option value="7">7</option>
                         </select>
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <select placeholder="Filter">
-                            <option>nitin</option>
-                            <option>rajat</option>
-                            <option>shivam</option>
-                            <option>naman</option>
+                        <select name="is_fatigue_left" placeholder="Filter">
+                            <option value="">Is Fatigue Right</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
                         </select>
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <select placeholder="Filter">
-                            <option>nitin</option>
-                            <option>rajat</option>
-                            <option>shivam</option>
-                            <option>naman</option>
+                        <select name="is_fatigue_right" placeholder="Filter">
+                            <option value="">Is Fatigue Left</option>
+                            <option value="true">Yes</option>
+                            <option value="false">No</option>
                         </select>
                     </div>
-                   {% comment %} <div>
-                        <button type="submit">Apply</button>
-                        <button type="button" id="clearButton">Clear</button>
-                    </div>  {% endcomment %}
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
+                    </div>
                 </form>
             </div>
         </div>
-
         <div class="export col-3">
             <ul>
-                <li class="add-btn me-3">
-                    <a href="{% url 'add_user_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
-                </li>
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
@@ -57,41 +62,8 @@
                 </li>
             </ul>
         </div>
-       
-        
-        <div class="mt-2">
-            <div class="slidecontainer">
-                <label>
-                    Health Score
-                </label>
-                <input type="range" >
-              </div>
-                    
-                </div>
-            </div>
-            <div class="d-flex mb-2">
-
-                <div>
-                    <button type="submit">Apply</button>
-                    <button type="button" id="clearButton">Clear</button>
-                </div>
-             
-                <div class="filter-dropdown ms-2">
-                    <select placeholder="Filter">
-                        <option>nitin</option>
-                        <option>rajat</option>
-                        <option>shivam</option>
-                        <option>naman</option>
-                    </select>
-                </div>
-
-            </div>
-            
-
-
-        </div> 
-
-
+    </div>
+</div>
 
 {% endblock nav_bar %}
 {% block table %}
@@ -107,23 +79,25 @@
         <th>Action</th>
     </tr>
     {% for report in eye_fatigue_reports %}
-        <tr>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ report.user }}</td>
-            <td>{{ report.report_id }}</td>
-            <td>{{ report.is_fatigue_right }}</td>
-            <td>{{ report.is_mild_tiredness_right }}</td>
-            <td>{{ report.is_fatigue_left }}</td>
-            <td>{{ report.is_mild_tiredness_left }}</td>
-            <td>
-                <a href="#" class="view-fatigue-details" data-fatigue-id="{{ report.pk }}"><i class="fa-regular fa-eye"></i></a>
-            </td>
-        </tr>
+    <tr>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ report.user }}</td>
+        <td>{{ report.report_id }}</td>
+        <td>{{ report.is_fatigue_right }}</td>
+        <td>{{ report.is_mild_tiredness_right }}</td>
+        <td>{{ report.is_fatigue_left }}</td>
+        <td>{{ report.is_mild_tiredness_left }}</td>
+        <td>
+            <a href="#" class="view-fatigue-details" data-fatigue-id="{{ report.pk }}"><i
+                    class="fa-regular fa-eye"></i></a>
+        </td>
+    </tr>
     {% endfor %}
 </table>
 
 <!-- Offer Detail Modal -->
-<div class="modal fade" id="fatigueDetailModal" tabindex="-1" role="dialog" aria-labelledby="fatigueDetailModalLabel" aria-hidden="true">
+<div class="modal fade" id="fatigueDetailModal" tabindex="-1" role="dialog" aria-labelledby="fatigueDetailModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -146,8 +120,8 @@
 <!-- Offer Detail Modal -->
 
 <script>
-    $(document).ready(function() {
-        $('.view-fatigue-details').click(function(event) {
+    $(document).ready(function () {
+        $('.view-fatigue-details').click(function (event) {
             event.preventDefault();
             var fatigue_id = $(this).data('fatigue-id');
             var modal = $('#fatigueDetailModal');
@@ -155,7 +129,7 @@
             $.ajax({
                 url: '/eye/eye-fatigue-detailed/' + fatigue_id,
                 method: 'GET',
-                success: function(data) {
+                success: function (data) {
                     var report_data = data.eye_fatigue_report
                     modal.find("#modal-name").text(report_data.full_name)
                     modal.find("#modal-age").text(report_data.age)
@@ -165,19 +139,19 @@
                     modal.find("#modal-is_mild_tiredness_left").text(report_data.is_mild_tiredness_left === true ? 'Yes' : 'No')
                     modal.modal('show');
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("Error fetching offer details:", error);
                     alert("An error occurred while fetching offer details. Please try again.");
                 }
             });
         });
 
-        $("#modal_dismis").on("click", function(e) {
+        $("#modal_dismis").on("click", function (e) {
             e.preventDefault();
             $('#fatigueDetailModal').modal('hide');
         })
     });
-    </script>
-    
+</script>
+
 
 {% endblock table%}
