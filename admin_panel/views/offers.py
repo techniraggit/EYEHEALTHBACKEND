@@ -17,6 +17,7 @@ from django.contrib import messages
 from django.db.models import Q
 
 from django.core.paginator import Paginator
+
 class OffersView(AdminLoginView):
     def get(self, request):
         search = str(request.GET.get("search", "")).strip()

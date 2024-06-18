@@ -80,7 +80,7 @@
     </tr>
     {% for report in eye_fatigue_reports %}
     <tr>
-        <td>{{ forloop.counter }}</td>
+        <td>{{ forloop.counter0|add:eye_fatigue_reports.start_index|default:forloop.counter }}</td>
         <td>{{ report.user }}</td>
         <td>{{ report.report_id }}</td>
         <td>{{ report.is_fatigue_right }}</td>
@@ -94,6 +94,7 @@
     </tr>
     {% endfor %}
 </table>
+{% include "base/pagination.html" with paginated_data=eye_fatigue_reports %}
 
 <!-- Offer Detail Modal -->
 <div class="modal fade" id="fatigueDetailModal" tabindex="-1" role="dialog" aria-labelledby="fatigueDetailModalLabel"

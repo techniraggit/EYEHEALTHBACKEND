@@ -5,13 +5,17 @@ from django.contrib import messages
 from django.http import JsonResponse, HttpResponse
 from utilities.utils import generate_pdf
 from django.shortcuts import get_object_or_404
+from django.core.paginator import Paginator
 
 
 class EyeTestView(AdminLoginView):
     def get(self, request):
         eye_test_reports = EyeTestReport.objects.all().order_by("-created_on")
+        paginator = Paginator(eye_test_reports, 1)
+        page_number = request.GET.get("page")
+        paginated_eye_test_reports = paginator.get_page(page_number)
         context = dict(
-            eye_test_reports=eye_test_reports,
+            eye_test_reports=paginated_eye_test_reports,
             is_eye_exam=True,
         )
         return render(request, "eye_exam/eye_test.html", context)
@@ -168,8 +172,11 @@ class DownloadEyeTestReportView(AdminLoginView):
 class EyeFatigueView(AdminLoginView):
     def get(self, request):
         eye_fatigue_reports = EyeFatigueReport.objects.all().order_by("-created_on")
+        paginator = Paginator(eye_fatigue_reports, 1)
+        page_number = request.GET.get("page")
+        paginated_eye_fatigue_reports = paginator.get_page(page_number)
         context = dict(
-            eye_fatigue_reports=eye_fatigue_reports,
+            eye_fatigue_reports=paginated_eye_fatigue_reports,
             is_eye_fatigue=True,
         )
         return render(request, "eye_exam/eye_fatigue.html", context)
