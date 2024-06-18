@@ -24,14 +24,18 @@ class UserView(AdminLoginView):
     def get(self, request):
         search = request.GET.get("search", "").strip()
         if search:
-            users = User.objects.exclude(id=request.user.id).filter(
-                Q(email__icontains=search)
-                | Q(first_name__icontains=search)
-                | Q(last_name__icontains=search)
-                | Q(phone_number__icontains=search)
-                | Q(referral_code__icontains=search)
-                | Q(points__icontains=search)
-            ).order_by("-created_on")
+            users = (
+                User.objects.exclude(id=request.user.id)
+                .filter(
+                    Q(email__icontains=search)
+                    | Q(first_name__icontains=search)
+                    | Q(last_name__icontains=search)
+                    | Q(phone_number__icontains=search)
+                    | Q(referral_code__icontains=search)
+                    | Q(points__icontains=search)
+                )
+                .order_by("-created_on")
+            )
         else:
             users = User.objects.exclude(id=request.user.id).order_by("-created_on")
         paginator = Paginator(users, 10)
@@ -57,6 +61,29 @@ class UserDetailedView(AdminLoginView):
             is_user=True,
         )
         return render(request, "users/user_view.html", context)
+
+class UserBulkDeleteView(AdminLoginView):
+    def post(self, request):
+        try:
+            selected_ids = request.POST.getlist("selected_ids[]")
+            users = User.objects.filter(id__in=selected_ids)
+            count = users.count()
+            if count < 1:
+                return JsonResponse({
+                    "status": False,
+                    "message": "No selected users found"
+                })
+            for user in users:
+                user.delete()
+            return JsonResponse({
+                "status": True,
+                "message": f"Selected users deleted successfully"
+            })
+        except Exception as e:
+            return JsonResponse({
+                "status": False,
+                "message": str(e)
+            })
 
 
 class UserEditView(AdminLoginView):
@@ -131,13 +158,15 @@ class UserDeleteView(AdminLoginView):
 
 
 class UserExportView(AdminLoginView):
-    current_timestamp = time_localize(datetime.now()).strftime("%Y%m%d%H%M%S")
-    file_name = f"users-{current_timestamp}"
+    def get_queryset(self, request):
+        selected_ids = request.POST.getlist("selected_ids[]")
+        if selected_ids:
+            users = User.objects.filter(id__in=selected_ids)
+        else:
+            users = User.objects.exclude(is_superuser=True)
+        return users
 
-    def get_queryset(self):
-        return User.objects.exclude(is_superuser=True)
-
-    def get(self, request, file_type):
+    def post(self, request, file_type):
         if file_type == "csv":
             return self.csv_export(request)
         elif file_type == "excel":
@@ -145,63 +174,51 @@ class UserExportView(AdminLoginView):
         else:
             return HttpResponse("Invalid file type")
 
+    def get_file_name(self):
+        current_timestamp = time_localize(datetime.now()).strftime("%Y%m%d%H%M%S")
+        file_name = f"users-{current_timestamp}"
+        return file_name
+
+    def get_headers(self):
+        return [
+            "ID",
+            "First Name",
+            "Last Name",
+            "Email",
+            "Phone Number",
+            "Referral Code",
+            "Points",
+        ]
+
+    def get_row_data(self, object):
+        return [
+            str(object.id),
+            object.first_name,
+            object.last_name,
+            object.email,
+            object.phone_number,
+            object.referral_code,
+            object.points,
+        ]
+
     def csv_export(self, request):
         response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = f'attachment; filename="{self.file_name}.csv"'
-        writer = csv.writer(response)
-        writer.writerow(
-            [
-                "id",
-                "first_name",
-                "last_name",
-                "email",
-                "phone_number",
-                "referral_code",
-                "points",
-            ]
+        response["Content-Disposition"] = (
+            f'attachment; filename="{self.get_file_name()}.csv"'
         )
-        for user in self.get_queryset():
-            writer.writerow(
-                [
-                    (user.id),
-                    user.first_name,
-                    user.last_name,
-                    user.email,
-                    user.phone_number,
-                    user.referral_code,
-                    user.points,
-                ]
-            )
+        writer = csv.writer(response)
+        writer.writerow(self.get_headers())
+        for user in self.get_queryset(request):
+            writer.writerow(self.get_row_data(user))
         return response
 
     def excel_export(self, request):
-        headers = [
-            "id",
-            "first_name",
-            "last_name",
-            "email",
-            "phone_number",
-            "referral_code",
-            "points",
-        ]
         workbook = Workbook()
         worksheet = workbook.active
-        response = HttpResponse(
-            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
 
-        worksheet.append(headers)
-        for user in self.get_queryset():
-            row = [
-                str(user.id),
-                user.first_name,
-                user.last_name,
-                user.email,
-                user.phone_number,
-                user.referral_code,
-                user.points,
-            ]
-            worksheet.append(row)
+        worksheet.append(self.get_headers())
+        for user in self.get_queryset(request):
+            worksheet.append(self.get_row_data(user))
 
         worksheet.column_dimensions["A"].width = 10
         worksheet.column_dimensions["B"].width = 15
@@ -212,7 +229,9 @@ class UserExportView(AdminLoginView):
         worksheet.column_dimensions["G"].width = 10
 
         virtual_excel_file = save_virtual_workbook(workbook)
-        response["Content-Disposition"] = f"attachment; filename={self.file_name}.xlsx"
-        response["Content-Type"] = "application/octet-stream"
+        response = HttpResponse(content_type="application/octet-stream")
+        response["Content-Disposition"] = (
+            f"attachment; filename={self.get_file_name()}.xlsx"
+        )
         response.write(virtual_excel_file)
         return response
