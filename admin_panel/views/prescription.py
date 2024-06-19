@@ -14,12 +14,12 @@ logger = Logger("prescription.logs")
 
 class PrescriptionView(AdminLoginView):
     def get(self, request):
-        prescriptions = UserPrescriptions.objects.all()
+        prescriptions = UserPrescriptions.objects.all().order_by("-created_on")
         paginator = Paginator(prescriptions, 10)
         page_number = request.GET.get("page")
-        paginated_offers = paginator.get_page(page_number)
+        paginated_prescriptions = paginator.get_page(page_number)
         context = dict(
-            prescriptions=paginated_offers,
+            prescriptions=paginated_prescriptions,
             is_prescription=True,
         )
         return render(request, "prescription/prescription.html", context)
