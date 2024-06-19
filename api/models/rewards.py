@@ -4,6 +4,7 @@ from django.db import models
 from api.models.accounts import UserModel, UserAddress
 from uuid import uuid4
 from django.utils import timezone
+from django.core.validators import FileExtensionValidator
 
 
 class Offers(BaseModel, SoftDeleteMixin):
@@ -14,7 +15,12 @@ class Offers(BaseModel, SoftDeleteMixin):
     )
     offer_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     title = models.CharField(max_length=250)
-    image = models.FileField(upload_to="offer/images", null=True, blank=False)
+    image = models.FileField(
+        upload_to="offer/images",
+        null=True,
+        blank=False,
+        validators=[FileExtensionValidator(allowed_extensions=["png", "jpg", "jpeg", "gif"])]
+    )
     description = models.TextField()
     expiry_date = models.DateTimeField()
     status = models.CharField(max_length=50, choices=offer_status, default="active")

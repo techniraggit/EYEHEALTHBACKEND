@@ -5,7 +5,7 @@ function showToaster(message, type) {
     document.body.appendChild(toaster);
     setTimeout(function() {
         toaster.remove();
-    }, 2000); // 2 seconds
+    }, 3000); // 2 seconds
 }
 
 
