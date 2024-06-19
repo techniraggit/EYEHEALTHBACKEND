@@ -87,6 +87,7 @@ class EyeTestView(AdminLoginView):
             "start_date_filter": start_date_str,
             "end_date_filter": end_date_str,
             "health_score_filter": health_score_filter,
+            "range_object": [round(x * 0.01, 2) for x in range(600, 751)],
         }
         return render(request, "eye_exam/eye_test.html", context)
 
