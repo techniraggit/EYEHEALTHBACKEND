@@ -70,7 +70,7 @@ class EyeTestView(AdminLoginView):
 
         # Order and paginate the results
         eye_test_reports = eye_test_reports.order_by("-created_on").distinct()
-        paginator = Paginator(eye_test_reports, 1)
+        paginator = Paginator(eye_test_reports, 10)
         page_number = request.GET.get("page")
         paginated_eye_test_reports = paginator.get_page(page_number)
 
