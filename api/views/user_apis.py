@@ -152,7 +152,7 @@ class OffersView(UserMixin):
         eye_health_score = EyeTestReport.objects.filter(
             user_profile__user=request.user,
             user_profile__full_name=request.user.get_full_name(),
-        )
+        ).order_by("-created_on")
 
         eye_health_score = (
             eye_health_score.first().health_score if eye_health_score.first() else 0
