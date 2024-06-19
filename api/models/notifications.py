@@ -13,6 +13,14 @@ class PushNotification(BaseModel):
     def __str__(self):
         return str(self.title)
 
+    def to_json(self):
+        return dict(
+            id=self.id,
+            title=self.title,
+            message=self.message,
+            users = list(self.users.all().values_list("email", flat=True)),
+        )
+
 
 class UserPushNotification(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)

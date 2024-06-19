@@ -24,7 +24,7 @@
                 <div class="col-md-4 f-name mt-4">
                     <label>Select Users:</label><br>
                     {% for user in users %}
-                        <input type="checkbox" name="users" value="{{ user.id }}"> {{ user.email }}<br>
+                        <input type="checkbox" name="users" value="{{ user.id }}"> <strong>{{ user.email }}</strong><br>
                     {% endfor %}
                     <span id="user_message"></span>
                 </div>

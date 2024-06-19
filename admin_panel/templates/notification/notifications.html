@@ -17,19 +17,21 @@
         <div class="col-1"></div>
         <div class="export col-6">
             <ul>
-            <li class="add-btn me-3">
-                <a href="{% url "add_notification_view" %}" ><span>Send New Notification</span><i class="fa-solid fa-plus ms-2"></i> </a>
-            </li>
+                <li class="add-btn me-3">
+                    <a href="{% url "add_notification_view" %}"><span>Send New Notification</span><i
+                            class="fa-solid fa-plus ms-2"></i> </a>
+                </li>
                 <div class="drop-downmenu">
-            <li class="ex-li" ><a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
-                <ul class="dropdown-content">
-                    <li class="mb-1"><a href="#">PDF</a></li>
-                    <li class="mb-1"><a href="#">Excel</a></li>
-                    <li><a href="#">CSV</a></li>
-                </ul>
-            </li>
-        </ul>
-            
+                    <li class="ex-li"><a class="export-btn" href="#">Export<i
+                                class="fa-solid fa-file-export ms-2"></i></a>
+                        <ul class="dropdown-content">
+                            <li class="mb-1"><a href="#">PDF</a></li>
+                            <li class="mb-1"><a href="#">Excel</a></li>
+                            <li><a href="#">CSV</a></li>
+                        </ul>
+                    </li>
+            </ul>
+
         </div>
     </div>
 </div>
@@ -44,18 +46,79 @@
         <th>Action</th>
     </tr>
     {% for notification in notifications %}
-        <tr>
-            <td>{{ forloop.counter0|add:notifications.start_index|default:forloop.counter }}</td>
-            <td>{{ notification.title }}</td>
-            <td>{{ notification.message }}</td>
-            <td>{{ notification.created_on|format_datetime }}</td>
-            <td>
-                <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-                <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="#"> <i class="fa-regular fa-eye"></i></a>
-            </td>
-        </tr>
+    <tr>
+        <td>{{ forloop.counter0|add:notifications.start_index|default:forloop.counter }}</td>
+        <td>{{ notification.title }}</td>
+        <td>{{ notification.message }}</td>
+        <td>{{ notification.created_on|format_datetime }}</td>
+        <td>
+            <a href="#" class="view-notification" data-notification-id="{{ notification.pk }}"> <i
+                    class="fa-regular fa-eye"></i></a>
+        </td>
+    </tr>
     {% endfor %}
 </table>
+
+<!-- Offer Detail Modal -->
+<div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="offerDetailModalLabel">Offer Details</h5>
+            </div>
+            <div class="modal-body">
+                <p><strong>Title:</strong> <span id="modal-title"></span></p>
+                <p><strong>Message:</strong> <span id="modal-message"></span></p>
+                <p><strong>Users:</strong> <span id="modal-users"></span></p>
+                <p><strong>Total Targeted Users:</strong> <span id="modal-targeted_user"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Offer Detail Modal -->
+
 {% include "base/pagination.html" with paginated_data=notifications %}
+<script>
+    $(document).ready(function () {
+        // View offer details when the view offer details button is clicked
+        $('.view-notification').click(function (event) {
+            event.preventDefault();
+            var notificationId = $(this).data('notification-id');
+            var modal = $('#offerDetailModal');
+
+            $.ajax({
+                url: "/notification/notification-detailed/" + notificationId,
+                method: 'GET',
+                success: function (data) {
+                    console.log(data);
+                    modal.find('#modal-title').text(data.notification.title);
+                    modal.find('#modal-message').html(data.notification.message);
+                    var users_to_list = "<br/>";
+                    for (var i = 0; i < data.users.length; i++) {
+                        users_to_list += `<strong>${data.users[i]}</strong><br/>`;
+                        console.log(data.users[i]);
+                    }
+                    modal.find('#modal-users').html(users_to_list).css({ "color": "#5200a5" });
+                    modal.find('#modal-targeted_user').text(data.users_count);
+                    modal.modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching offer details:", error);
+                    alert("An error occurred while fetching offer details. Please try again.");
+                }
+            });
+        });
+
+        // Hide the modal when the dismiss button is clicked
+        $("#modal_dismis").on("click", function (event) {
+            event.preventDefault();
+            $('#offerDetailModal').modal('hide');
+        });
+    });
+</script>
+
 {% endblock table%}
