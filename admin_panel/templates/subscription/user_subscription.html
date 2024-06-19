@@ -21,9 +21,6 @@
 
         <div class="export col-4">
             <ul>
-                {% comment %} <li class="add-btn me-3">
-                    <a href="{% url 'add_user_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
-                </li> {% endcomment %}
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
@@ -56,7 +53,7 @@
         <tr>
             <td>{{ forloop.counter0|add:user_plans.start_index|default:forloop.counter }}</td>
             <td>{{ user_plan.user }}</td>
-            <td>{{ user_plan.plan.title }}</td>
+            <td>{{ user_plan.plan.name }}</td>
             <td>{{ user_plan.start_date }}</td>
             <td>{{ user_plan.end_date }}</td>
             <td>{% if user_plan.is_active %} Yes {% else %} No {% endif %}</td>
