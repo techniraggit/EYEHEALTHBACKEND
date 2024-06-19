@@ -991,36 +991,6 @@ button.btn.btn-secondary {
     /* border-color: #0a58ca; */
 }
 
-.pending {
-    color: orange;
-    font-weight: bold;
-}
-
-.approved {
-    color: green;
-    font-weight: bold;
-}
-
-.rejected {
-    color: red;
-    font-weight: bold;
-}
-
-.inactive {
-    color: orange;
-    font-weight: bold;
-}
-
-.active {
-    color: green;
-    font-weight: bold;
-}
-
-.expired {
-    color: red;
-    font-weight: bold;
-}
-
 .hide-table {
     display: none;
 }
@@ -1157,14 +1127,4 @@ label.radio {
 .search-box.row {
     align-items: start;
 }
-/* SPAN ERROR/SUCCESS MESSAGE START */
-.span-error-message{
-    font-weight: bold;
-    color: red;
-}
 
-.span-success-message{
-    font-weight: bold;
-    color: green;
-}
-/* SPAN ERROR/SUCCESS MESSAGE END */

@@ -7,27 +7,31 @@
     <div class="search-box row">
         <div class="col-9">
             <div class="input-wrapp">
-                <form action="{% url 'users_view' %}" method="get" id="searchForm">
+                <form action="{% url 'eye_test_view' %}" method="get" id="searchForm">
                     <div>
-                        <input type="text" name="search" id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{ search }}{% endif %}">
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Report ID, Email, Phone and Name"
+                            value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown ms-2">
                         <label>From Date</label>
-                        <input type="date" name="start_date" placeholder="Start Date">
+                        <input type="date" name="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown ms-2">
                         <label>To Date</label>
-                        <input type="date" name="end_date" placeholder="End Date">
+                        <input type="date" name="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <select name="health_score" placeholder="Filter">
+                        <select name="health_score_filter" placeholder="Filter">
                             <option value="">Health Score</option>
-                            <option value="6.5">6.5</option>
-                            <option value="6.6">6.6</option>
-                            <option value="6.7">6.7</option>
-                            <option value="6.8">6.8</option>
-                            <option value="6.9">6.9</option>
-                            <option value="7">7</option>
+                            <option value="6.5" {% if health_score_filter == 6.5 %}selected{% endif %}>6.5</option>
+                            <option value="6.6" {% if health_score_filter == 6.6 %}selected{% endif %}>6.6</option>
+                            <option value="6.7" {% if health_score_filter == 6.7 %}selected{% endif %}>6.7</option>
+                            <option value="6.8" {% if health_score_filter == 6.8 %}selected{% endif %}>6.8</option>
+                            <option value="6.9" {% if health_score_filter == 6.9 %}selected{% endif %}>6.9</option>
+                            <option value="7" {% if health_score_filter == 7.0 %}selected{% endif %}>7</option>
                         </select>
                     </div>
                     <div class="d-flex mb-2">
@@ -44,8 +48,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url 'user_export_view' 'excel' %}">Excel</a></li>
-                        <li><a class="dropdown-item" href="{% url 'user_export_view' 'csv' %}">CSV</a></li>
+                        <li><a class="dropdown-item" href="{% url 'eye_test_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" href="{% url 'eye_test_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
@@ -60,25 +64,29 @@
         <th>Report ID</th>
         <th>User Profile</th>
         <th>Health Score</th>
+        <th>Created At</th>
         <th>Action</th>
     </tr>
     {% for report in eye_test_reports %}
-        <tr>
-            <td>{{ forloop.counter0|add:eye_test_reports.start_index|default:forloop.counter }}</td>
-            <td>{{ report.report_id }}</td>
-            <td>{{ report.user_profile.user.get_full_name }} ({{ report.user_profile.full_name }}) </td>
-            <td>{{ report.health_score }}</td>
-            <td>
-                <a href="#" class="view-eye-test-details" data-report-id="{{ report.pk }}"><i class="fa-solid fa-prescription"></i></a>
-            </td>
-        </tr>
+    <tr>
+        <td>{{ forloop.counter0|add:eye_test_reports.start_index|default:forloop.counter }}</td>
+        <td>{{ report.report_id }}</td>
+        <td>{{ report.user_profile.user.get_full_name }} ({{ report.user_profile.full_name }}) </td>
+        <td>{{ report.health_score }}</td>
+        <td>{{ report.created_on }}</td>
+        <td>
+            <a href="#" class="view-eye-test-details" data-report-id="{{ report.pk }}"><i
+                    class="fa-solid fa-prescription"></i></a>
+        </td>
+    </tr>
     {% endfor %}
 </table>
 </div>
 {% include "base/pagination.html" with paginated_data=eye_test_reports %}
 
 <!-- Offer Detail Modal -->
-<div class="modal fade" id="reportDetailModal" tabindex="-1" role="dialog" aria-labelledby="reportDetailModalLabel" aria-hidden="true">
+<div class="modal fade" id="reportDetailModal" tabindex="-1" role="dialog" aria-labelledby="reportDetailModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -121,8 +129,18 @@
 <!-- Offer Detail Modal -->
 
 <script>
-    $(document).ready(function() {
-        $('.view-eye-test-details').click(function(event) {
+    $(document).ready(function () {
+        $('#clearButton').on('click', function () {
+            // Clear all input fields
+            $('#searchInput').val('');
+            $('input[type="date"]').val('');
+            $('select[name="health_score_filter"]').val('');
+
+            // Submit the form to show all results
+            $('#searchForm').submit();
+        });
+
+        $('.view-eye-test-details').click(function (event) {
             event.preventDefault();
             var report_id = $(this).data('report-id');
             var modal = $('#reportDetailModal');
@@ -131,7 +149,7 @@
             $.ajax({
                 url: '/eye/eye-test-detailed/' + report_id,
                 method: 'GET',
-                success: function(data) {
+                success: function (data) {
                     var report_data = data.eye_test_report
 
                     modal.find('#modal-name').text(report_data.name);
@@ -150,22 +168,22 @@
                     modal.find("#left-sph").text(report_data.left.sph)
                     modal.modal('show');
                 },
-                error: function(xhr, status, error) {
+                error: function (xhr, status, error) {
                     console.error("Error fetching offer details:", error);
                     alert("An error occurred while fetching offer details. Please try again.");
                 }
             });
         });
 
-        $("#modal_dismis").on("click", function(e) {
+        $("#modal_dismis").on("click", function (e) {
             e.preventDefault();
             $('#reportDetailModal').modal('hide');
         })
     });
-    $(".filter-dropdown input").click(function(){
+    $(".filter-dropdown input").click(function () {
         $(".filter-dropdown label").hide();
-      });
-    </script>
-    
+    });
+</script>
+
 
 {% endblock table%}

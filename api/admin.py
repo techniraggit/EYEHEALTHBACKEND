@@ -124,6 +124,7 @@ class EyeFatigueReportAdmin(admin.ModelAdmin):
         "is_mild_tiredness_right",
         "is_fatigue_left",
         "is_mild_tiredness_left",
+        "health_score",
         "created_on",
     ]
     search_fields = [

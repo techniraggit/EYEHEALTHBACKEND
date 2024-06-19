@@ -7,41 +7,43 @@
     <div class="search-box row">
         <div class="col-9">
             <div class="input-wrapp">
-                <form action="{% url 'users_view' %}" method="get" id="searchForm">
+                <form action="{% url 'eye_fatigue_view' %}" method="get" id="searchForm">
                     <div>
-                        <input type="text" name="search" id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{ search }}{% endif %}">
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Report ID, Name, Email and Phone"
+                            value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown">
                         <label>From Date</label>
-                        <input type="date" name="start_date" >
+                        <input type="date" name="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown">
                         <label>To Date</label>
-                        <input type="date" name="end_date">
+                        <input type="date" name="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown">
-                        <select name="health_score" placeholder="Filter">
+                        <select name="health_score_filter" placeholder="Filter">
                             <option value="">Health Score</option>
-                            <option value="6.5">6.5</option>
-                            <option value="6.6">6.6</option>
-                            <option value="6.7">6.7</option>
-                            <option value="6.8">6.8</option>
-                            <option value="6.9">6.9</option>
-                            <option value="7">7</option>
+                            <option value="2" {% if health_score_filter == 2 %}selected{% endif %}>2</option>
+                            <option value="5" {% if health_score_filter == 5 %}selected{% endif %}>5</option>
+                            <option value="7" {% if health_score_filter == 7 %}selected{% endif %}>7</option>
+                            <option value="10" {% if health_score_filter == 10 %}selected{% endif %}>10</option>
                         </select>
                     </div>
                     <div class="filter-dropdown">
-                        <select name="is_fatigue_left" placeholder="Filter">
-                            <option value="">Is Fatigue Right</option>
-                            <option value="true">Yes</option>
-                            <option value="false">No</option>
-                        </select>
-                    </div>
-                    <div class="filter-dropdown">
-                        <select name="is_fatigue_right" placeholder="Filter">
+                        <select name="is_fatigue_left_filter" placeholder="Filter">
                             <option value="">Is Fatigue Left</option>
-                            <option value="true">Yes</option>
-                            <option value="false">No</option>
+                            <option value="yes" {% if is_fatigue_left_filter == 'yes' %}selected{% endif %}>Yes</option>
+                            <option value="no" {% if is_fatigue_left_filter == 'no' %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+                    <div class="filter-dropdown">
+                        <select name="is_fatigue_right_filter" placeholder="Filter">
+                            <option value="">Is Fatigue Right</option>
+                            <option value="yes" {% if is_fatigue_right_filter == 'yes' %}selected{% endif %}>Yes</option>
+                            <option value="no" {% if is_fatigue_right_filter == 'no' %}selected{% endif %}>No</option>
                         </select>
                     </div>
                     <div class="d-flex mb-2">
@@ -87,10 +89,10 @@
         <td>{{ forloop.counter0|add:eye_fatigue_reports.start_index|default:forloop.counter }}</td>
         <td>{{ report.user }}</td>
         <td>{{ report.report_id }}</td>
-        <td>{{ report.is_fatigue_right }}</td>
-        <td>{{ report.is_mild_tiredness_right }}</td>
-        <td>{{ report.is_fatigue_left }}</td>
-        <td>{{ report.is_mild_tiredness_left }}</td>
+        <td class="{% if report.is_fatigue_right %}fatigue-yes {% else %}fatigue-no{% endif %}">{% if report.is_fatigue_right %}Yes {% else %}No{% endif %}</td>
+        <td class="{% if report.is_mild_tiredness_right %}fatigue-yes {% else %}fatigue-no{% endif %}">{% if report.is_mild_tiredness_right %}Yes {% else %}No{% endif %}</td>
+        <td class="{% if report.is_fatigue_left %}fatigue-yes {% else %}fatigue-no{% endif %}">{% if report.is_fatigue_left %}Yes {% else %}No{% endif %}</td>
+        <td class="{% if report.is_mild_tiredness_left %}fatigue-yes {% else %}fatigue-no{% endif %}">{% if report.is_mild_tiredness_left %}Yes {% else %}No{% endif %}</td>
         <td>
             <a href="#" class="view-fatigue-details" data-fatigue-id="{{ report.pk }}"><i
                     class="fa-regular fa-eye"></i></a>
@@ -117,7 +119,7 @@
                 <p><strong>Is Mild Tiredness Right:</strong> <span id="modal-is_mild_tiredness_left"></span></p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" id="modal_dismiss" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -126,6 +128,14 @@
 
 <script>
     $(document).ready(function () {
+        $('#clearButton').click(function () {
+            $('#searchInput').val('');
+            $('input[type="date"]').val('');
+            $('select').prop('selectedIndex', 0);
+
+            $('#searchForm').submit();
+        });
+
         $('.view-fatigue-details').click(function (event) {
             event.preventDefault();
             var fatigue_id = $(this).data('fatigue-id');
@@ -151,14 +161,14 @@
             });
         });
 
-        $("#modal_dismis").on("click", function (e) {
+        $("#modal_dismiss").on("click", function (e) {
             e.preventDefault();
             $('#fatigueDetailModal').modal('hide');
         })
     });
-    $(".filter-dropdown input").click(function(){
+    $(".filter-dropdown input").click(function () {
         $(".filter-dropdown label").hide();
-      });
+    });
 </script>
 
 

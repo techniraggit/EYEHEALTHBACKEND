@@ -1,3 +1,8 @@
+from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl import Workbook
+import csv
+from django.utils import timezone
+from utilities.utils import time_localize
 from .base import AdminLoginView
 from django.shortcuts import render
 from api.models.eye_health import EyeTestReport, EyeFatigueReport
@@ -6,18 +11,77 @@ from django.http import JsonResponse, HttpResponse
 from utilities.utils import generate_pdf
 from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
+from django.db.models import Q
+from datetime import datetime
 
 
 class EyeTestView(AdminLoginView):
     def get(self, request):
-        eye_test_reports = EyeTestReport.objects.all().order_by("-created_on")
+        search = request.GET.get("search")
+        start_date_str = request.GET.get("start_date_filter")
+        end_date_str = request.GET.get("end_date_filter")
+        health_score_str = request.GET.get("health_score_filter")
+
+        # Filter base query
+        eye_test_reports = EyeTestReport.objects.all().select_related(
+            "user_profile", "user_profile__user"
+        )
+
+        # Apply search filter
+        if search:
+            search_filter = (
+                Q(report_id=search)
+                | Q(user_profile__full_name__icontains=search)
+                | Q(user_profile__user__email__icontains=search)
+                | Q(user_profile__user__phone_number__icontains=search)
+            )
+            eye_test_reports = eye_test_reports.filter(search_filter)
+
+        # Convert date filters
+        start_date_filter = (
+            datetime.strptime(start_date_str, "%Y-%m-%d").date()
+            if start_date_str
+            else None
+        )
+        end_date_filter = (
+            datetime.strptime(end_date_str, "%Y-%m-%d").date() if end_date_str else None
+        )
+
+        # Apply date filters
+        if start_date_filter and end_date_filter:
+            eye_test_reports = eye_test_reports.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+        elif start_date_filter:
+            eye_test_reports = eye_test_reports.filter(
+                created_on__date__gte=start_date_filter
+            )
+        elif end_date_filter:
+            eye_test_reports = eye_test_reports.filter(
+                created_on__date__lte=end_date_filter
+            )
+
+        # Apply health score filter
+        try:
+            health_score_filter = float(health_score_str)
+            eye_test_reports = eye_test_reports.filter(health_score=health_score_filter)
+        except (ValueError, TypeError):
+            health_score_filter = 0.0
+
+        # Order and paginate the results
+        eye_test_reports = eye_test_reports.order_by("-created_on").distinct()
         paginator = Paginator(eye_test_reports, 1)
         page_number = request.GET.get("page")
         paginated_eye_test_reports = paginator.get_page(page_number)
-        context = dict(
-            eye_test_reports=paginated_eye_test_reports,
-            is_eye_exam=True,
-        )
+
+        context = {
+            "eye_test_reports": paginated_eye_test_reports,
+            "is_eye_exam": True,
+            "search": search,
+            "start_date_filter": start_date_str,
+            "end_date_filter": end_date_str,
+            "health_score_filter": health_score_filter,
+        }
         return render(request, "eye_exam/eye_test.html", context)
 
 
@@ -36,13 +100,6 @@ class EyeTestDetailedView(AdminLoginView):
                 "eye_test_report": eye_test_report_obj.report(),
             }
         )
-
-
-from utilities.utils import time_localize
-from django.utils import timezone
-import csv
-from openpyxl import Workbook
-from openpyxl.writer.excel import save_virtual_workbook
 
 
 class EyeTestExportView(AdminLoginView):
@@ -171,14 +228,89 @@ class DownloadEyeTestReportView(AdminLoginView):
 
 class EyeFatigueView(AdminLoginView):
     def get(self, request):
-        eye_fatigue_reports = EyeFatigueReport.objects.all().order_by("-created_on")
-        paginator = Paginator(eye_fatigue_reports, 1)
+        search = request.GET.get("search")
+        start_date_str = request.GET.get("start_date_filter")
+        end_date_str = request.GET.get("end_date_filter")
+        health_score_str = request.GET.get("health_score_filter", 0)
+        is_fatigue_left_str = request.GET.get("is_fatigue_left_filter")
+        is_fatigue_right_str = request.GET.get("is_fatigue_right_filter")
+
+        # Convert boolean filters
+        is_fatigue_left = (
+            is_fatigue_left_str.lower() == "yes" if is_fatigue_left_str else None
+        )
+        is_fatigue_right = (
+            is_fatigue_right_str.lower() == "yes" if is_fatigue_right_str else None
+        )
+
+        # Convert health score filter
+        try:
+            health_score_filter = int(health_score_str)
+        except ValueError:
+            health_score_filter = 0
+
+        # Filter base query
+        eye_fatigue_reports = EyeFatigueReport.objects.all().select_related("user")
+
+        # Apply search filter
+        if search:
+            search_filter = (
+                Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
+                | Q(user__phone_number__icontains=search)
+                | Q(report_id__icontains=search)
+            )
+            eye_fatigue_reports = eye_fatigue_reports.filter(search_filter)
+
+        # Apply date filters
+        if start_date_str:
+            start_date_filter = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                created_on__date__gte=start_date_filter
+            )
+        if end_date_str:
+            end_date_filter = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                created_on__date__lte=end_date_filter
+            )
+        if start_date_str and end_date_str:
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        # Apply health score filter
+        if health_score_filter:
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                health_score=health_score_filter
+            )
+
+        # Apply fatigue filters
+        if is_fatigue_left is not None:
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                is_fatigue_left=is_fatigue_left
+            )
+        if is_fatigue_right is not None:
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                is_fatigue_right=is_fatigue_right
+            )
+
+        # Order and paginate the results
+        eye_fatigue_reports = eye_fatigue_reports.order_by("-created_on").distinct()
+        paginator = Paginator(eye_fatigue_reports, 10)
         page_number = request.GET.get("page")
         paginated_eye_fatigue_reports = paginator.get_page(page_number)
-        context = dict(
-            eye_fatigue_reports=paginated_eye_fatigue_reports,
-            is_eye_fatigue=True,
-        )
+
+        context = {
+            "eye_fatigue_reports": paginated_eye_fatigue_reports,
+            "is_eye_fatigue": True,
+            "search": search,
+            "start_date_filter": start_date_str,
+            "end_date_filter": end_date_str,
+            "health_score_filter": health_score_filter,
+            "is_fatigue_left_filter": is_fatigue_left_str,
+            "is_fatigue_right_filter": is_fatigue_right_str,
+        }
         return render(request, "eye_exam/eye_fatigue.html", context)
 
 
