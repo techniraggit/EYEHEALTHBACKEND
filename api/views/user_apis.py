@@ -149,9 +149,11 @@ class OffersView(UserMixin):
 
         offers = Offers.objects.all()
         serialized_data = OffersSerializer(offers, many=True).data
+
         eye_health_score = EyeTestReport.objects.filter(
             user_profile__user=request.user,
             user_profile__full_name=request.user.get_full_name(),
+            health_score__gt=0
         ).order_by("-created_on")
 
         eye_health_score = (
