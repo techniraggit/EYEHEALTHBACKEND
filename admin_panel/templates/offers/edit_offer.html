@@ -32,10 +32,10 @@
                 <div class="col-md-4 f-name mt-4">
                     <label for="status">Status <span id="required_star">*</span></label>
                     <select name="status" id="status" class="form-control">
-                        <option value="active" {% if offer_obj.status == active %}selected{% endif %}>Active</option>
-                        <option value="inactive" {% if offer_obj.status == inactive %}selected{% endif %}>Inactive
+                        <option value="active" {% if offer_obj.status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if offer_obj.status == 'inactive' %}selected{% endif %}>Inactive
                         </option>
-                        <option value="expired" {% if offer_obj.status == expired %}selected{% endif %}>Expired</option>
+                        <option value="expired" {% if offer_obj.status == 'expired' %}selected{% endif %}>Expired</option>
                     </select>
                 </div>
                 <div class="col-md-4 f-lname mt-4">
