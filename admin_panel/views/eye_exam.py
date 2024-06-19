@@ -63,7 +63,13 @@ class EyeTestView(AdminLoginView):
 
         # Apply health score filter
         try:
+            tolerance = 0.1  
             health_score_filter = float(health_score_str)
+            lower_bound = health_score_filter - tolerance
+            upper_bound = health_score_filter + tolerance
+            eye_test_reports = eye_test_reports.filter(
+            health_score__gte=lower_bound, health_score__lte=upper_bound
+        )
             eye_test_reports = eye_test_reports.filter(health_score=health_score_filter)
         except (ValueError, TypeError):
             health_score_filter = 0.0
