@@ -149,7 +149,15 @@ class OffersView(UserMixin):
 
         offers = Offers.objects.all()
         serialized_data = OffersSerializer(offers, many=True).data
-        eye_health_score = 300
+        eye_health_score = EyeTestReport.objects.filter(
+            user_profile__user=request.user,
+            user_profile__full_name=request.user.get_full_name(),
+        )
+
+        eye_health_score = (
+            eye_health_score.first().health_score if eye_health_score.first() else 0
+        )
+
         return api_response(
             True, 200, data=serialized_data, eye_health_score=eye_health_score
         )
