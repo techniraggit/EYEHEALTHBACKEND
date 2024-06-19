@@ -79,3 +79,15 @@ def time_localize(datetime_object: datetime):
 def dlt_value():
     from uuid import uuid4
     return f"/{str(uuid4()).split('-')[0]}"
+
+import json
+
+def get_form_error_msg(form_errors):
+    errors = form_errors.errors.as_json()
+    parsed_data = json.loads(errors)
+    first_key = next(iter(parsed_data))
+    first_object = parsed_data[first_key][0]
+    message = (
+        f"{first_key.title().replace('_', ' ')}: {first_object['message']}"
+    )
+    return message

@@ -1,3 +1,4 @@
+from utilities.utils import get_form_error_msg
 from utilities.utils import dlt_value
 from admin_panel.forms.accounts import UserCreationForm
 import json
@@ -62,6 +63,7 @@ class UserDetailedView(AdminLoginView):
         )
         return render(request, "users/user_view.html", context)
 
+
 class UserBulkDeleteView(AdminLoginView):
     def post(self, request):
         try:
@@ -69,21 +71,16 @@ class UserBulkDeleteView(AdminLoginView):
             users = User.objects.filter(id__in=selected_ids)
             count = users.count()
             if count < 1:
-                return JsonResponse({
-                    "status": False,
-                    "message": "No selected users found"
-                })
+                return JsonResponse(
+                    {"status": False, "message": "No selected users found"}
+                )
             for user in users:
                 user.delete()
-            return JsonResponse({
-                "status": True,
-                "message": f"Selected users deleted successfully"
-            })
+            return JsonResponse(
+                {"status": True, "message": f"Selected users deleted successfully"}
+            )
         except Exception as e:
-            return JsonResponse({
-                "status": False,
-                "message": str(e)
-            })
+            return JsonResponse({"status": False, "message": str(e)})
 
 
 class UserEditView(AdminLoginView):
@@ -105,12 +102,14 @@ class UserEditView(AdminLoginView):
         except:
             messages.error(request, "User does not exist")
             return redirect(f"user_edit_view/{user_obj.id}")
-        serialized_data = UserSerializer(data=request.POST, instance=user_obj)
-        if serialized_data.is_valid():
-            serialized_data.save()
+
+        user_form = UserCreationForm(data=request.POST, instance=user_obj)
+        if user_form.is_valid():
+            user_form.save()
             messages.success(request, "User updated successfully")
-            return redirect(reverse("user_edit_view", kwargs={"id": user_obj.id}))
-        messages.error(request, serialized_data.errors)
+            return redirect("users_view")
+
+        messages.error(request, get_form_error_msg(user_form.errors))
         return redirect(reverse("user_edit_view", kwargs={"id": user_obj.id}))
 
 
