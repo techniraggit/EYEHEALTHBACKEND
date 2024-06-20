@@ -19,7 +19,9 @@ class Offers(BaseModel, SoftDeleteMixin):
         upload_to="offer/images",
         null=True,
         blank=False,
-        validators=[FileExtensionValidator(allowed_extensions=["png", "jpg", "jpeg", "gif"])]
+        validators=[
+            FileExtensionValidator(allowed_extensions=["png", "jpg", "jpeg", "gif"])
+        ],
     )
     description = models.TextField()
     expiry_date = models.DateTimeField()
@@ -46,6 +48,17 @@ class Offers(BaseModel, SoftDeleteMixin):
             self.status = "expired"
             self.save()
             return "offer expired"
+
+    def update_offer_status(self):
+        current_time = timezone.now()
+        expiry_time = self.expiry_date
+        time_difference = expiry_time - current_time
+        if time_difference.total_seconds() > 0:
+            if self.status == "expired":
+                self.status = "active"
+        else:
+            self.status = "expired"
+        self.save()
 
 
 class UserRedeemedOffers(BaseModel):

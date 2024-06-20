@@ -105,6 +105,7 @@ class EditOfferView(AdminLoginView):
         if offer_form.is_valid():
             offer_obj = offer_form.save(commit=False)
             offer_obj.updated_by = request.user
+            offer_obj.update_offer_status()
             offer_obj.save()
             return JsonResponse(
                 {"status": True, "message": "Offer has been updated successfully"}
