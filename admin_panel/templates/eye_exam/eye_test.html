@@ -79,7 +79,6 @@
     {% endfor %}
 </table>
 </div>
-{% comment %} {% include "base/pagination.html" with paginated_data=eye_test_reports %} {% endcomment %}
 {% include "base/pagination.html" with paginated_data=eye_test_reports search=search start_date_filter=start_date_filter end_date_filter=end_date_filter health_score_filter=health_score_filter %}
 
 

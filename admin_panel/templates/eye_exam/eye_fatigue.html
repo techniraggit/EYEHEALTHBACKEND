@@ -105,7 +105,7 @@
     </tr>
     {% endfor %}
 </table>
-{% include "base/pagination.html" with paginated_data=eye_fatigue_reports %}
+{% include "base/pagination.html" with paginated_data=eye_fatigue_reports search=search start_date_filter=start_date_filter end_date_filter=end_date_filter health_score_filter=health_score_filter is_fatigue_left_filter=is_fatigue_left_filter is_fatigue_right_filter=is_fatigue_right_filter %}
 
 <!-- Offer Detail Modal -->
 <div class="modal fade" id="fatigueDetailModal" tabindex="-1" role="dialog" aria-labelledby="fatigueDetailModalLabel"
