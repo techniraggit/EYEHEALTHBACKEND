@@ -46,8 +46,8 @@
 <div class="pagination">
     <span class="step-links">
         {% if paginated_data.has_previous %}
-            <a href="?page=1" class="pagination-link first">&laquo; First</a>
-            <a id="prevPage" href="?page={{ paginated_data.previous_page_number }}" class="pagination-link">Previous</a>
+            <a href="?page=1{% if search %}&search={{ search }}{% endif %}{% if start_date_filter %}&start_date_filter={{ start_date_filter|date:'Y-m-d' }}{% endif %}{% if end_date_filter %}&end_date_filter={{ end_date_filter|date:'Y-m-d' }}{% endif %}{% if health_score_filter %}&health_score_filter={{ health_score_filter }}{% endif %}" class="pagination-link first">&laquo; First</a>
+            <a id="prevPage" href="?page={{ paginated_data.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if start_date_filter %}&start_date_filter={{ start_date_filter|date:'Y-m-d' }}{% endif %}{% if end_date_filter %}&end_date_filter={{ end_date_filter|date:'Y-m-d' }}{% endif %}{% if health_score_filter %}&health_score_filter={{ health_score_filter }}{% endif %}" class="pagination-link">Previous</a>
         {% endif %}
 
         <span class="current">
@@ -55,9 +55,8 @@
         </span>
 
         {% if paginated_data.has_next %}
-        <a id="nextPage" href="?page={{ paginated_data.next_page_number }}" class="pagination-link">Next</a>
-        <a id="nextPage" href="?page={{ paginated_data.paginator.num_pages }}" class="pagination-link last">Last
-            &raquo;</a>
+            <a id="nextPage" href="?page={{ paginated_data.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if start_date_filter %}&start_date_filter={{ start_date_filter|date:'Y-m-d' }}{% endif %}{% if end_date_filter %}&end_date_filter={{ end_date_filter|date:'Y-m-d' }}{% endif %}{% if health_score_filter %}&health_score_filter={{ health_score_filter }}{% endif %}" class="pagination-link">Next</a>
+            <a id="lastPage" href="?page={{ paginated_data.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if start_date_filter %}&start_date_filter={{ start_date_filter|date:'Y-m-d' }}{% endif %}{% if end_date_filter %}&end_date_filter={{ end_date_filter|date:'Y-m-d' }}{% endif %}{% if health_score_filter %}&health_score_filter={{ health_score_filter }}{% endif %}" class="pagination-link last">Last &raquo;</a>
         {% endif %}
     </span>
 </div>

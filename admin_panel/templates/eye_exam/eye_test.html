@@ -79,7 +79,9 @@
     {% endfor %}
 </table>
 </div>
-{% include "base/pagination.html" with paginated_data=eye_test_reports %}
+{% comment %} {% include "base/pagination.html" with paginated_data=eye_test_reports %} {% endcomment %}
+{% include "base/pagination.html" with paginated_data=eye_test_reports search=search start_date_filter=start_date_filter end_date_filter=end_date_filter health_score_filter=health_score_filter %}
+
 
 <!-- Offer Detail Modal -->
 <div class="modal fade" id="reportDetailModal" tabindex="-1" role="dialog" aria-labelledby="reportDetailModalLabel"
@@ -183,4 +185,7 @@
 </script>
 
 
-{% endblock table%}
+{% endblock table%}\
+
+
+This is my django template code, and my getting a issue if i apply the filters and then click on next page the data is comming normally. without applying filters, fix it if i apply filter then give me filtered data on next page also 
