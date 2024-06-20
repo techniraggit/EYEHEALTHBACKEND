@@ -903,7 +903,7 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
     font-weight: 600;
     font-size: 13px !important;
     display: block;
-    width: 100%;
+    /* width: 100%; */
 }
 
 .Reject-btn button {
