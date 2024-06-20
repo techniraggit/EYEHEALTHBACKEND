@@ -9,29 +9,181 @@
         <form id="send_notification" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
-                <div class="col-md-4 f-lname mt-4">
-                    <label for="title">Title <span id="required_star">*</span></label>
-                    <input type="text" name="title" id="title" class="form-control" />
-                    <span id="title_message"></span>
-                </div>
+                <div class="col-7">
+                    <div class=" f-lname mt-4">
+                        <label for="title">Title <span id="required_star">*</span></label>
+                        <input type="text" name="title" id="title" class="form-control" />
+                        <span id="title_message"></span>
+                    </div>
+    
+                    <div class="f-lname mt-4">
+                        <label for="message">Message <span id="required_star">*</span></label>
+                        <textarea name="message" id="message" class="form-control" rows="5" cols="10"></textarea>
+                        <span id="msg_message"></span>
+                    </div>
+                    <div class="col-md-4 cancel-btn mb-4 mt-5">
+                        <button type="submit" class="btn btn-primary save-btn">Send</button>
+                    </div>
 
-                <div class="col-md-4 f-lname mt-4">
-                    <label for="message">Message <span id="required_star">*</span></label>
-                    <textarea name="message" id="message" class="form-control" rows="5" cols="10"></textarea>
-                    <span id="msg_message"></span>
                 </div>
+              
+<div class="col-5">
+    <div class="k-name mt-4">
+        <label class="d-block mb-2 mt-2">Select Users:</label>
+        <div class="notification-search mb-4">
+        <input type="search" placeholder= "Search Users"/>
+        </div>
+        {% for user in users %}
+        <div class="d-flex mb-3">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>Select All</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
 
-                <div class="col-md-4 f-name mt-4">
-                    <label>Select Users:</label><br>
-                    {% for user in users %}
-                        <input type="checkbox" name="users" value="{{ user.id }}"> <strong>{{ user.email }}</strong><br>
-                    {% endfor %}
-                    <span id="user_message"></span>
-                </div>
-                <div class="col-md-3 cancel-btn mb-4 mt-5">
-                    <button type="submit" class="btn btn-primary save-btn">Send</button>
-                </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        <div class="d-flex">
+            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
+            <strong>{{ user.email }}</strong><br>
+        </div>
+        
+        {% endfor %}
+        <span id="user_message"></span>
+    </div>
+</div>
+
             </div>
+
+{% comment %}  {% endcomment %}
+         
+
+{% comment %}  {% endcomment %}
         </form>
     </div>
 </div>
