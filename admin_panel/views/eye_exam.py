@@ -30,7 +30,7 @@ class EyeTestView(AdminLoginView):
         # Apply search filter
         if search:
             search_filter = (
-                Q(report_id=search)
+                Q(report_id__icontains=search)
                 | Q(user_profile__full_name__icontains=search)
                 | Q(user_profile__user__email__icontains=search)
                 | Q(user_profile__user__phone_number__icontains=search)
