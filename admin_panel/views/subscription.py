@@ -232,14 +232,14 @@ class UserSubscriptionExportView(AdminLoginView):
 
     def get_headers(self):
         return [
-            "User"
-            "Plan"
-            "Start Date"
-            "End Date"
-            "Is Active"
-            "Payment Method"
-            "Paid Amount"
-            "Payment Status"
+            "User",
+            "Plan",
+            "Start Date",
+            "End Date",
+            "Is Active",
+            "Payment Method",
+            "Paid Amount",
+            "Payment Status",
         ]
 
     def get_queryset(self):
