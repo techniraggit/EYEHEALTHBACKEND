@@ -190,7 +190,7 @@ class EditRedeemedOffer(AdminLoginView):
         )
         return render(request, "offers/edit_redeemed_offers.html", context)
 
-
+from utilities.services.notification import create_notification
 class OfferDispatchView(AdminLoginView):
     def post(self, request):
         required_fields = ["redeemed_offer_id", "dispatch_address"]
@@ -214,6 +214,11 @@ class OfferDispatchView(AdminLoginView):
         redeemed_offer_obj.dispatch_address = dispatch_address
         redeemed_offer_obj.dispatch_on = timezone.now()
         redeemed_offer_obj.save()
+        create_notification(
+            user_ids=[redeemed_offer_obj.user.id],
+            title="Your offer has been dispatched",
+            message=f"Your offer with title '{redeemed_offer_obj.offer.title}' has been dispatched",
+        )
 
         return JsonResponse({"status": True, "message": "Offer has been dispatched"})
 
@@ -254,6 +259,11 @@ class OfferEmailView(AdminLoginView):
             redeemed_offer_obj.email_body = email_body
             redeemed_offer_obj.email_subject = email_subject
             redeemed_offer_obj.save()
+            create_notification(
+            user_ids=[redeemed_offer_obj.user.id],
+            title="You have received an email regarding your redeemed offer",
+            message=f"You have received an email regarding your redeemed offer with title '{redeemed_offer_obj.offer.title}'",
+        )
             return JsonResponse({"status": True, "message": "Email sent successfully"})
 
         return JsonResponse({"status": False, "message": "Email not sent"})
