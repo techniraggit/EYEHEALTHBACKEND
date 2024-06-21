@@ -5,9 +5,9 @@
 {% block table %}
 
 <div class="right-table1">
-    <div class="row">
-        <div class="col-4">
-            <div class="list-box">
+    <div class=" home-main row">
+        <a href="https://www.google.com"  class="col-4">
+            <div  class="list-box">
                 <div>
                     <img class="me-4" src="{% static 'icons/home/group.png' %}" />
                 </div>
@@ -16,43 +16,9 @@
                     <span>Users</span>
                 </div>
             </div>
-        </div>
-        <div class="col-4">
-            <div class="list-box">
-                <div>
-                    <img class="me-4" src="{% static 'icons/home/discount.png' %}" />
-                </div>
-                <div>
-                    <h4>{{ total_active_offers }}</h4>
-                    <span>Active Offers</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="list-box">
-                <div>
-                    <img class="me-4" src="{% static 'icons/home/box.png' %}" />
-                </div>
-                <div>
-                    <h4>{{ total_redeemed_offers }}</h4>
-                    <span>Redeemed Offers</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row mt-4">
-        <div class="col-4">
-            <div class="list-box">
-                <div>
-                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
-                </div>
-                <div>
-                    <h4>{{ total_approved_prescriptions }}</h4>
-                    <span>Approved Prescription</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
+        </a>
+       
+        <a href="https://www.google.com"  class="col-4">
             <div class="list-box">
                 <div>
                     <img class="me-4" src="{% static 'icons/home/eye-exam.png' %}" />
@@ -62,43 +28,22 @@
                     <span>Eye Test</span>
                 </div>
             </div>
-        </div>
-        <div class="col-4">
+        </a>
+        <a href="https://www.google.com"  class="col-4">
             <div class="list-box">
                 <div>
-                    <img class="me-4" src="{% static 'icons/home/eye-test.png' %}" />
+                    <img class="me-4" src="{% static 'icons/home/box.png' %}" />
                 </div>
                 <div>
-                    <h4>{{ total_eye_fatigue_test }}</h4>
-                    <span>Fatigue Test</span>
+                    <h4>{{ total_redeemed_offers }}</h4>
+                    <span>Redeemed Offers</span>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
-    <div class="row mt-4">
-        <div class="col-4">
-            <div class="list-box">
-                <div>
-                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
-                </div>
-                <div>
-                    <h4>{{ total_pending_prescriptions }}</h4>
-                    <span>Pending Prescription</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
-            <div class="list-box">
-                <div>
-                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
-                </div>
-                <div>
-                    <h4>{{ total_rejected_prescriptions }}</h4>
-                    <span>Rejected Prescription</span>
-                </div>
-            </div>
-        </div>
-        <div class="col-4">
+    <div class="row home-main mt-4">
+      
+        <a href="https://www.google.com"  class="col-4">
             <div class="list-box">
                 <div>
                     <img class="me-4" src="{% static 'icons/home/discount.png' %}" />
@@ -108,8 +53,22 @@
                     <span>Inactive Offers</span>
                 </div>
             </div>
-        </div>
-        <div class="col-4 mt-4">
+        </a>
+
+        <a href="https://www.google.com"  class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/discount.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_active_offers }}</h4>
+                    <span>Active Offers</span>
+                </div>
+            </div>
+        </a>
+       
+       
+        <a href="https://www.google.com"  class="col-4">
             <div class="list-box">
                 <div>
                     <img class="me-4" src="{% static 'icons/home/discount.png' %}" />
@@ -119,7 +78,54 @@
                     <span>Expired Offers</span>
                 </div>
             </div>
-        </div>
+        </a>
+    </div>
+    <div class="row home-main mt-4">
+        <a href="https://www.google.com"  class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_pending_prescriptions }}</h4>
+                    <span>Pending Prescription</span>
+                </div>
+            </div>
+        </a>
+        <a href="https://www.google.com"  class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_rejected_prescriptions }}</h4>
+                    <span>Rejected Prescription</span>
+                </div>
+            </div>
+        </a>
+        <a href="https://www.google.com"  class="col-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/prescription.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_approved_prescriptions }}</h4>
+                    <span>Approved Prescription</span>
+                </div>
+            </div>
+        </a>
+       
+        <a href="https://www.google.com"  class="col-4 mt-4">
+            <div class="list-box">
+                <div>
+                    <img class="me-4" src="{% static 'icons/home/eye-test.png' %}" />
+                </div>
+                <div>
+                    <h4>{{ total_eye_fatigue_test }}</h4>
+                    <span>Fatigue Test</span>
+                </div>
+            </div>
+        </a>
     </div>
 </div>
 
