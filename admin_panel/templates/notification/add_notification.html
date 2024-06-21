@@ -15,7 +15,7 @@
                         <input type="text" name="title" id="title" class="form-control" />
                         <span id="title_message"></span>
                     </div>
-    
+
                     <div class="f-lname mt-4">
                         <label for="message">Message <span id="required_star">*</span></label>
                         <textarea name="message" id="message" class="form-control" rows="5" cols="10"></textarea>
@@ -24,200 +24,110 @@
                     <div class="col-md-4 cancel-btn mb-4 mt-5">
                         <button type="submit" class="btn btn-primary save-btn">Send</button>
                     </div>
-
                 </div>
-              
-<div class="col-5">
-    <div class="k-name mt-4">
-        <label class="d-block mb-2 mt-2">Select Users:</label>
-        <div class="notification-search mb-4">
-        <input type="search" placeholder= "Search Users"/>
-        </div>
-        {% for user in users %}
-        <div class="d-flex mb-3">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>Select All</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
 
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
+                <div class="col-5">
+                    <div class="k-name mt-4">
+                        <label class="d-block mb-2 mt-2">Select Users:</label>
+                        <div class="notification-search mb-4">
+                            <input type="search" id="search_users"
+                                placeholder="Search by Name, Email, and Phone Number" />
+                        </div>
+                        <div class="d-flex mb-3">
+                            <input class="me-2" type="checkbox" id="select_all">
+                            <strong>Select All</strong><br>
+                        </div>
+                        <div class="users-listing">
+                            {% for user in users %}
+                            <div class="d-flex">
+                                <input class="me-2" type="checkbox" name="users" value="{{ user.id }}">
+                                <strong>{{ user.email }}</strong><br>
+                            </div>
+                            {% endfor %}
+                        </div>
 
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        <div class="d-flex">
-            <input class="me-2" type="checkbox" name="users" value="{{ user.id }}"> 
-            <strong>{{ user.email }}</strong><br>
-        </div>
-        
-        {% endfor %}
-        <span id="user_message"></span>
-    </div>
-</div>
+                        <span id="user_message"></span>
+                    </div>
+                </div>
 
             </div>
 
-{% comment %}  {% endcomment %}
-         
-
-{% comment %}  {% endcomment %}
         </form>
     </div>
 </div>
 
 <script>
     $(document).ready(function () {
+        // Handle Select All checkbox
+        $('#select_all').on('click', function () {
+            $('input[name="users"]').prop('checked', this.checked);
+        });
+
+        $('#search_users').on('keyup', function () {
+            var search = $(this).val();
+
+            // Make the AJAX request
+            $.ajax({
+                url: '/notification/search-users-listing?search=' + search,
+                method: 'GET',
+                success: function (response) {
+                    updateUserList(response.users);
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching users:", error);
+                }
+            });
+        });
+
+        function updateUserList(users) {
+            var userList = $('.users-listing');
+            userList.empty();
+            users.forEach(function (user) {
+                var userItem = `<div class="d-flex">
+                                    <input class="me-2" type="checkbox" name="users" value="${user.id}">
+                                    <strong>${user.email}</strong><br>
+                                </div>`
+                userList.append(userItem);
+            });
+        }
+
+
+        // Sync individual checkboxes with the Select All checkbox
+        $('input[name="users"]').on('change', function () {
+            if ($('input[name="users"]:checked').length === $('input[name="users"]').length) {
+                $('#select_all').prop('checked', true);
+            } else {
+                $('#select_all').prop('checked', false);
+            }
+        });
+
         $('#send_notification').on('submit', function (e) {
             e.preventDefault(); // Prevent the default form submission
-            
+
             // Perform form validation
             var isValid = true;
             var title = $('#title').val().trim();
             var message = $('#message').val().trim();
             var selectedUsers = $('input[name="users"]:checked').length;
-            
+
             if (title === '') {
                 $("#title_message").text("Title is required").addClass('span-error-message');
                 isValid = false;
             }
-            
+
             if (message === '') {
                 $("#msg_message").text("Message is required").addClass('span-error-message');
                 isValid = false;
             }
-            
+
             if (selectedUsers === 0) {
                 $("#user_message").text("At least one user must be selected").addClass('span-error-message');
                 isValid = false;
             }
-            
+
             if (isValid) {
-                // If the form is valid, submit it via AJAX
                 var formData = new FormData(this);
-                
+
                 $.ajax({
                     url: "{% url 'add_notification_view' %}",
                     type: 'POST',
@@ -228,12 +138,12 @@
                         'X-CSRFToken': $('[name=csrfmiddlewaretoken]').val()
                     },
                     success: function (response) {
-                        if(response.status){
+                        if (response.status) {
                             showToaster(response.message, "alert-success");
                             setTimeout(function () {
                                 window.location.href = "/notification/";
                             }, 2000);
-                        }else{
+                        } else {
                             showToaster(response.message, "alert-error");
                         }
                     },
@@ -246,6 +156,4 @@
         });
     });
 </script>
-
-
 {% endblock table %}
