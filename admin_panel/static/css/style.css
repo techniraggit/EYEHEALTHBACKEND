@@ -1159,3 +1159,8 @@ label.radio {
 .home-main a :hover {
     color: black;
 }
+
+.ckeditor-container label {
+    font-weight: 500;
+    font-size: 24px;
+}

@@ -9,6 +9,7 @@ from .views.subscription import *
 from .views import settings
 from .views import eye_exam
 from .views import trash
+from .views import user_agreement
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -88,6 +89,21 @@ trash_urls = [
     path("restore-subscription-plan/<uuid:id>", trash.RestoreSubscriptionPlanView.as_view(), name="restore_subscription_plan"),
 ]
 
+privacy_policy_urls = [
+    path("", user_agreement.PrivacyPolicyView.as_view(), name="privacy_policy_view"),
+    path("detailed-privacy-policy/<uuid:id>", user_agreement.PrivacyPolicyDetailedView.as_view(), name="detailed_privacy_policy_view"),
+    path("edit-privacy-policy/<uuid:id>", user_agreement.EditPrivacyPolicyView.as_view(), name="edit_privacy_policy_view"),
+    path("add-privacy-policy", user_agreement.AddPrivacyPolicyView.as_view(), name="add_privacy_policy_view"),
+]
+
+term_and_condition_urls = [
+    path("", user_agreement.TermsAndConditionsView.as_view(), name="term_and_condition_view"),
+    path("detailed-term-and-conditions/<uuid:id>", user_agreement.TermsAndConditionsDetailedView.as_view(), name="detailed_term_and_condition_view"),
+    path("edit-term-and-conditions/<uuid:id>", user_agreement.EditTermsAndConditionsView.as_view(), name="edit_term_and_condition_view"),
+    path("add-term-and-conditions", user_agreement.AddTermsAndConditionsView.as_view(), name="add_term_and_condition_view"),
+
+]
+
 urlpatterns = [
     path("", include(auth_urls)),
     path("home/", include(home_urls)),
@@ -99,4 +115,6 @@ urlpatterns = [
     path("settings/", include(settings_urls)),
     path("eye/", include(eye_exam_urls)),
     path("trash/", include(trash_urls)),
+    path("privacy-policy/", include(privacy_policy_urls)),
+    path("term-and-conditions/", include(term_and_condition_urls)),
 ]

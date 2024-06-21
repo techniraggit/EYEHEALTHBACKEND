@@ -1,0 +1,66 @@
+{% extends "base/side_bar.html" %}
+{% load custom_filters %}
+{% block title %} Privacy Policies {% endblock title %}
+
+{% block page_name %}Privacy Policies{% endblock page_name %}
+{% block nav_bar %}
+<div class="bottomwrap">
+    <div class="search-box row">
+        <div class="col-8">
+            <div class="input-wrapp">
+                <form action="#" method="get" id="searchForm">
+                    <div> 
+                        <input type="text" name="search" id="searchInput" placeholder="Search" value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div>
+                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <button type="button" id="clearButton">Clear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="export col-4">
+            <ul>
+                <li class="add-btn me-3">
+                    <a href="{% url 'add_term_and_condition_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                </li>
+                <li class="ex-li">
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <ul class="dropdown-content">
+                        <li><a class="dropdown-item" href="#">PDF</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+{% endblock nav_bar %}
+{% block table %}
+<table>
+    <tr>
+        <th>Sr.No</th>
+        <th>Content</th>
+        <th>Created By</th>
+        <th>Created On</th>
+        <th>Action</th>
+    </tr>
+    {% for term_and_condition in term_and_conditions %}
+        <tr>
+            <td>{{ forloop.counter0|add:term_and_conditions.start_index|default:forloop.counter }}</td>
+            <td>{{ term_and_condition.content|truncate_chars }}</td>
+            <td>{{ term_and_condition.created_by }}</td>
+            <td>{{ term_and_condition.created_on|format_datetime }}</td>
+            <td>
+                <a href="{% url "edit_term_and_condition_view" term_and_condition.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
+                <a href="{% url "detailed_term_and_condition_view" term_and_condition.pk %}"> <i class="fa-regular fa-eye"></i></a>
+            </td>
+        </tr>
+    {% endfor %}
+
+</table>
+{% include "base/pagination.html" with paginated_data=term_and_conditions search=search %}
+
+{% endblock table%}
+

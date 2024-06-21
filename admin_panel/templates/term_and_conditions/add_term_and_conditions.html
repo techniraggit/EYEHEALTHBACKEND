@@ -1,0 +1,77 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %}Add{% endblock title %}
+
+{% block page_name %}Add{% endblock page_name %}
+{% block table %}
+<div class="right-table1">
+    <div class="form-main">
+        <form method="POST" id="planForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-12 f-lname mt-4 ckeditor-container">
+                    <label class="mb-4" for="term_content">Term and Conditions <span id="required_star">*</span></label>
+                    <textarea name="term_content" id="term_content" cols="30"
+                        rows="6"></textarea>
+                    <span id="term_content_message" style="color: red; font-weight: bold"></span>
+                </div>
+
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    CKEDITOR.replace('term_content', {
+        toolbar: USER_CONSENT_CKEDITOR,
+        height: 500
+    });
+
+    $(document).ready(function () {
+        $('#planForm').submit(function (event) {
+            event.preventDefault();
+
+            // Update all CKEditor instances
+            for (const instanceName in CKEDITOR.instances) {
+                CKEDITOR.instances[instanceName].updateElement();
+            }
+
+            let isValid = true;
+            const term_content = $('#term_content').val().trim();
+
+            if (!term_content) {
+                isValid = false;
+                $("#term_content_message").text("Content is required")
+            }
+
+            if (isValid) {
+                $.ajax({
+                    url: "{% url 'add_term_and_condition_view'  %}",
+                    method: "POST",
+                    data: {
+                        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+                        term_content: term_content
+                    },
+                    success: function (response) {
+                        if (response.status) {
+                            showToaster(response.message, "alert-success")
+                            setTimeout(function () {
+                                window.location.href = "{% url 'term_and_condition_view' %}";
+                            }, 2000);
+                        } else {
+                            showToaster(response.message, "alert-error")
+                        }
+                    },
+                    error: function (response) {
+                        alert('An error occurred while updating the plan');
+                    }
+                });
+            }
+        });
+    });
+</script>
+
+{% endblock table %}
