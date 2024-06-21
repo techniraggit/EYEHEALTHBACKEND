@@ -5,6 +5,7 @@ from api.models.subscription import *
 from api.models.rewards import *
 from api.models.eye_health import *
 from api.models.prescription import *
+from api.models.user_agreements import *
 
 
 # Register your models here.
@@ -159,3 +160,16 @@ class UserRedeemedOffersAdmin(admin.ModelAdmin):
 class UserPrescriptionsAdmin(admin.ModelAdmin):
     list_display = ["prescription_id", "status", "user"]
     search_fields = ["prescription_id", "user__email", "user__phone_number"]
+
+USER_AGREEMENT_FIELD = [
+    "id",
+    "content",
+    "created_by",
+    "created_on"
+]
+@admin.register(PrivacyPolicy)
+class PrivacyPolicyAdmin(admin.ModelAdmin):
+    list_display = USER_AGREEMENT_FIELD
+@admin.register(TermsAndConditions)
+class TermsAndConditionsAdmin(admin.ModelAdmin):
+    list_display = USER_AGREEMENT_FIELD

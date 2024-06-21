@@ -5,6 +5,7 @@ from api.views.subscription import *
 from api.views.eye_test_apis import *
 from api.views import eye_fatigue_apis
 from api.views.strip_apis import *
+from api.views import user_agreements
 
 accounts = [
     path("verification_otp", VerificationOTPView.as_view()),
@@ -82,6 +83,10 @@ fatigue_apis = [
     path("take-user-selfie", eye_fatigue_apis.TakeUserSelfie.as_view()),
 ]
 
+agreement_urls = [
+    path("", user_agreements.UserAgreementView.as_view()),
+]
+
 urlpatterns = (
     accounts
     + subscriptions
@@ -90,5 +95,6 @@ urlpatterns = (
         path("eye/", include(eye_health_apis)),
         path("payment/", include(strip_urls)),
         path("fatigue/", include(fatigue_apis)),
+        path("agreement/", include(agreement_urls)),
     ]
 )
