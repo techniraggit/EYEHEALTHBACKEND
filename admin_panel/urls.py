@@ -52,6 +52,7 @@ notification_urls = [
     path("", NotificationView.as_view(), name="notification_view"),
     path("notification-detailed/<uuid:id>", NotificationDetailedView.as_view(), name="notification_detailed_view"),
     path("add-notificatioin", NewNotificationView.as_view(), name="add_notification_view"),
+    path("search-users-listing", UsersSearchListing.as_view(), name="search_users_listing"),
 ]
 
 

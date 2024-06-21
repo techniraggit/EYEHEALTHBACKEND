@@ -1,8 +1,8 @@
+from django.db.models import Q
 from .base import AdminLoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from api.models.notifications import PushNotification, UserModel
 from django.core.paginator import Paginator
-from django.contrib import messages
 from utilities.services.notification import create_notification
 from django.http import JsonResponse
 
@@ -75,3 +75,21 @@ class NewNotificationView(AdminLoginView):
             )
         except Exception as e:
             return JsonResponse({"status": False, "message": str(e)})
+
+
+class UsersSearchListing(AdminLoginView):
+    def get(self, request):
+        search = request.GET.get("search", "")
+        users = (
+            UserModel.objects.exclude(is_superuser=True)
+            .filter(
+                Q(first_name__icontains=search)
+                | Q(last_name__icontains=search)
+                | Q(email__icontains=search)
+                | Q(phone_number__icontains=search)
+            )
+            .values("email", "id")
+            .distinct()
+        )
+
+        return JsonResponse({"status": True, "users": list(users)})
