@@ -72,6 +72,7 @@ class EditPrivacyPolicyView(AdminLoginView):
                 {"status": False, "message": "Privacy Policy does not exist"}
             )
 
+        privacy_policy_obj.pk = None
         privacy_policy_obj.content = policy_content
         privacy_policy_obj.save()
         return JsonResponse(
@@ -167,6 +168,7 @@ class EditTermsAndConditionsView(AdminLoginView):
                 {"status": False, "message": "Terms and Conditions does not exist"}
             )
 
+        term_and_condition_obj.pk = None
         term_and_condition_obj.content = policy_content
         term_and_condition_obj.save()
         return JsonResponse(
