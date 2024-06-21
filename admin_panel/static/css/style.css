@@ -1150,3 +1150,12 @@ label.radio {
     padding: 0px 20px 0px 20px;
     border-radius: 4px;
 }
+
+.home-main a {
+    text-decoration: none !important;
+    color: black;
+}
+
+.home-main a :hover {
+    color: black;
+}
