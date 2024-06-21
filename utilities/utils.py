@@ -91,3 +91,26 @@ def get_form_error_msg(form_errors):
         f"{first_key.title().replace('_', ' ')}: {first_object['message']}"
     )
     return message
+
+import re
+
+
+def is_valid_phone(phone_number):
+    """ "+1" and "+91" prefixes validate before a 10-digit number."""
+    pattern = re.compile(r"^\+(1|91)\d{10}$")
+    if phone_number:
+        if re.match(pattern, phone_number):
+            return True
+    return False
+
+
+def is_valid_email(email=None):
+    EMAIL_REGEX = re.compile(
+        r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|'
+        r'(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|'
+        r"(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
+    )
+    if email:
+        if EMAIL_REGEX.match(email):
+            return True
+    return False

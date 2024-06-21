@@ -1,9 +1,8 @@
+from utilities.utils import is_valid_phone, is_valid_email
 from api.serializers.accounts import (
     UserSerializer,
     UserModel,
     LoginSerializer,
-    UserAddress,
-    UserAddressSerializer,
 )
 from utilities.services.sms import send_sms
 from utilities.services.email import send_email
@@ -18,7 +17,7 @@ from utilities.utils import (
     get_tokens_for_user,
     phone_or_email,
 )
-from core.constants import SMS_TEMPLATE
+from core.constants import SMS_TEMPLATE, ERROR_500_MSG
 
 
 class IsAlreadyVerified(APIView):
@@ -36,22 +35,28 @@ class VerificationOTPView(APIView):
         if not username:
             return api_response(False, 400, "username required")
 
-        OTPLog.objects.get_or_create(username=username)
+        contact_type = phone_or_email(username)
+        if contact_type == "email":
+            if not is_valid_email(username):
+                return api_response(False, 400, "Not a valid email address")
+        else:
+            if not is_valid_phone(username):
+                return api_response(False, 400, "Not a valid phone number")
+
+        OTPLog.objects.create(username=username)
         otp = generate_otp(username)
-        if phone_or_email(username) == "email":
-            try:
+
+        try:
+            if contact_type == "email":
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
-                return api_response(True, 200, f"OTP sent successfully to {username}.")
+            else:
+                message = SMS_TEMPLATE["send_otp"].format(otp=otp)
+                send_sms(username, message)
 
-            except Exception as e:
-                # raise e
-                return api_response(False, 500, "Something went wrong")
-
-        else:
-            message = SMS_TEMPLATE["send_otp"].format(otp=otp)
-            send_sms(username, message)
-            return api_response(False, 200, f"OTP sent successfully to {username}.")
+            return api_response(True, 200, f"OTP sent successfully to {username}.")
+        except Exception as e:
+            return api_response(False, 500, ERROR_500_MSG, error=str(e))
 
     def patch(self, request):
         username = request.data.get("username")

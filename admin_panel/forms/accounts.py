@@ -2,6 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from api.models.accounts import UserModel
 from datetime import datetime, timedelta
+from utilities.utils import is_valid_phone, is_valid_email
 
 class UserCreationForm(forms.ModelForm):
     class Meta:
@@ -17,9 +18,15 @@ class UserCreationForm(forms.ModelForm):
 
     def clean_phone_number(self):
         phone_number = self.cleaned_data.get('phone_number')
-        if not phone_number.isdigit():
-            raise ValidationError("Phone number must contain only digits.")
+        if not is_valid_phone(phone_number):
+            raise ValidationError("Not a valid phone number")
         return phone_number
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not is_valid_email(email):
+            raise ValidationError("Not a valid email address")
+        return email
 
     def clean_dob(self):
         dob = self.cleaned_data.get('dob')

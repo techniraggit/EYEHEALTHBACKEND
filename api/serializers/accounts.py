@@ -113,6 +113,7 @@ class UserAddressSerializer(BaseSerializer):
         return instance
 
 from api.models.rewards import GlobalPointsModel
+from utilities.utils import is_valid_phone, is_valid_email
 
 class UserSerializer(serializers.ModelSerializer):
     device_token = DeviceInfoSerializer(many=True, read_only=True)
@@ -143,8 +144,8 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def validate_phone_number(self, value):
-        if not value.isdigit():
-            raise serializers.ValidationError("Phone number must contain only digits.")
+        if not is_valid_phone(value):
+            raise serializers.ValidationError("Not a valid phone number")
         try:
             otp_log = OTPLog.objects.get(username=value)
             if not otp_log.is_verify:
@@ -155,6 +156,9 @@ class UserSerializer(serializers.ModelSerializer):
         return value
 
     def validate_email(self, value):
+        if not is_valid_email(value):
+            raise serializers.ValidationError("Not a valid email address")
+
         try:
             otp_log = OTPLog.objects.get(username=value)
             if not otp_log.is_verify:
@@ -260,8 +264,9 @@ class ProfileSerializer(BaseSerializer):
         }
 
     def validate_phone_number(self, value):
-        if not value.isdigit():
-            raise serializers.ValidationError("Phone number must contain only digits.")
+        if not is_valid_phone(value):
+            raise serializers.ValidationError("Not a valid phone number")
+
         try:
             if not OTPLog.objects.get(username=value).is_verify:
                 raise serializers.ValidationError("Phone number not verified.")
@@ -271,6 +276,8 @@ class ProfileSerializer(BaseSerializer):
         return value
 
     def validate_email(self, value):
+        if not is_valid_email(value):
+            raise serializers.ValidationError("Not a valid email address")
         try:
             if not OTPLog.objects.get(username=value).is_verify:
                 raise serializers.ValidationError("Email not verified.")
