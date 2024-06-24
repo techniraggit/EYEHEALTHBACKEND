@@ -16,13 +16,29 @@ from django.core.paginator import Paginator
 
 class SubscriptionView(AdminLoginView):
     def get(self, request):
-        plans = SubscriptionPlan.objects.all()
-        paginator = Paginator(plans, 10)
+        search = request.GET.get("search", "").strip()
+        plan_type_filter = request.GET.get("plan_type_filter")
+        
+        plan_qs = SubscriptionPlan.objects.all()
+        
+        if search:
+            plan_qs = plan_qs.filter(
+                Q(name__icontains=search)
+                | Q(description__icontains=search)
+                | Q(price__icontains=search)
+            )
+        
+        if plan_type_filter:
+            plan_qs = plan_qs.filter(plan_type=plan_type_filter)
+
+        paginator = Paginator(plan_qs, 10)
         page_number = request.GET.get("page")
         paginated_plans = paginator.get_page(page_number)
         context = dict(
             plans=paginated_plans,
             is_subscription=True,
+            search = search,
+            plan_type_filter = plan_type_filter,
         )
         return render(request, "subscription/subscription.html", context)
 
