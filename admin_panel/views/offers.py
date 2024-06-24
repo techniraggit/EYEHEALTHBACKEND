@@ -18,6 +18,7 @@ from django.db.models import Q
 
 from django.core.paginator import Paginator
 
+
 class OffersView(AdminLoginView):
     def get(self, request):
         search = str(request.GET.get("search", "")).strip()
@@ -26,36 +27,32 @@ class OffersView(AdminLoginView):
         offer_status_filter = request.GET.get("offer_status_filter")
 
         offers_qs = Offers.objects.all().order_by("-created_on")
-        
+
         if search:
             offers_qs = offers_qs.filter(
                 Q(title__icontains=search)
                 | Q(description__icontains=search)
                 | Q(status=str(search).lower())
             )
-        
+
         if start_date_filter and not end_date_filter:
             start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
-            offers_qs = offers_qs.filter(
-                created_on__date__gte=start_date_filter
-            )
-        
+            offers_qs = offers_qs.filter(created_on__date__gte=start_date_filter)
+
         if end_date_filter and not start_date_filter:
             end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
-            offers_qs = offers_qs.filter(
-                created_on__date__lte=end_date_filter
-            )
-        
+            offers_qs = offers_qs.filter(created_on__date__lte=end_date_filter)
+
         if start_date_filter and end_date_filter:
             start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
             end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
             offers_qs = offers_qs.filter(
                 created_on__date__range=(start_date_filter, end_date_filter)
             )
-        
+
         if offer_status_filter:
             offers_qs = offers_qs.filter(status=offer_status_filter)
-            
+
         paginator = Paginator(offers_qs, 10)
         page_number = request.GET.get("page")
         paginated_offers = paginator.get_page(page_number)
@@ -63,9 +60,9 @@ class OffersView(AdminLoginView):
             paginated_offers=paginated_offers,
             is_offer=True,
             search=search if search else "",
-            start_date_filter = start_date_filter,
-            end_date_filter = end_date_filter,
-            offer_status_filter = offer_status_filter,
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter,
+            offer_status_filter=offer_status_filter,
         )
         return render(request, "offers/offers.html", context)
 
@@ -194,13 +191,54 @@ class DeleteOfferView(AdminLoginView):
 
 class RedeemedOffersView(AdminLoginView):
     def get(self, request):
-        redeemed_offers = UserRedeemedOffers.objects.all().order_by("-created_on")
-        paginator = Paginator(redeemed_offers, 10)
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        status_filter = request.GET.get("status_filter")
+
+        redeemed_offer_qs = UserRedeemedOffers.objects.all().order_by("-redeemed_on")
+
+        if search:
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                Q(offer__title__icontains=search)
+                | Q(offer__description__icontains=search)
+                | Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__gte=start_date_filter
+            )
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__lte=end_date_filter
+            )
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        if status_filter:
+            redeemed_offer_qs = redeemed_offer_qs.filter(status=status_filter)
+
+        paginator = Paginator(redeemed_offer_qs, 10)
         page_number = request.GET.get("page")
         paginated_redeemed_offers = paginator.get_page(page_number)
         context = dict(
             redeemed_offers=paginated_redeemed_offers,
             is_redeemed_offers=True,
+            search = search,
+            start_date_filter = start_date_filter,
+            end_date_filter = end_date_filter,
+            status_filter = status_filter,
         )
         return render(request, "offers/redeemed_offers.html", context)
 
@@ -221,7 +259,10 @@ class EditRedeemedOffer(AdminLoginView):
         )
         return render(request, "offers/edit_redeemed_offers.html", context)
 
+
 from utilities.services.notification import create_notification
+
+
 class OfferDispatchView(AdminLoginView):
     def post(self, request):
         required_fields = ["redeemed_offer_id", "dispatch_address"]
@@ -291,10 +332,10 @@ class OfferEmailView(AdminLoginView):
             redeemed_offer_obj.email_subject = email_subject
             redeemed_offer_obj.save()
             create_notification(
-            user_ids=[redeemed_offer_obj.user.id],
-            title="You have received an email regarding your redeemed offer",
-            message=f"You have received an email regarding your redeemed offer with title '{redeemed_offer_obj.offer.title}'",
-        )
+                user_ids=[redeemed_offer_obj.user.id],
+                title="You have received an email regarding your redeemed offer",
+                message=f"You have received an email regarding your redeemed offer with title '{redeemed_offer_obj.offer.title}'",
+            )
             return JsonResponse({"status": True, "message": "Email sent successfully"})
 
         return JsonResponse({"status": False, "message": "Email not sent"})
