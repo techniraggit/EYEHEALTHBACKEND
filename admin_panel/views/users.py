@@ -1,3 +1,4 @@
+from core.constants import ERROR_500_MSG
 from utilities.utils import get_form_error_msg
 from utilities.utils import dlt_value
 from admin_panel.forms.accounts import UserCreationForm
@@ -154,6 +155,39 @@ class UserDeleteView(AdminLoginView):
         OTPLog.objects.filter(Q(username=usr_phone) | Q(username=usr_email)).delete()
         messages.success(request, "User deleted successfully")
         return redirect("users_view")
+
+
+class ChangeUserStatusView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            user_obj = User.objects.get(id=id)
+        except:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "User does not exist",
+                }
+            )
+
+        try:
+            user_obj.is_active = not user_obj.is_active
+            user_obj.save()
+            message = "Activated" if user_obj.is_active else "Suspended"
+            return JsonResponse(
+                {
+                    "status": True,
+                    "user_current_status": user_obj.is_active,
+                    "message": f"User {message} successfully",
+                }
+            )
+        except Exception as e:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": ERROR_500_MSG,
+                    "error": str(e),
+                }
+            )
 
 
 class UserExportView(AdminLoginView):

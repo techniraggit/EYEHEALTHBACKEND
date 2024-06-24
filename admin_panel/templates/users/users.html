@@ -59,6 +59,7 @@
         <th>Age</th>
         <th>Points</th>
         <th>Referral Code</th>
+        <th>Account Status</th>
         <th>Type</th>
         <th>Action</th>
     </tr>
@@ -73,6 +74,11 @@
         <td>{{ user.age }}</td>
         <td>{{ user.points }}</td>
         <td>{{ user.referral_code }}</td>
+        {% if user.is_active %}
+            <td ><span class="user-account-active change_user_status" data-user-id="{{ user.pk }}">Active</span></td>
+        {% else %}
+            <td ><span class="user-account-suspended change_user_status" data-user-id="{{ user.pk }}">Suspended</span></td>
+        {% endif %}
         <td>{% if user.is_superuser %}Admin {% else %}User{% endif %}</td>
         <td>
             <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-id="{{ user.id }}"></i></a>
@@ -87,6 +93,34 @@
 {% include "base/delete_popup.html" with msg='Are you sure you want to delete this User?' %}
 <script>
     $(document).ready(function () {
+        // Change User status
+        $(".change_user_status").click(function () {
+            user_id = $(this).data("user-id");
+            $current_user = $(this)
+
+            $.ajax({
+                url: "change-user-status/" + user_id,
+                type: 'GET',
+                success: function (data) {
+                    if(data.status){
+                        showToaster(data.message, "alert-success")
+                        if(data.user_current_status){
+                            $current_user.text("Active")
+                            $current_user.removeClass("user-account-suspended")
+                            $current_user.addClass("user-account-active")
+                        }else{
+                            $current_user.text("Suspended")
+                            $current_user.removeClass("user-account-active")
+                            $current_user.addClass("user-account-suspended")
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error making GET request:', error);
+                }
+            });
+        });
+
         // Clear the search input value when the clear button is clicked
         $('#clearButton').click(function () {
             $('#searchInput').val('');
