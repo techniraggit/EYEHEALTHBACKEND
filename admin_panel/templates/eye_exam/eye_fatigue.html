@@ -1,4 +1,5 @@
 {% extends "base/side_bar.html" %}
+{% load custom_filters %}
 {% block title %} Eye Fatigue {% endblock title %}
 
 {% block page_name %}Eye Fatigue{% endblock page_name %}
@@ -84,9 +85,9 @@
         <th>User</th>
         <th>Report ID</th>
         <th>Is Fatigue Right</th>
-        <th>Is Mild Tiredness Right</th>
         <th>Is Fatigue Left</th>
-        <th>Is Mild Tiredness Left</th>
+        <th>Score</th>
+        <th>Test Date</th>
         <th>Action</th>
     </tr>
     {% for report in eye_fatigue_reports %}
@@ -95,9 +96,9 @@
         <td>{{ report.user }}</td>
         <td>{{ report.report_id }}</td>
         <td class="{% if report.is_fatigue_right %}fatigue-yes {% else %}fatigue-no{% endif %}">{% if report.is_fatigue_right %}Yes {% else %}No{% endif %}</td>
-        <td class="{% if report.is_mild_tiredness_right %}fatigue-yes {% else %}fatigue-no{% endif %}">{% if report.is_mild_tiredness_right %}Yes {% else %}No{% endif %}</td>
         <td class="{% if report.is_fatigue_left %}fatigue-yes {% else %}fatigue-no{% endif %}">{% if report.is_fatigue_left %}Yes {% else %}No{% endif %}</td>
-        <td class="{% if report.is_mild_tiredness_left %}fatigue-yes {% else %}fatigue-no{% endif %}">{% if report.is_mild_tiredness_left %}Yes {% else %}No{% endif %}</td>
+        <td>{{ report.health_score }}</td>
+        <td>{{ report.created_on|format_datetime }}</td>
         <td>
             <a href="#" class="view-fatigue-details" data-fatigue-id="{{ report.pk }}"><i
                     class="fa-regular fa-eye"></i></a>
