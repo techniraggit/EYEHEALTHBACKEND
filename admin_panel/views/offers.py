@@ -21,21 +21,51 @@ from django.core.paginator import Paginator
 class OffersView(AdminLoginView):
     def get(self, request):
         search = str(request.GET.get("search", "")).strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        offer_status_filter = request.GET.get("offer_status_filter")
+
+        offers_qs = Offers.objects.all().order_by("-created_on")
+        
         if search:
-            offers = Offers.objects.filter(
+            offers_qs = offers_qs.filter(
                 Q(title__icontains=search)
                 | Q(description__icontains=search)
                 | Q(status=str(search).lower())
-            ).order_by("-created_on")
-        else:
-            offers = Offers.objects.all().order_by("-created_on")
-        paginator = Paginator(offers, 10)
+            )
+        
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(
+                created_on__date__gte=start_date_filter
+            )
+        
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(
+                created_on__date__lte=end_date_filter
+            )
+        
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+        
+        if offer_status_filter:
+            offers_qs = offers_qs.filter(status=offer_status_filter)
+            
+        paginator = Paginator(offers_qs, 10)
         page_number = request.GET.get("page")
         paginated_offers = paginator.get_page(page_number)
         context = dict(
             paginated_offers=paginated_offers,
             is_offer=True,
             search=search if search else "",
+            start_date_filter = start_date_filter,
+            end_date_filter = end_date_filter,
+            offer_status_filter = offer_status_filter,
         )
         return render(request, "offers/offers.html", context)
 
