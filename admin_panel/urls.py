@@ -64,6 +64,7 @@ subscription_urls = [
     path("delete-subscription/<uuid:id>", SubscriptionDeleteView.as_view(), name="delete_subscription_view"),
     path("add-subscription", SubscriptionAddView.as_view(), name="add_subscription_view"),
     path("user-subscription-plans", UserSubscriptionView.as_view(), name="user_subscription_plans_view"),
+    path("user-subscription-detail/<uuid:id>", UserSubscriptionDetailView.as_view(), name="user_subscription_detail_view"),
     path("subscription-export/<str:file_type>", SubscriptionExportView.as_view(), name="subscription_export_view"),
     path("user-subscription-export/<str:file_type>", UserSubscriptionExportView.as_view(), name="user_subscription_export_view"),
 ]

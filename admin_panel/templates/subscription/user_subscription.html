@@ -1,7 +1,9 @@
 {% extends "base/side_bar.html" %}
-{% block title %} Use Subscription Plans {% endblock title %}
 
-{% block page_name %}User Subscription Plans{% endblock page_name %}
+{% block title %} User Subscription Plans {% endblock title %}
+
+{% block page_name %} User Subscription Plans {% endblock page_name %}
+
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
@@ -22,7 +24,7 @@
         <div class="export col-4">
             <ul>
                 <li class="ex-li">
-                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <a class="export-btn" href="#">Export <i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
                         <li><a class="dropdown-item" href="{% url 'user_subscription_export_view' 'excel' %}">Excel</a></li>
                         <li><a class="dropdown-item" href="{% url 'user_subscription_export_view' 'csv' %}">CSV</a></li>
@@ -30,26 +32,28 @@
                 </li>
             </ul>
         </div>
-
     </div>
 </div>
-
 {% endblock nav_bar %}
+
 {% block table %}
 <table>
-    <tr>
-        <th>Sr.No</th>
-        <th>User</th>
-        <th>Plan Title</th>
-        <th>Start Date</th>
-        <th>End Date</th>
-        <th>Is Active</th>
-        <th>Payment Method</th>
-        <th>Paid Amount</th>
-        <th>Payment Status</th>
-        <th>Action</th>
-    </tr>
-    {% for user_plan in user_plans %}
+    <thead>
+        <tr>
+            <th>Sr.No</th>
+            <th>User</th>
+            <th>Plan Title</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Is Active</th>
+            <th>Payment Method</th>
+            <th>Paid Amount</th>
+            <th>Payment Status</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user_plan in user_plans %}
         <tr>
             <td>{{ forloop.counter0|add:user_plans.start_index|default:forloop.counter }}</td>
             <td>{{ user_plan.user }}</td>
@@ -61,14 +65,42 @@
             <td>{{ user_plan.paid_amount }}</td>
             <td>{{ user_plan.payment_status }}</td>
             <td>
-                <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a>
-                <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="#"> <i class="fa-regular fa-eye"></i></a>
+                <a href="#" class="view-user-subscription" data-id="{{ user_plan.pk }}"><i class="fa-regular fa-eye"></i></a>
             </td>
         </tr>
-    {% endfor %}
+        {% endfor %}
+    </tbody>
 </table>
+
 {% include "base/pagination.html" with paginated_data=user_plans %}
+
+<!-- User Subscription Detail Modal -->
+<div class="modal fade" id="userSubscriptionDetailModal" tabindex="-1" role="dialog" aria-labelledby="userSubscriptionDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userSubscriptionDetailModalLabel">User Subscription Details</h5>
+            </div>
+            <div class="modal-body">
+                <p><strong>Plan:</strong> <span id="modal-plan"></span></p>
+                <p><strong>User Name:</strong> <span id="modal-user_name"></span></p>
+                <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                <p><strong>Phone Number:</strong> <span id="modal-phone_number"></span></p>
+                <p><strong>Paid Amount:</strong> <span id="modal-paid_amount"></span></p>
+                <p><strong>Payment Method:</strong> <span id="modal-payment_method"></span></p>
+                <p><strong>Payment Status:</strong> <span id="modal-payment_status"></span></p>
+                <p><strong>Start Date:</strong> <span id="modal-start_date"></span></p>
+                <p><strong>End Date:</strong> <span id="modal-end_date"></span></p>
+                <p><strong>Status:</strong> <span id="modal-status"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal_close" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- User Subscription Detail Modal -->
+
 <script>
     $(document).ready(function () {
         // Clear the search input value when the clear button is clicked
@@ -76,6 +108,48 @@
             $('#searchInput').val('');
             $('#searchForm').submit();
         });
+
+        // Handle click on view details icon
+        $(".view-user-subscription").click(function(){
+            let id = $(this).data("id");
+            var modal = $('#userSubscriptionDetailModal');
+
+            $.ajax({
+                url: "user-subscription-detail/" + id,
+                type: "GET",
+                success: function (data) {
+                    var is_active = data.user_plan.is_active;
+
+                    modal.find('#modal-plan').text(data.user_plan.plan);
+                    modal.find('#modal-user_name').text(data.user_plan.user.full_name);
+                    modal.find('#modal-email').text(data.user_plan.user.email);
+                    modal.find('#modal-phone_number').text(data.user_plan.user.phone_number);
+                    modal.find('#modal-paid_amount').text(data.user_plan.paid_amount);
+                    modal.find('#modal-payment_method').text(data.user_plan.payment_method);
+                    modal.find('#modal-payment_status').text(data.user_plan.payment_status);
+                    modal.find('#modal-start_date').text(data.user_plan.start_date);
+                    modal.find('#modal-end_date').text(data.user_plan.end_date);
+
+                    if (is_active) {
+                        modal.find('#modal-status').text("Yes").css({"color": "green", "font-weight": "bold"});
+                    } else {
+                        modal.find('#modal-status').text("No").css({"color": "red", "font-weight": "bold"});
+                    }
+
+                    modal.modal('show');
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        });
+
+        // Close modal on close button click
+        $("#modal_close").on("click", function (event) {
+            event.preventDefault();
+            $('#userSubscriptionDetailModal').modal('hide');
+        });
+
     });
 </script>
-{% endblock table%}
+{% endblock table %}

@@ -34,7 +34,7 @@ class SubscriptionPlan(BaseModel, SoftDeleteMixin):
             duration=self.duration,
         )
 
-
+from utilities.utils import time_localize
 class UserSubscription(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     payment_status_choices = (
@@ -54,3 +54,16 @@ class UserSubscription(BaseModel):
     payment_status = models.CharField(
         max_length=50, choices=payment_status_choices, default="pending"
     )
+
+    def to_json(self):
+        return dict(
+            id=self.id,
+            user=self.user.to_json(),
+            plan=self.plan.name,
+            start_date=self.start_date,
+            end_date=self.end_date,
+            is_active=self.is_active,
+            payment_method=self.payment_method,
+            paid_amount=self.paid_amount,
+            payment_status=self.payment_status,
+        )

@@ -137,6 +137,21 @@ class UserSubscriptionView(AdminLoginView):
         )
         return render(request, "subscription/user_subscription.html", context)
 
+class UserSubscriptionDetailView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            user_plan_obj = UserSubscription.objects.get(pk=id)
+        except:
+            return JsonResponse(
+                {"status": False, "message": "User Subscription does not exist"}
+            )
+        return JsonResponse(
+            {
+                "status": True,
+                "user_plan": user_plan_obj.to_json(),
+            }
+        )
+
 
 class SubscriptionExportView(AdminLoginView):
     def get(self, request, file_type):
