@@ -5,17 +5,45 @@ from api.models.notifications import PushNotification, UserModel
 from django.core.paginator import Paginator
 from utilities.services.notification import create_notification
 from django.http import JsonResponse
+from datetime import datetime
 
 
 class NotificationView(AdminLoginView):
     def get(self, request):
-        notifications = PushNotification.objects.all().order_by("-created_on")
-        paginator = Paginator(notifications, 10)
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        notification_qs = PushNotification.objects.all().order_by("-created_on")
+
+        if search:
+            notification_qs = notification_qs.filter(
+                Q(title__icontains=search)
+                | Q(message__icontains=search)
+            )
+        
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            notification_qs = notification_qs.filter(created_on__gte=start_date_filter)
+        
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            notification_qs = notification_qs.filter(created_on__lte=end_date_filter)
+        
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            notification_qs = notification_qs.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+        paginator = Paginator(notification_qs, 10)
         page_number = request.GET.get("page")
         paginated_notifications = paginator.get_page(page_number)
         context = dict(
             notifications=paginated_notifications,
             is_notification=True,
+            search = search,
+            start_date_filter = start_date_filter,
+            end_date_filter = end_date_filter,
         )
         return render(request, "notification/notifications.html", context)
 

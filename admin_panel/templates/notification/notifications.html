@@ -7,35 +7,54 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-        <div class="col-5">
+        <div class="col-9">
             <div class="input-wrapp">
-                <input type="text" placeholder="Search by names,type and value">
-                <!-- <button>Search</button> -->
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <form action="#" method="get" id="searchForm">
+                    <div>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Title"
+                            value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <label>From Date</label>
+                        <input type="date" name="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <label>To Date</label>
+                        <input type="date" name="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="col-1"></div>
-        <div class="export col-6">
+
+        <div class="export col-3">
             <ul>
                 <li class="add-btn me-3">
-                    <a href="{% url "add_notification_view" %}"><span>Send New Notification</span><i
-                            class="fa-solid fa-plus ms-2"></i> </a>
+                    <a href="{% url 'add_notification_view' %}"><span>Send New Notification</span><i
+                            class="fa-solid fa-plus ms-2"></i></a>
                 </li>
-                <div class="drop-downmenu">
-                    <li class="ex-li"><a class="export-btn" href="#">Export<i
-                                class="fa-solid fa-file-export ms-2"></i></a>
-                        <ul class="dropdown-content">
-                            <li class="mb-1"><a href="#">PDF</a></li>
-                            <li class="mb-1"><a href="#">Excel</a></li>
-                            <li><a href="#">CSV</a></li>
-                        </ul>
-                    </li>
+                <li class="ex-li">
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <ul class="dropdown-content">
+                        <li class="dropdown-item"><a href="#">PDF</a></li>
+                        <li class="dropdown-item"><a href="#">Excel</a></li>
+                        <li class="dropdown-item"><a href="#">CSV</a></li>
+                    </ul>
+                </li>
             </ul>
-
         </div>
     </div>
 </div>
 {% endblock nav_bar %}
+
 {% block table %}
 <table>
     <tr>
@@ -84,6 +103,13 @@
 {% include "base/pagination.html" with paginated_data=notifications %}
 <script>
     $(document).ready(function () {
+        $(document).ready(function () {
+            $('#clearButton').on('click', function () {
+                $('#searchInput').val('');
+                $('input[type="date"]').val('');
+                $('#searchForm').submit();
+            });
+        });
         // View offer details when the view offer details button is clicked
         $('.view-notification').click(function (event) {
             event.preventDefault();
