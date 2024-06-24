@@ -54,7 +54,7 @@
             <td>{{ privacy_policy.created_on|format_datetime }}</td>
             <td>
                 <a href="{% url "edit_privacy_policy_view" privacy_policy.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="{% url "detailed_privacy_policy_view" privacy_policy.pk %}"> <i class="fa-regular fa-eye"></i></a>
+                <a href="{% url "detailed_privacy_policy_view" privacy_policy.pk %}"> <i class="fa-regular fa-eye me-2"></i></a>
             </td>
         </tr>
     {% endfor %}

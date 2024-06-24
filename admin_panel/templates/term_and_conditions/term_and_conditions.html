@@ -54,7 +54,7 @@
             <td>{{ term_and_condition.created_on|format_datetime }}</td>
             <td>
                 <a href="{% url "edit_term_and_condition_view" term_and_condition.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="{% url "detailed_term_and_condition_view" term_and_condition.pk %}"> <i class="fa-regular fa-eye"></i></a>
+                <a href="{% url "detailed_term_and_condition_view" term_and_condition.pk %}"> <i class="fa-regular fa-eye me-2"></i></a>
             </td>
         </tr>
     {% endfor %}
