@@ -1,5 +1,28 @@
+:root{
+    --bg-color-body:#fff;
+    --black-color: #000;
+    --highlight-color:#5200a5;
+    --color-whf8: #f5f8fa;
+    --sign-color:#8C55AA;
+    --color-e1: #E1BEE7;
+    --green-color: #009688;
+    --color-e6: #e6f2e2;
+    --input-color: #bfbbbb;
+    --input-placeholder:#2b292c;
+    --disable-bg-input:#f5f5f5;
+    --disable-text-input: #a1a1a1;
+    --red-color: red;
+    --blue-color:#0d6efd;
+    --aliceblue:aliceblue;
+    --color-f8f8: #f8f8f8;
+    --red-blood: #b10808;
+    --match-black: #021202;
+    --match-blue: #004c91;
+    --color-e8: #e8e8e8;
+    --color-ddd: #ddd;
+}
 body {
-    background-color: #fff;
+    background-color: var(--bg-color-body);
     font-family: 'Ubuntu', sans-serif;
     margin: 0;
 }
@@ -19,7 +42,7 @@ ul {
 }
 
 .main {
-    background-color: #FFFFFF;
+    background-color: var(--bg-color-body);
     width: 400px;
     height: 400px;
     margin: 7em auto;
@@ -29,7 +52,7 @@ ul {
 
 .sign {
     padding-top: 40px;
-    color: #8C55AA;
+    color: var(--sign-color);
     font-family: 'Ubuntu', sans-serif;
     font-weight: bold;
     font-size: 23px;
@@ -67,8 +90,8 @@ form.form1 {
 .submit {
     cursor: pointer;
     border-radius: 5em;
-    color: #fff;
-    background: #5200a5;
+    color: var(--bg-color-body);
+    background: var(--highlight-color);
     border: 0;
     padding-left: 40px;
     padding-right: 40px;
@@ -82,7 +105,7 @@ form.form1 {
 
 .forgot {
     text-shadow: 0px 0px 3px rgba(117, 117, 117, 0.12);
-    color: #E1BEE7;
+    color: var(--color-e1);
     padding-top: 15px;
 }
 
@@ -90,7 +113,7 @@ form.form1 {
 .w3-sidebar {
     height: 100%;
     width: 200px;
-    background-color: #fff;
+    background-color: var(--bg-color-body);
     position: fixed !important;
     z-index: 1;
     overflow: auto;
@@ -103,8 +126,8 @@ form.form1 {
 
 .w3-teal,
 .w3-hover-teal:hover {
-    color: #fff !important;
-    background-color: #009688 !important;
+    color: var(--bg-color-body) !important;
+    background-color: var(--green-color)!important;
 }
 
 * {
@@ -113,14 +136,14 @@ form.form1 {
 }
 
 .side-bar {
-    background: #f5f8fa 0 0 no-repeat padding-box;
+    background: var(--color-whf8)0 0 no-repeat padding-box;
     box-shadow: 4px 0 11px #0000000a;
     opacity: 1;
     width: 230px;
     height: 100%;
     position: fixed;
     left: 0;
-    color: black;
+    color: var(--black-color);
     top: 0;
     cursor: pointer;
     z-index: 1111;
@@ -139,13 +162,13 @@ form.form1 {
 .mainwrapper header {
     padding: 14px 46px;
     max-width: 100%;
-    color: #000;
-    background-color: #f5f8fa;
+    color: var(--black-color);
+    background-color: var(--color-whf8);
 }
 
 .innerdiv h5 {
     font-size: 26px;
-    color: #000;
+    color: var(--black-color);
     padding: 20px 40px;
     margin: 0;
 }
@@ -156,7 +179,7 @@ form.form1 {
 
 .innerdiv div>ul li a {
     font-size: 14px;
-    color: #000;
+    color: var(--black-color);
     font-weight: 600;
     display: block;
     padding: 6px 12px;
@@ -186,8 +209,8 @@ form.form1 {
 }
 
 .logout-wrap a:hover {
-    background-color: #5200a5;
-    color: #FFFFFF;
+    background-color: var(--highlight-color);
+    color: var(--bg-color-body);
     border-radius: 7px;
 }
 
@@ -200,14 +223,14 @@ form.form1 {
 }
 
 .innerdiv ul li a:hover {
-    background-color: #5200a5;
-    color: #FFFFFF;
+    background-color: var(--highlight-color);
+    color: var(--bg-color-body);
     border-radius: 7px;
 }
 
 .innerdiv ul li a.acive-link {
-    background-color: #5200a5;
-    color: #FFFFFF;
+    background-color: var(--highlight-color);
+    color: var(--bg-color-body);
     border-radius: 7px;
 }
 
@@ -218,13 +241,13 @@ form.form1 {
 }
 
 .add-btn a {
-    background-color: #5200a5;
+    background-color: var(--highlight-color);
     border: none;
     text-align: center;
     padding: 8px 12px;
     width: 100%;
     font-size: 14px;
-    color: #fff !important;
+    color: var(--bg-color-body) !important;
     font-weight: 700;
     border-radius: 12px 12px 12px 12px;
     display: flex;
@@ -234,7 +257,7 @@ form.form1 {
 
 .add-btn a span,
 .add-btn i {
-    color: #fff;
+    color: var(--bg-color-body);
 }
 
 .export>ul {
@@ -250,16 +273,16 @@ li.ex-li:hover ul.dropdown-content {
 }
 
 .export-btn {
-    background-color: #fff;
+    background-color: var(--bg-color-body);
     border-radius: 12px 12px 12px 12px;
     position: relative;
     padding: 8px 12px;
     display: block;
     list-style: none;
     height: 42px;
-    color: black;
+    color: var(--black-color);
     border: 2px solid;
-    border-color: #5200a5;
+    border-color: var(--highlight-color);
 }
 
 .header-heading {
@@ -269,14 +292,14 @@ li.ex-li:hover ul.dropdown-content {
 
 .search-box input {
     border: none;
-    background-color: #f5f8fa;
+    background-color: var(--color-whf8);
     padding: 8px 16px;
     border-radius: 50px;
     font-size: 15px;
     font-weight: 500;
     outline: none;
     width: 100%;
-    color: #000;
+    color: var(--black-color);
 }
 
 .right-table {
@@ -322,12 +345,12 @@ li.ex-li:hover ul.dropdown-content {
 .right-table table,
 th,
 td {
-    border-bottom: 1px dotted black;
+    border-bottom: 1px dotted var(--black-color);
     padding: 15px 0px 15px 0px;
 }
 
 .dropdown-content {
-    background-color: #fff;
+    background-color: var(--bg-color-body);
     padding: 15px 21px;
     position: absolute;
     min-width: 147px;
@@ -354,7 +377,7 @@ button.export-btn:hover ul.dropdown-content {
 
 .list-box {
     display: flex;
-    background: #e6f2e2;
+    background: var(--color-e6);
     padding: 35px 18px 35px;
     cursor: pointer;
     align-items: center;
@@ -387,8 +410,8 @@ button.export-btn:hover ul.dropdown-content {
     width: 100%;
     padding: 6px 12px;
     outline: none;
-    border: 1px solid #bfbbbb;
-    color: #2b292c;
+    border: 1px solid var(--input-color);
+    color: var(--input-placeholder);
 }
 
 .profile {
@@ -397,10 +420,10 @@ button.export-btn:hover ul.dropdown-content {
 
 .cancel-btn button {
     width: 100%;
-    background-color: #5200a5;
+    background-color: var(--highlight-color);
     padding: 10px 14px;
     border-radius: 5px;
-    color: #fff;
+    color: var(--bg-color-body);
     font-weight: 500;
     border: none;
     font-size: 14px;
@@ -422,14 +445,14 @@ button.export-btn:hover ul.dropdown-content {
 .list-boxs h6 {
     font-size: 16px;
     font-weight: 500;
-    color: #5200a5;
+    color: var(--highlight-color);
 }
 
 .list-box {
     display: flex;
     align-items: center;
     padding: 17px;
-    background-color: #e6f2e2;
+    background-color: var(--color-e6);;
     border-radius: 5px;
 }
 
@@ -443,7 +466,7 @@ button.export-btn:hover ul.dropdown-content {
 }
 
 i.fa.fa-search {
-    color: #000;
+    color: var(--black-color);
 }
 
 /* 22-may */
@@ -454,9 +477,9 @@ button {
     border: none;
     font-size: 16px !important;
     font-weight: 500;
-    color: #FFFFFF;
+    color: var(--bg-color-body);
     padding: 6px 24px;
-    background-color: #5200a5;
+    background-color: var(--highlight-color);
 }
 .custom-button-1 {
     width: 15%;
@@ -474,8 +497,8 @@ button {
 }
 
 .custom-button button {
-    background-color: #e6f2e2;
-    color: #5200a5;
+    background-color: var(--color-e6);;
+    color: var(--highlight-color);
     padding: 10px 32px;
     font-size: 16px;
     font-weight: 500;
@@ -496,8 +519,8 @@ button {
     padding: 6px 12px;
     border-radius: 5px;
     outline: none;
-    color: #2b292c;
-    border: 1px solid #bfbbbb;
+    color: var(--input-placeholder);
+    border: 1px solid var(--input-color);
 }
 
 .last-name input {
@@ -517,17 +540,17 @@ button {
 }
 
 span.custom-class-1 {
-    color: #5200a5;
+    color: var(--highlight-color);
     font-weight: 500;
 }
 
 input:disabled {
-    background-color: #f5f5f5;
-    color: #a1a1a1;
+    background-color: var(--disable-bg-input);
+    color: var(--disable-text-input);
 }
 
 .side-bar a {
-    color: #000000;
+    color: var(--black-color);
 }
 
 .wrapper form {
@@ -540,20 +563,20 @@ table {
 
 input[type=email] {
     outline: none;
-    border: 1px solid #bfbbbb;
+    border: 1px solid var(--input-color);
     padding: 6px 12px;
     width: 100%;
 }
 
 input[type=text] {
     outline: none;
-    border: 1px solid #bfbbbb;
+    border: 1px solid var(--input-color);
     padding: 6px 12px;
     width: 100%;
 }
 
 .fa-angle-down {
-    color: #fff;
+    color: var(--bg-color-body);
 }
 
 .w3-school-row,
@@ -568,8 +591,8 @@ ul.export-btn {
 
 button.add-btn {
     width: 100%;
-    color: #fff;
-    background-color: #5200a5;
+    color: var(--bg-color-body);
+    background-color: var(--highlight-color);
     border-radius: 5px;
 }
 
@@ -586,8 +609,8 @@ ul.export-btn {
 header {
     padding: 14px 46px;
     max-width: 100%;
-    color: #000;
-    background-color: #f5f8fa;
+    color: var(--black-color);
+    background-color: var(--color-whf8);
 }
 
 .logout-wrap {
@@ -595,7 +618,7 @@ header {
 }
 
 ul.dropdown-content {
-    background-color: #fff;
+    background-color: var(--bg-color-body);
     padding: 15px 21px;
     position: absolute;
     min-width: 147px;
@@ -625,7 +648,7 @@ button.export-btn:hover ul.dropdown-content {
 
 .search-box input {
     border: none;
-    background-color: #f5f8fa;
+    background-color: var(--color-whf8);
     padding: 8px 16px;
     border-radius: 50px;
     font-size: 15px;
@@ -633,7 +656,7 @@ button.export-btn:hover ul.dropdown-content {
     outline: none;
     height: 42px;
     width: 100%;
-    color: #000;
+    color: var(--black-color);
 }
 
 .wrapper form {
@@ -661,7 +684,7 @@ button.export-btn:hover ul.dropdown-content {
     display: flex;
     align-items: center;
     padding: 17px;
-    background-color: #e6f2e2;
+    background-color: var(--color-e6);;
     border-radius: 5px;
 }
 
@@ -675,20 +698,20 @@ ul.export-btn {
 }
 
 .logout-wrap a:hover {
-    background-color: #5200a5;
-    color: #FFFFFF;
+    background-color: var(--highlight-color);
+    color: var(--bg-color-body);
     border-radius: 7px;
 }
 
 .innerdiv ul li a:hover {
-    background-color: #5200a5;
-    color: #FFFFFF;
+    background-color: var(--highlight-color);
+    color: var(--bg-color-body);
     border-radius: 7px;
 }
 
 .innerdiv ul li a.acive-link {
-    background-color: #5200a5;
-    color: #FFFFFF;
+    background-color: var(--highlight-color);
+    color: var(--bg-color-body);
     border-radius: 7px;
 }
 
@@ -704,14 +727,14 @@ ul.export-btn {
 .right-table table,
 th,
 td {
-    border-bottom: 1px dotted black;
+    border-bottom: 1px dotted var(--black-color);
     padding: 15px 0px 15px 0px;
 }
 
 .right-table1 table,
 th,
 td {
-    border-bottom: 1px dotted black;
+    border-bottom: 1px dotted var(--black-color);
     padding: 15px 0px 15px 0px;
 }
 
@@ -729,16 +752,16 @@ td {
     width: 100%;
     padding: 6px 12px;
     outline: none;
-    border: 1px solid #bfbbbb;
-    color: #2b292c;
+    border: 1px solid var(--input-color);
+    color: var(--input-placeholder);
 }
 
 .cancel-btn button {
     width: 100%;
-    background-color: #5200a5;
+    background-color: var(--highlight-color);
     padding: 10px 14px;
     border-radius: 5px;
-    color: #fff;
+    color: var(--bg-color-body);
     font-weight: 500;
     border: none;
     font-size: 14px;
@@ -787,7 +810,7 @@ form#searchForm {
 }
 
 .dlt-popup {
-    background: white;
+    background: var(--bg-color-body);
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -808,48 +831,48 @@ form#searchForm {
 }
 
 #confirmDelete {
-    background: red;
-    color: white;
+    background: var(--red-color);
+    color: var(--bg-color-body);
 }
 
 #cancelDelete {
-    background: #5200a5;
-    color: white;
+    background: var(--highlight-color);
+    color: var(--bg-color-body);
 }
 
 /* delete popup end */
 
 /* required_star */
 #required_star {
-    color: red;
+    color: var(--red-color);
 }
 
 /* required_star end */
 i#deleteButton {
-    color: #0d6efd;
+    color: var(--blue-color);
 }
 
 /* approve-reject prescription */
 .Approve-btn {
     /* background-color: green; */
-    color: #fff;
+    color: var(--bg-color-body);
     /* border-radius: 7px; */
 }
 
 .Reject-btn {
     /* background-color: red; */
-    color: #fff;
+    color: var(--bg-color-body);
     /* border-radius: 7px; */
 }
 
 .btn-primary1 {
     /* background-color: green; */
-    color: #FFF !important;
+    color: var(--bg-color-body) !important;
 }
 
 /* approve-reject prescription end*/
 .btn-primary:hover {
-    color: #fff;
+    color: var(--bg-color-body);
     /* background-color: #0b5ed7; */
     /* border-color: #0a58ca; */
 }
@@ -859,7 +882,7 @@ i#deleteButton {
 }
 
 li.nav-item.dropdown {
-    border: 2px solid #5200a5;
+    border: 2px solid var(--highlight-color);
     border-radius: 7px;
 }
 
@@ -871,15 +894,15 @@ li.nav-item.dropdown {
     cursor: pointer;
     text-align: center;
     text-decoration: none;
-    color: #ffffff;
-    background-color: #5200a5;
+    color: var(--bg-color-body);
+    background-color: var(--highlight-color);
     border: none;
     border-radius: 5px;
     outline: none;
 }
 
 .show-file-btn:hover {
-    background-color: #ffffff;
+    background-color: var(--bg-color-body);
 }
 
 /* show file button in prescription */
@@ -889,17 +912,17 @@ li.nav-item.dropdown {
 }
 
 button.btn.btn-primary1.save-btn.col-md-3.mt-5.Dispatch-btn.me-2 {
-    background-color: #5200a5;
+    background-color: var(--highlight-color);
 }
 
 button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
-    background-color: #5200a5;
+    background-color: var(--highlight-color);
 }
 
 .right-table button {
-    color: #fff;
-    background-color: #5200a5;
-    border-color: #5200a5 !important;
+    color: var(--bg-color-body);
+    background-color: var(--highlight-color);
+    border-color: var(--highlight-color) !important;
     font-weight: 600;
     font-size: 13px !important;
     display: block;
@@ -907,7 +930,7 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
 }
 
 .Reject-btn button {
-    background-color: red;
+    background-color: var(--red-color);
 }
 
 .right-bar .card {
@@ -915,7 +938,7 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
 }
 
 .card-body {
-    background-color: #f5f8fa;
+    background-color: var(--color-whf8);
 }
 
 .card {
@@ -932,7 +955,7 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
 }
 
 .view-status {
-    background-color: #f5f8fa;
+    background-color: var(--color-whf8);
     padding: 25px;
     /* text-align: center; */
     align-items: center;
@@ -955,15 +978,15 @@ p.pending-status {
 }
 
 a.view-img {
-    background-color: #5200a5;
-    color: white;
+    background-color: var(--highlight-color);
+    color: var(--bg-color-body);
     padding: 6px 12px;
     border-radius: 7px;
     font-weight: 600;
 }
 
 a.view-img :hover {
-    color: white;
+    color: var(--bg-color-body);
 }
 
 .right-table .modal-footer {
@@ -972,12 +995,12 @@ a.view-img :hover {
 }
 
 .right-table button#confirm-reject-btn {
-    background-color: #b10808;
+    background-color: var(--red-blood);
     border: 0;
 }
 
 button.btn.btn-secondary {
-    background-color: #021202;
+    background-color: var(--match-black);
     border: none;
 }
 
@@ -986,8 +1009,8 @@ button.btn.btn-secondary {
 }
 
 .btn-primary:hover {
-    color: #fff;
-    background-color: #5200a5 !important;
+    color: var(--bg-color-body);
+    background-color: var(--highlight-color) !important;
     /* border-color: #0a58ca; */
 }
 
@@ -1000,10 +1023,10 @@ ul.nav.nav-tabs.customtabs {
     margin-bottom: 30px;
 }
 ul.nav.nav-tabs.customtabs li.nav-item > a {
-    background-color: #f5f8fa;
+    background-color: var(--color-whf8);
     margin-right: 10px;
     padding: 10px 13px;
-    color: #004c91;
+    color: var(--match-blue);
     font-weight: 600;
     max-width: 100%;
     width: 200px;
@@ -1011,11 +1034,11 @@ ul.nav.nav-tabs.customtabs li.nav-item > a {
     border-radius: 6px;
 }
 .tab-content h3 {
-    color: #000;
+    color: var(--black-color);
 }
 ul.nav.nav-tabs.customtabs li.nav-item > a.nav-link.active {
-    background-color: #5200a5;
-    color: #fff;
+    background-color: var(--highlight-color);
+    color: var(--bg-color-body);
     font-weight: 500;
 }
 div#users, div#subscription {
@@ -1025,24 +1048,24 @@ table.table {
     margin-top: 15px;
 }
 table.table  tbody {
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--color-e8);
     border-top: 0px;
 }
 table.table  thead {
-    border: 1px solid #e8e8e8;
+    border: 1px solid var(--color-e8);
 }
 table.table th {
-    background-color: #f5f8fa;
+    background-color: var(--color-whf8);
     padding: 14px 12px;
-    color: #521ca2;
+    color: var(--match-blue);
     border-bottom: 0;
     font-size: 18px;
 }
 
 table.table tbody td {
     padding: 10px 12px;
-    border-bottom: 1px solid #e8e8e8;
-    color: #000;
+    border-bottom: 1px solid var(--color-e8);
+    color: var(--black-color);
     font-weight: 500;
     font-size: 16px;
 }
@@ -1051,7 +1074,7 @@ table.table tbody td {
 .thumbnail-img{
     width: 80px;
     height: auto;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-ddd);
     border-radius: 4px;
     padding: 5px;
     box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
@@ -1080,16 +1103,16 @@ table.table tbody td {
 .filter-dropdown select {
     width: 100%;
     padding: 13px 12px;
-    border-color: aliceblue;
+    border-color: var(--aliceblue);
     border-radius: 33px;
     height: 42px;
     outline: none;
-    background-color: #f5f8fa;
+    background-color: var(--color-whf8);
 }
 
 
 label.radio {
-    background-color: #f8f8f8;
+    background-color: var(--color-f8f8);
     padding: 1px 12px;
     text-align: center;
     border-radius: 6px;
@@ -1114,7 +1137,7 @@ label.radio {
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    background-color: #f5f8fa;
+    background-color: var(--color-whf8);
     width: 90px;
 }
 
@@ -1135,7 +1158,7 @@ label.radio {
 
 .notification-search input {
     width: 100%;
-    border: 1px solid #bfbbbb;
+    border: 1px solid var(--input-color);
     max-width: 100%;
     border-radius: 6px;
     outline: none;
@@ -1153,11 +1176,11 @@ label.radio {
 
 .home-main a {
     text-decoration: none !important;
-    color: black;
+    color: var(--black-color);
 }
 
 .home-main a :hover {
-    color: black;
+    color: var(--black-color);
 }
 
 .ckeditor-container label {
