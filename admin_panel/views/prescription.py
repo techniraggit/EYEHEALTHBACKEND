@@ -8,19 +8,57 @@ from .base import AdminLoginView
 from django.shortcuts import render, get_object_or_404
 from api.models.prescription import UserPrescriptions
 from django.core.paginator import Paginator
+from django.db.models import Q
+from datetime import datetime
 
 logger = Logger("prescription.logs")
 
 
 class PrescriptionView(AdminLoginView):
     def get(self, request):
-        prescriptions = UserPrescriptions.objects.all().order_by("-created_on")
-        paginator = Paginator(prescriptions, 10)
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        status_filter = request.GET.get("status_filter")
+        prescription_qs = UserPrescriptions.objects.all().order_by("-created_on")
+
+        if search:
+            prescription_qs = prescription_qs.filter(
+                Q(prescription_id__icontains=search)
+                | Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
+                | Q(status=str(search).lower())
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            prescription_qs = prescription_qs.filter(created_on__gte=start_date_filter)
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            prescription_qs = prescription_qs.filter(created_on__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            prescription_qs = prescription_qs.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        if status_filter:
+            prescription_qs = prescription_qs.filter(status=status_filter)
+
+        paginator = Paginator(prescription_qs, 10)
         page_number = request.GET.get("page")
         paginated_prescriptions = paginator.get_page(page_number)
         context = dict(
             prescriptions=paginated_prescriptions,
             is_prescription=True,
+            search = search,
+            start_date_filter = start_date_filter,
+            end_date_filter = end_date_filter,
+            status_filter = status_filter,
         )
         return render(request, "prescription/prescription.html", context)
 
