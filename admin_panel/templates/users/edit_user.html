@@ -7,7 +7,7 @@
 <div class="right-table1">
     <div class="edit-nav row">
         <div class="profile col-4">
-            <img src="{% if user_obj.image %} {{user_obj.image.url}} {% else %}{% static "img/default_user_icon.png" %}{% endif %}" alt="">
+            <img src="{% if user_obj.image %} {{user_obj.image.url}} {% else %}{% static "img/default_user_icon.png"%}{% endif %}" alt="">
         </div>
     </div>
     <div class=" form-main">
@@ -18,25 +18,27 @@
                     <label>
                         First Name
                     </label>
-                    <input type="text" name="first_name" value="{{ user_obj.first_name}}"/>
+                    <input type="text" name="first_name" value="{{ user_obj.first_name}}" />
                 </div>
                 <div class="col-md-4 f-lname mt-4">
                     <label>Last Name</label>
-                    <input type="text" name="last_name" value="{{ user_obj.last_name}}"/>
+                    <input type="text" name="last_name" value="{{ user_obj.last_name}}" />
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label>E-mail</label>
-                    <input type="email"name="email" value="{{ user_obj.email}}" />
+                    <p id="email-p">{{ user_obj.email }}</p>
+                    <!-- <input type="email" name="email" value="{{ user_obj.email}}" /> -->
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label>Date Of Birth</label>
-                    <input type="date" name="dob" value="{{ user_obj.dob|date:'Y-m-d'}}"/>
+                    <input type="date" name="dob" value="{{ user_obj.dob|date:'Y-m-d'}}" />
                 </div>
                 <div class="col-md-4 f-name mt-4">
                     <label>
                         Phone Number
                     </label>
-                    <input type="number" name="phone_number" value="{{ user_obj.phone_number}}"/>
+                    <p id="phone-number-p">{{ user_obj.phone_number }}</p>
+                    <!-- <input type="number" name="phone_number" value="{{ user_obj.phone_number}}" /> -->
                 </div>
                 <div class="col-md-3 cancel-btn mb-4 mt-5">
                     <button type="submit">Save</button>
@@ -45,4 +47,10 @@
         </form>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        // $('input[name="email"], input[name="phone_number"]').attr('readonly', true);
+    });
+</script>
 {% endblock table%}
