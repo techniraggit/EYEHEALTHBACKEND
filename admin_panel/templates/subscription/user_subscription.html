@@ -7,26 +7,53 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-        <div class="col-8">
+        <div class="col-9">
             <div class="input-wrapp">
                 <form action="{% url 'user_subscription_plans_view' %}" method="get" id="searchForm">
-                    <div> 
-                        <input type="text" name="search" id="searchInput" placeholder="Search by Names, Email, Phone Number and Referral Code" value="{% if search %}{{ search }}{% endif %}">
-                    </div>
                     <div>
-                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                        <button type="button" id="clearButton">Clear</button>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Name, email and phone_number"
+                            value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <label for="start_date_filter">From Date</label>
+                        <input type="date" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <label for="end_date_filter">To Date</label>
+                        <input type="date" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <label for="status_filter">Payment Status</label>
+                        <select name="status_filter" id="status_filter" placeholder="Filter">
+                            <option value="" selected>Payment Status</option>
+                            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="failed" {% if status_filter == 'failed' %}selected{% endif %}>Failed</option>
+                            <option value="success" {% if status_filter == 'success' %}selected{% endif %}>Success</option>
+                        </select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div class="export col-4">
+        <div class="export col-3">
             <ul>
+                <li class="add-btn me-3">
+                    <a href="{% url 'add_subscription_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                </li>
                 <li class="ex-li">
-                    <a class="export-btn" href="#">Export <i class="fa-solid fa-file-export ms-2"></i></a>
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url 'user_subscription_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" href="{% url 'user_subscription_export_view' 'excel' %}">Excel</a>
+                        </li>
                         <li><a class="dropdown-item" href="{% url 'user_subscription_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
@@ -65,7 +92,8 @@
             <td>{{ user_plan.paid_amount }}</td>
             <td>{{ user_plan.payment_status }}</td>
             <td>
-                <a href="#" class="view-user-subscription" data-id="{{ user_plan.pk }}"><i class="fa-regular fa-eye"></i></a>
+                <a href="#" class="view-user-subscription" data-id="{{ user_plan.pk }}"><i
+                        class="fa-regular fa-eye"></i></a>
             </td>
         </tr>
         {% endfor %}
@@ -75,7 +103,8 @@
 {% include "base/pagination.html" with paginated_data=user_plans %}
 
 <!-- User Subscription Detail Modal -->
-<div class="modal fade" id="userSubscriptionDetailModal" tabindex="-1" role="dialog" aria-labelledby="userSubscriptionDetailModalLabel" aria-hidden="true">
+<div class="modal fade" id="userSubscriptionDetailModal" tabindex="-1" role="dialog"
+    aria-labelledby="userSubscriptionDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -104,13 +133,15 @@
 <script>
     $(document).ready(function () {
         // Clear the search input value when the clear button is clicked
-        $('#clearButton').click(function(){
+        $('#clearButton').click(function () {
             $('#searchInput').val('');
+            $('input[type="date"]').val('');
+            $('select[name="status_filter"]').val('');
             $('#searchForm').submit();
         });
 
         // Handle click on view details icon
-        $(".view-user-subscription").click(function(){
+        $(".view-user-subscription").click(function () {
             let id = $(this).data("id");
             var modal = $('#userSubscriptionDetailModal');
 
@@ -131,9 +162,9 @@
                     modal.find('#modal-end_date').text(data.user_plan.end_date);
 
                     if (is_active) {
-                        modal.find('#modal-status').text("Yes").css({"color": "green", "font-weight": "bold"});
+                        modal.find('#modal-status').text("Yes").css({ "color": "green", "font-weight": "bold" });
                     } else {
-                        modal.find('#modal-status').text("No").css({"color": "red", "font-weight": "bold"});
+                        modal.find('#modal-status').text("No").css({ "color": "red", "font-weight": "bold" });
                     }
 
                     modal.modal('show');

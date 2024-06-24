@@ -18,16 +18,16 @@ class SubscriptionView(AdminLoginView):
     def get(self, request):
         search = request.GET.get("search", "").strip()
         plan_type_filter = request.GET.get("plan_type_filter")
-        
+
         plan_qs = SubscriptionPlan.objects.all()
-        
+
         if search:
             plan_qs = plan_qs.filter(
                 Q(name__icontains=search)
                 | Q(description__icontains=search)
                 | Q(price__icontains=search)
             )
-        
+
         if plan_type_filter:
             plan_qs = plan_qs.filter(plan_type=plan_type_filter)
 
@@ -37,8 +37,8 @@ class SubscriptionView(AdminLoginView):
         context = dict(
             plans=paginated_plans,
             is_subscription=True,
-            search = search,
-            plan_type_filter = plan_type_filter,
+            search=search,
+            plan_type_filter=plan_type_filter,
         )
         return render(request, "subscription/subscription.html", context)
 
@@ -134,24 +134,51 @@ class SubscriptionDeleteView(AdminLoginView):
 
 class UserSubscriptionView(AdminLoginView):
     def get(self, request):
-        search = str(request.GET.get("search", "")).strip()
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        status_filter = request.GET.get("status_filter")
+
+        user_plan_qs = UserSubscription.objects.all()
+
         if search:
-            user_plans = UserSubscription.objects.filter(
+            user_plan_qs = user_plan_qs.filter(
                 Q(user__first_name__icontains=search)
                 | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
             )
-        else:
-            user_plans = UserSubscription.objects.all()
 
-        paginator = Paginator(user_plans, 10)
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(start_date__gte=start_date_filter)
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(end_date__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(
+                Q(start_date__gte=start_date_filter) & Q(end_date__lte=end_date_filter)
+            )
+
+        if status_filter:
+            user_plan_qs = user_plan_qs.filter(payment_status=status_filter)
+
+        paginator = Paginator(user_plan_qs, 10)
         page_number = request.GET.get("page")
         paginated_user_plans = paginator.get_page(page_number)
         context = dict(
             user_plans=paginated_user_plans,
             is_user_subscription=True,
-            search=search if search else "",
+            search=search,
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter,
+            status_filter=status_filter,
         )
         return render(request, "subscription/user_subscription.html", context)
+
 
 class UserSubscriptionDetailView(AdminLoginView):
     def get(self, request, id):
