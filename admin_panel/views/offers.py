@@ -304,10 +304,10 @@ class OfferExportView(AdminLoginView):
     def get_queryset(self):
         return Offers.objects.all()
 
-    def get_data_row(self, object):
+    def get_data_row(self, object, request):
         return [
             object.title,
-            object.image.url if object.image else "",
+            request.build_absolute_uri(object.image.url) if object.image else "",
             object.description,
             object.expiry_date.strftime("%Y-%m-%d"),
             object.status,
@@ -323,7 +323,7 @@ class OfferExportView(AdminLoginView):
         writer = csv.writer(response)
         writer.writerow(self.get_headers())
         for user in self.get_queryset():
-            row = self.get_data_row(user)
+            row = self.get_data_row(user, request)
             writer.writerow(row)
         return response
 
@@ -336,7 +336,7 @@ class OfferExportView(AdminLoginView):
 
         worksheet.append(self.get_headers())
         for user in self.get_queryset():
-            row = self.get_data_row(user)
+            row = self.get_data_row(user, request)
             worksheet.append(row)
 
         worksheet.column_dimensions["A"].width = 10
