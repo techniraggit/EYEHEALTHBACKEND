@@ -1,7 +1,7 @@
 from core.constants import ERROR_500_MSG
 from utilities.utils import get_form_error_msg
 from utilities.utils import dlt_value
-from admin_panel.forms.accounts import UserCreationForm
+from admin_panel.forms.accounts import UserCreationForm, AdminCreationForm
 import json
 from django.http import JsonResponse
 from utilities.utils import time_localize
@@ -110,7 +110,7 @@ class UserEditView(AdminLoginView):
             messages.success(request, "User updated successfully")
             return redirect("users_view")
 
-        messages.error(request, get_form_error_msg(user_form.errors))
+        messages.error(request, get_form_error_msg(user_form.errors.as_json()))
         return redirect(reverse("user_edit_view", kwargs={"id": user_obj.id}))
 
 
@@ -131,6 +131,21 @@ class AddUserView(AdminLoginView):
         first_key = next(iter(parsed_data))
         first_object = parsed_data[first_key][0]
         message = f"{first_key.title().replace('_', ' ')}: {first_object['message']}"
+        return JsonResponse(
+            {
+                "status": False,
+                "message": message,
+            }
+        )
+
+
+class AddAdminView(AdminLoginView):
+    def post(self, request):
+        admin_creation_form = AdminCreationForm(data=request.POST)
+        if admin_creation_form.is_valid():
+            admin_creation_form.save()
+            return JsonResponse({"status": True, "message": "Admin added successfully"})
+        message = get_form_error_msg(admin_creation_form.errors.as_json())
         return JsonResponse(
             {
                 "status": False,
