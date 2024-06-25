@@ -23,7 +23,7 @@
                         <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
-                    <div class="filter-dropdown">
+                    <div class="filter-dropdown select-wrapp">
                         <select name="status_filter" id="status_filter">
                             <option value="">Status</option>
                             <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>

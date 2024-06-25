@@ -24,7 +24,7 @@
                         <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
-                    <div class="filter-dropdown-status">
+                    <div class="filter-dropdown-status select-wrapp">
                         {% comment %} <label for="status_filter">Status</label> {% endcomment %}
                         <select name="status_filter" id="status_filter" placeholder="Filter">
                             <option value="" {% if None %}selected{% endif %}>Status</option>

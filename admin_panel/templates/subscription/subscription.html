@@ -14,7 +14,7 @@
                             value="{% if search %}{{ search }}{% endif %}">
                     </div>
 
-                    <div class="filter-dropdown">
+                    <div class="filter-dropdown select-wrapp">
                         <select name="plan_type_filter" id="plan_type_filter" placeholder="Filter">
                             <option value=""  selected>Plan Type</option>
                             <option value="basic" {% if plan_type_filter == 'basic' %}selected{% endif %}>Basic</option>
@@ -24,7 +24,7 @@
                         </select>
                     </div>
 
-                    <div class="filter-dropdown">
+                    <div class="filter-dropdown select-wrapp">
                         <select name="is_active_filter" id="is_active_filter" placeholder="Filter">
                             <option value="">Active</option>
                             <option value="yes" {% if is_active_filter == 'yes' %}selected{% endif %}>Yes</option>

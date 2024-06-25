@@ -20,7 +20,7 @@
                         <input type="text" name="end_date_filter", id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
-                    <div class="filter-dropdown ms-2">
+                    <div class="filter-dropdown select-wrapp ms-2">
                         <select name="health_score_filter" id="health_score_filter" placeholder="Filter">
                             <option value="">Health Score</option>
                             {% for i in range_object %}
