@@ -18,6 +18,7 @@ class SubscriptionView(AdminLoginView):
     def get(self, request):
         search = request.GET.get("search", "").strip()
         plan_type_filter = request.GET.get("plan_type_filter")
+        is_active_filter = request.GET.get("is_active_filter")
 
         plan_qs = SubscriptionPlan.objects.all()
 
@@ -31,6 +32,9 @@ class SubscriptionView(AdminLoginView):
         if plan_type_filter:
             plan_qs = plan_qs.filter(plan_type=plan_type_filter)
 
+        if is_active_filter:
+            plan_qs = plan_qs.filter(is_active=str(is_active_filter).lower() == "yes")
+
         paginator = Paginator(plan_qs, 10)
         page_number = request.GET.get("page")
         paginated_plans = paginator.get_page(page_number)
@@ -39,6 +43,7 @@ class SubscriptionView(AdminLoginView):
             is_subscription=True,
             search=search,
             plan_type_filter=plan_type_filter,
+            is_active_filter=is_active_filter,
         )
         return render(request, "subscription/subscription.html", context)
 
@@ -137,7 +142,7 @@ class UserSubscriptionView(AdminLoginView):
         search = request.GET.get("search", "").strip()
         start_date_filter = request.GET.get("start_date_filter")
         end_date_filter = request.GET.get("end_date_filter")
-        status_filter = request.GET.get("status_filter")
+        payment_status_filter = request.GET.get("payment_status_filter")
 
         user_plan_qs = UserSubscription.objects.all()
 
@@ -163,8 +168,8 @@ class UserSubscriptionView(AdminLoginView):
                 Q(start_date__gte=start_date_filter) & Q(end_date__lte=end_date_filter)
             )
 
-        if status_filter:
-            user_plan_qs = user_plan_qs.filter(payment_status=status_filter)
+        if payment_status_filter:
+            user_plan_qs = user_plan_qs.filter(payment_status=payment_status_filter)
 
         paginator = Paginator(user_plan_qs, 10)
         page_number = request.GET.get("page")
@@ -175,7 +180,7 @@ class UserSubscriptionView(AdminLoginView):
             search=search,
             start_date_filter=start_date_filter,
             end_date_filter=end_date_filter,
-            status_filter=status_filter,
+            payment_status_filter=payment_status_filter,
         )
         return render(request, "subscription/user_subscription.html", context)
 

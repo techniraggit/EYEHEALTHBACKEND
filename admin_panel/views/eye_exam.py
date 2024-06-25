@@ -18,8 +18,8 @@ from datetime import datetime
 class EyeTestView(AdminLoginView):
     def get(self, request):
         search = request.GET.get("search")
-        start_date_str = request.GET.get("start_date_filter")
-        end_date_str = request.GET.get("end_date_filter")
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
         health_score_str = request.GET.get("health_score_filter")
 
         # Filter base query
@@ -37,39 +37,33 @@ class EyeTestView(AdminLoginView):
             )
             eye_test_reports = eye_test_reports.filter(search_filter)
 
-        # Convert date filters
-        start_date_filter = (
-            datetime.strptime(start_date_str, "%Y-%m-%d").date()
-            if start_date_str
-            else None
-        )
-        end_date_filter = (
-            datetime.strptime(end_date_str, "%Y-%m-%d").date() if end_date_str else None
-        )
-
         # Apply date filters
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            eye_test_reports = eye_test_reports.filter(
+                created_on__gte=start_date_filter
+            )
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            eye_test_reports = eye_test_reports.filter(created_on__lte=end_date_filter)
+
         if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
             eye_test_reports = eye_test_reports.filter(
                 created_on__date__range=(start_date_filter, end_date_filter)
-            )
-        elif start_date_filter:
-            eye_test_reports = eye_test_reports.filter(
-                created_on__date__gte=start_date_filter
-            )
-        elif end_date_filter:
-            eye_test_reports = eye_test_reports.filter(
-                created_on__date__lte=end_date_filter
             )
 
         # Apply health score filter
         try:
-            tolerance = 0.1  
+            tolerance = 0.1
             health_score_filter = float(health_score_str)
             lower_bound = health_score_filter - tolerance
             upper_bound = health_score_filter + tolerance
             eye_test_reports = eye_test_reports.filter(
-            health_score__gte=lower_bound, health_score__lte=upper_bound
-        )
+                health_score__gte=lower_bound, health_score__lte=upper_bound
+            )
             eye_test_reports = eye_test_reports.filter(health_score=health_score_filter)
         except (ValueError, TypeError):
             health_score_filter = 0.0
@@ -84,8 +78,8 @@ class EyeTestView(AdminLoginView):
             "eye_test_reports": paginated_eye_test_reports,
             "is_eye_exam": True,
             "search": search,
-            "start_date_filter": start_date_str,
-            "end_date_filter": end_date_str,
+            "start_date_filter": start_date_filter,
+            "end_date_filter": end_date_filter,
             "health_score_filter": health_score_filter,
             "range_object": [round(x * 0.01, 2) for x in range(600, 751)],
         }
@@ -236,8 +230,8 @@ class DownloadEyeTestReportView(AdminLoginView):
 class EyeFatigueView(AdminLoginView):
     def get(self, request):
         search = request.GET.get("search")
-        start_date_str = request.GET.get("start_date_filter")
-        end_date_str = request.GET.get("end_date_filter")
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
         health_score_str = request.GET.get("health_score_filter", 0)
         is_fatigue_left_str = request.GET.get("is_fatigue_left_filter")
         is_fatigue_right_str = request.GET.get("is_fatigue_right_filter")
@@ -271,17 +265,19 @@ class EyeFatigueView(AdminLoginView):
             eye_fatigue_reports = eye_fatigue_reports.filter(search_filter)
 
         # Apply date filters
-        if start_date_str:
-            start_date_filter = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
             eye_fatigue_reports = eye_fatigue_reports.filter(
-                created_on__date__gte=start_date_filter
+                created_on__gte=start_date_filter
             )
-        if end_date_str:
-            end_date_filter = datetime.strptime(end_date_str, "%Y-%m-%d").date()
-            eye_fatigue_reports = eye_fatigue_reports.filter(
-                created_on__date__lte=end_date_filter
-            )
-        if start_date_str and end_date_str:
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            eye_fatigue_reports = eye_fatigue_reports.filter(created_on__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
             eye_fatigue_reports = eye_fatigue_reports.filter(
                 created_on__date__range=(start_date_filter, end_date_filter)
             )
@@ -312,8 +308,8 @@ class EyeFatigueView(AdminLoginView):
             "eye_fatigue_reports": paginated_eye_fatigue_reports,
             "is_eye_fatigue": True,
             "search": search,
-            "start_date_filter": start_date_str,
-            "end_date_filter": end_date_str,
+            "start_date_filter": start_date_filter,
+            "end_date_filter": end_date_filter,
             "health_score_filter": health_score_filter,
             "is_fatigue_left_filter": is_fatigue_left_str,
             "is_fatigue_right_filter": is_fatigue_right_str,

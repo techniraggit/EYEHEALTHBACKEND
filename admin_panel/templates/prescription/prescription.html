@@ -15,17 +15,17 @@
                             value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown">
-                        <label for="start_date_filter">From Date</label>
-                        <input type="date" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                        {% comment %} <label for="start_date_filter">From Date</label> {% endcomment %}
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
                             value="{{ start_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown">
-                        <label for="end_date_filter">To Date</label>
-                        <input type="date" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                        {% comment %} <label for="end_date_filter">To Date</label> {% endcomment %}
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown-status">
-                        <label for="status_filter">Status</label>
+                        {% comment %} <label for="status_filter">Status</label> {% endcomment %}
                         <select name="status_filter" id="status_filter" placeholder="Filter">
                             <option value="" {% if None %}selected{% endif %}>Status</option>
                             <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
@@ -83,6 +83,15 @@
 
 <script>
     $(document).ready(function () {
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd"
+        }).attr("readonly", "readonly");
+
+        $('#status_filter').select2({
+            placeholder: "Status",
+            minimumResultsForSearch: Infinity
+        });
+
         $('#clearButton').on('click', function () {
             $('#searchForm')[0].reset();
             $('#searchInput').val('');

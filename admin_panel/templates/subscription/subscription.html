@@ -15,14 +15,23 @@
                     </div>
 
                     <div class="filter-dropdown">
-                        <select name="plan_type_filter" placeholder="Filter">
+                        <select name="plan_type_filter" id="plan_type_filter" placeholder="Filter">
                             <option value=""  selected>Plan Type</option>
-                            <option value="basic" {% if plan_type_filter == basic %}selected{% endif %}>Basic</option>
-                            <option value="monthly" {% if plan_type_filter == monthly %}selected{% endif %}>Monthly</option>
-                            <option value="quarterly" {% if plan_type_filter == quarterly %}selected{% endif %}>Quarterly</option>
-                            <option value="yearly" {% if plan_type_filter == yearly %}selected{% endif %}>Yearly</option>
+                            <option value="basic" {% if plan_type_filter == 'basic' %}selected{% endif %}>Basic</option>
+                            <option value="monthly" {% if plan_type_filter == 'monthly' %}selected{% endif %}>Monthly</option>
+                            <option value="quarterly" {% if plan_type_filter == 'quarterly' %}selected{% endif %}>Quarterly</option>
+                            <option value="yearly" {% if plan_type_filter == 'yearly' %}selected{% endif %}>Yearly</option>
                         </select>
                     </div>
+
+                    <div class="filter-dropdown">
+                        <select name="is_active_filter" id="is_active_filter" placeholder="Filter">
+                            <option value="">Active</option>
+                            <option value="yes" {% if is_active_filter == 'yes' %}selected{% endif %}>Yes</option>
+                            <option value="no" {% if is_active_filter == 'no' %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+
                     <div class="d-flex mb-2">
                         <div>
                             <button type="submit">Apply</button>
@@ -69,7 +78,11 @@
             <td>{{ plan.description }}</td>
             <td>{{ plan.price }}</td>
             <td>{{ plan.plan_type|title }}</td>
-            <td>{% if plan.is_active %} Yes {% else %} No{% endif %}</td>
+            {% if plan.is_active %}
+                <td class="active">Yes</td>
+            {% else %}
+                <td class="rejected">No</td>
+            {% endif %}
             <td>{{ plan.duration }}</td>
             <td>
                 <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-plan_id="{{ plan.pk }}"></i></a>
@@ -119,10 +132,18 @@
 {% include "base/pagination.html" with paginated_data=plans %}
 <script>
     $(document).ready(function () {
+
+        $('#plan_type_filter, #is_active_filter').select2({
+            //placeholder: "Plan Type",
+            minimumResultsForSearch: Infinity
+        });
         
         // Clear the search input value when the clear button is clicked
-        $('#clearButton').click(function(){
+        $('#clearButton').click(function () {
             $('#searchInput').val('');
+            $('input[type="text"]').val('');
+            $('select[name="is_active_filter"]').val('');
+            $('select[name="plan_type_filter"]').val('');
             $('#searchForm').submit();
         });
 

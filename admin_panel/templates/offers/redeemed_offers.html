@@ -14,21 +14,21 @@
                             value="{{ search }}">
                     </div>
                     <div class="filter-dropdown">
-                        <label>From Date</label>
-                        <input type="date" name="start_date_filter" placeholder="Start Date"
+                        {% comment %} <label>From Date</label>{% endcomment %}
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
                             value="{{ start_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown">
-                        <label>To Date</label>
-                        <input type="date" name="end_date_filter" placeholder="End Date"
+                        {% comment %} <label>To Date</label> {% endcomment %}
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown">
-                        <select name="status_filter" placeholder="Filter">
+                        <select name="status_filter" id="status_filter">
                             <option value="">Status</option>
-                            <option value="pending" {% if status_filter == pending %}selected{% endif %}>Pending</option>
-                            <option value="dispatched" {% if status_filter == dispatched %}selected{% endif %}>Distatched</option>
-                            <option value="emailed" {% if status_filter == emailed %}selected{% endif %}>Email</option>
+                            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="dispatched" {% if status_filter == 'dispatched' %}selected{% endif %}>Dispatched</option>
+                            <option value="emailed" {% if status_filter == 'emailed' %}selected{% endif %}>Emailed</option>
                         </select>
                     </div>
                     <div class="d-flex mb-2">
@@ -84,9 +84,18 @@
 
 <script>
     $(document).ready(function () {
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd"
+        }).attr("readonly", "readonly");
+
+        $('#status_filter').select2({
+            placeholder: "Status",
+            minimumResultsForSearch: Infinity
+        });
+
         $('#clearButton').click(function () {
             $('#searchInput').val('');
-            $('input[type="date"]').val('');
+            $('input[type="text"]').val('');
             $('select[name="status_filter"]').val('');
             $('#searchForm').submit();
         });

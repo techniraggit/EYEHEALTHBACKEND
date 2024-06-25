@@ -14,17 +14,15 @@
                             value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <label>From Date</label>
-                        <input type="date" name="start_date_filter" placeholder="Start Date"
+                        <input type="text" name="start_date_filter", id="start_date_filter" placeholder="Start Date"
                             value="{{ start_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <label>To Date</label>
-                        <input type="date" name="end_date_filter" placeholder="End Date"
+                        <input type="text" name="end_date_filter", id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <select name="health_score_filter" placeholder="Filter">
+                        <select name="health_score_filter" id="health_score_filter" placeholder="Filter">
                             <option value="">Health Score</option>{{range_object}}
                             {% for i in range_object %}
                                 <option value="{{ i }}" {% if health_score_filter == i %}selected{% endif %}>{{ i }}</option>
@@ -128,6 +126,14 @@
 
 <script>
     $(document).ready(function () {
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd"
+        }).attr("readonly", "readonly");
+
+        $('#health_score_filter').select2({
+            //minimumResultsForSearch: Infinity
+        });
+
         $('#clearButton').on('click', function () {
             // Clear all input fields
             $('#searchInput').val('');
@@ -185,6 +191,3 @@
 
 
 {% endblock table%}\
-
-
-This is my django template code, and my getting a issue if i apply the filters and then click on next page the data is comming normally. without applying filters, fix it if i apply filter then give me filtered data on next page also 

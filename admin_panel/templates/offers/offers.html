@@ -15,17 +15,17 @@
                             value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown">
-                        <label for="start_date_filter">From Date</label>
-                        <input type="date" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                        {% comment %} <label for="start_date_filter">From Date</label> {% endcomment %}
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
                             value="{{ start_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown">
-                        <label for="end_date_filter">To Date</label>
-                        <input type="date" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                        {% comment %} <label for="end_date_filter">To Date</label> {% endcomment %}
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown">
-                        <label for="offer_status_filter">Payment Status</label>
+                        {% comment %} <label for="offer_status_filter">Payment Status</label> {% endcomment %}
                         <select name="offer_status_filter" id="offer_status_filter" placeholder="Filter">
                             <option value="" selected>Payment Status</option>
                             <option value="active" {% if offer_status_filter == 'active' %}selected{% endif %}>active</option>
@@ -130,10 +130,19 @@
 
 <script>
     $(document).ready(function () {
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd"
+        }).attr("readonly", "readonly");
+
+        $('#offer_status_filter').select2({
+            placeholder: "Payment Status",
+            minimumResultsForSearch: Infinity
+        });
+
         // Clear the search input value when the clear button is clicked
         $('#clearButton').click(function () {
             $('#searchInput').val('');
-            $('input[type="date"]').val('');
+            $('input[type="text"]').val('');
             $('select[name="offer_status_filter"]').val('');
             $('#searchForm').submit();
         });
