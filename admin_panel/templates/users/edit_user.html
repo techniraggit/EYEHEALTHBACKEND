@@ -27,7 +27,6 @@
                 <div class="col-md-4 f-mail mt-4">
                     <label>E-mail</label>
                     <p id="email-p">{{ user_obj.email }}</p>
-                    <!-- <input type="email" name="email" value="{{ user_obj.email}}" /> -->
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label>Date Of Birth</label>
@@ -38,7 +37,6 @@
                         Phone Number
                     </label>
                     <p id="phone-number-p">{{ user_obj.phone_number }}</p>
-                    <!-- <input type="number" name="phone_number" value="{{ user_obj.phone_number}}" /> -->
                 </div>
                 <div class="col-md-3 cancel-btn mb-4 mt-5">
                     <button type="submit">Save</button>
@@ -47,10 +45,4 @@
         </form>
     </div>
 </div>
-
-<script>
-    $(document).ready(function () {
-        // $('input[name="email"], input[name="phone_number"]').attr('readonly', true);
-    });
-</script>
 {% endblock table%}

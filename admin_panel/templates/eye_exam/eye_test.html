@@ -134,7 +134,7 @@
         $('#clearButton').on('click', function () {
             // Clear all input fields
             $('#searchInput').val('');
-            $('input[type="date"]').val('');
+            $('input[type="text"]').val('');
             $('select[name="health_score_filter"]').val('');
 
             // Submit the form to show all results
@@ -180,10 +180,8 @@
             e.preventDefault();
             $('#reportDetailModal').modal('hide');
         })
-    });
-    $(".filter-dropdown input").click(function () {
-        $(".filter-dropdown label").hide();
-    });
+
+    }); // document.ready
 </script>
 
 
