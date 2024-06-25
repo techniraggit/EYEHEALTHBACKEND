@@ -173,3 +173,18 @@ class PrivacyPolicyAdmin(admin.ModelAdmin):
 @admin.register(TermsAndConditions)
 class TermsAndConditionsAdmin(admin.ModelAdmin):
     list_display = USER_AGREEMENT_FIELD
+
+@admin.register(UserContacts)
+class UserContactsAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "user",
+        "name",
+        "phone_number",
+    ]
+    search_fields = [
+        "user__email",
+        "user__phone_number",
+        "name",
+        "phone_number",
+    ]

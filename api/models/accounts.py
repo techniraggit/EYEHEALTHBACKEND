@@ -159,3 +159,23 @@ class ReferTrack(BaseModel):
     referred_by = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="referred_by"
     )
+
+class UserContacts(BaseModel):
+    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='contacts')
+    name = models.CharField(max_length=255)
+    email = models.EmailField(blank=True)
+    phone_number = models.CharField(max_length=20, blank=True)
+    address = models.TextField(blank=True)
+    is_favorite = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name
+
+    def to_json(self):
+        return dict(
+            name=self.name,
+            email=self.email,
+            phone_number=self.phone_number,
+            address=self.address,
+            is_favorite=self.is_favorite,
+        )
