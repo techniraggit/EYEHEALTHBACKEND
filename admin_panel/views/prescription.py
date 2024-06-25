@@ -1,3 +1,8 @@
+from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl import Workbook
+import csv
+from utilities.utils import time_localize
+from django.http import HttpResponse
 from utilities.services.email import send_email
 from utilities.services.notification import create_notification
 from django.http import JsonResponse
@@ -55,10 +60,10 @@ class PrescriptionView(AdminLoginView):
         context = dict(
             prescriptions=paginated_prescriptions,
             is_prescription=True,
-            search = search,
-            start_date_filter = start_date_filter,
-            end_date_filter = end_date_filter,
-            status_filter = status_filter,
+            search=search,
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter,
+            status_filter=status_filter,
         )
         return render(request, "prescription/prescription.html", context)
 
@@ -111,3 +116,84 @@ class ChangePrescriptionStatusView(AdminLoginView):
         return JsonResponse(
             {"status": True, "message": f"Prescription {status} successfully"}
         )
+
+
+class PrescriptionExportView(AdminLoginView):
+    def get(self, request, file_type):
+        if file_type == "csv":
+            return self.csv_export(request)
+        elif file_type == "excel":
+            return self.excel_export(request)
+        else:
+            return HttpResponse("Invalid file type")
+
+    def get_file_name(self):
+        current_timestamp = time_localize(datetime.now()).strftime("%Y%m%d%H%M%S")
+        return f"user-prescriptions-{current_timestamp}"
+
+    def get_headers(self):
+        return [
+            "Prescription ID",
+            "User Email",
+            "Doctor Name",
+            "Visit Date",
+            "Status",
+            "Uploaded File",
+        ]
+
+    def get_queryset(self, request):
+        return UserPrescriptions.objects.all().order_by("created_on")
+
+    def get_data_row(self, object, request):
+        return [
+            str(object.pk),
+            object.user.email,
+            object.doctor_name,
+            object.visit_date.strftime("%Y-%m-%d"),
+            object.status,
+            (
+                request.build_absolute_uri(object.uploaded_file.url)
+                if object.uploaded_file
+                else ""
+            ),
+        ]
+
+    def csv_export(self, request):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = (
+            f'attachment; filename="{self.get_file_name()}.csv"'
+        )
+        writer = csv.writer(response)
+        writer.writerow(self.get_headers())
+        for user in self.get_queryset(request):
+            row = self.get_data_row(user, request)
+            writer.writerow(row)
+        return response
+
+    def excel_export(self, request):
+        workbook = Workbook()
+        worksheet = workbook.active
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+        worksheet.append(self.get_headers())
+        for user in self.get_queryset(request):
+            row = self.get_data_row(user, request)
+            worksheet.append(row)
+
+        worksheet.column_dimensions["A"].width = 10
+        worksheet.column_dimensions["B"].width = 15
+        worksheet.column_dimensions["C"].width = 15
+        worksheet.column_dimensions["D"].width = 15
+        worksheet.column_dimensions["E"].width = 20
+        worksheet.column_dimensions["F"].width = 20
+        worksheet.column_dimensions["G"].width = 10
+
+        virtual_excel_file = save_virtual_workbook(workbook)
+        response["Content-Disposition"] = (
+            f"attachment; filename={self.get_file_name()}.xlsx"
+        )
+        response["Content-Type"] = "application/octet-stream"
+        response.write(virtual_excel_file)
+        return response

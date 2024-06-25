@@ -42,12 +42,14 @@ offers_urls = [
     path("offer-dispatch", OfferDispatchView.as_view(), name="offer_dispatch_view"),
     path("offer-email", OfferEmailView.as_view(), name="offer_email_view"),
     path("offer-export/<str:file_type>", OfferExportView.as_view(), name="offer_export_view"),
+    path("redeemed-offer-export/<str:file_type>", RedeemedOffersExportView.as_view(), name="redeemed_offer_export_view"),
 ]
 
 prescription_urls = [
     path("", PrescriptionView.as_view(), name="prescription_view"),
     path("detailed-view/<uuid:id>", PrescriptionDetailView.as_view(), name="prescription_detailed_view"),
     path("change-status/<uuid:id>", ChangePrescriptionStatusView.as_view(), name="change_status_view"),
+    path("prescription-export/<str:file_type>", PrescriptionExportView.as_view(), name="prescription_export_view"),
 ]
 
 notification_urls = [
@@ -55,6 +57,7 @@ notification_urls = [
     path("notification-detailed/<uuid:id>", NotificationDetailedView.as_view(), name="notification_detailed_view"),
     path("add-notification", NewNotificationView.as_view(), name="add_notification_view"),
     path("search-users-listing", UsersSearchListing.as_view(), name="search_users_listing"),
+    path("notification-export/<str:file_type>", NotificationExportView.as_view(), name="notification_export_view"),
 ]
 
 

@@ -1,3 +1,4 @@
+from utilities.services.notification import create_notification
 from openpyxl import Workbook
 import csv
 from django.http import HttpResponse
@@ -235,10 +236,10 @@ class RedeemedOffersView(AdminLoginView):
         context = dict(
             redeemed_offers=paginated_redeemed_offers,
             is_redeemed_offers=True,
-            search = search,
-            start_date_filter = start_date_filter,
-            end_date_filter = end_date_filter,
-            status_filter = status_filter,
+            search=search,
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter,
+            status_filter=status_filter,
         )
         return render(request, "offers/redeemed_offers.html", context)
 
@@ -258,9 +259,6 @@ class EditRedeemedOffer(AdminLoginView):
             ),
         )
         return render(request, "offers/edit_redeemed_offers.html", context)
-
-
-from utilities.services.notification import create_notification
 
 
 class OfferDispatchView(AdminLoginView):
@@ -407,6 +405,85 @@ class OfferExportView(AdminLoginView):
 
         worksheet.append(self.get_headers())
         for user in self.get_queryset():
+            row = self.get_data_row(user, request)
+            worksheet.append(row)
+
+        worksheet.column_dimensions["A"].width = 10
+        worksheet.column_dimensions["B"].width = 15
+        worksheet.column_dimensions["C"].width = 15
+        worksheet.column_dimensions["D"].width = 15
+        worksheet.column_dimensions["E"].width = 20
+        worksheet.column_dimensions["F"].width = 20
+        worksheet.column_dimensions["G"].width = 10
+
+        virtual_excel_file = save_virtual_workbook(workbook)
+        response["Content-Disposition"] = (
+            f"attachment; filename={self.get_file_name()}.xlsx"
+        )
+        response["Content-Type"] = "application/octet-stream"
+        response.write(virtual_excel_file)
+        return response
+
+
+class RedeemedOffersExportView(AdminLoginView):
+    def get(self, request, file_type):
+        if file_type == "csv":
+            return self.csv_export(request)
+        elif file_type == "excel":
+            return self.excel_export(request)
+        else:
+            return HttpResponse("Invalid file type")
+
+    def get_file_name(self):
+        current_timestamp = time_localize(datetime.now()).strftime("%Y%m%d%H%M%S")
+        return f"user-redeemed-offers-{current_timestamp}"
+
+    def get_headers(self):
+        return [
+            "ID",
+            "User Email",
+            "Offer ID",
+            "Status",
+            "Redeemed On",
+            "Emailed On",
+            "Dispatch On",
+        ]
+
+    def get_queryset(self, request):
+        return UserRedeemedOffers.objects.all().order_by("created_on")
+
+    def get_data_row(self, object, request):
+        return [
+            str(object.pk),
+            object.user.email,
+            str(object.offer.pk),
+            object.status.title(),
+            object.redeemed_on.strftime("%Y-%m-%d") if object.redeemed_on else None,
+            object.emailed_on.strftime("%Y-%m-%d") if object.emailed_on else None,
+            object.dispatch_on.strftime("%Y-%m-%d") if object.dispatch_on else None,
+        ]
+
+    def csv_export(self, request):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = (
+            f'attachment; filename="{self.get_file_name()}.csv"'
+        )
+        writer = csv.writer(response)
+        writer.writerow(self.get_headers())
+        for user in self.get_queryset(request):
+            row = self.get_data_row(user, request)
+            writer.writerow(row)
+        return response
+
+    def excel_export(self, request):
+        workbook = Workbook()
+        worksheet = workbook.active
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+        worksheet.append(self.get_headers())
+        for user in self.get_queryset(request):
             row = self.get_data_row(user, request)
             worksheet.append(row)
 

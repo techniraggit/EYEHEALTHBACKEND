@@ -14,12 +14,10 @@
                             value="{{ search }}">
                     </div>
                     <div class="filter-dropdown">
-                        {% comment %} <label>From Date</label>{% endcomment %}
                         <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
                             value="{{ start_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown">
-                        {% comment %} <label>To Date</label> {% endcomment %}
                         <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
@@ -46,9 +44,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li class="dropdown-item"><a href="#">PDF</a></li>
-                        <li class="dropdown-item"><a href="#">Excel</a></li>
-                        <li class="dropdown-item"><a href="#">CSV</a></li>
+                        <li class="dropdown-item"><a href="{% url "redeemed_offer_export_view" 'excel' %}">Excel</a></li>
+                        <li class="dropdown-item"><a href="{% url "redeemed_offer_export_view" 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
