@@ -1,6 +1,5 @@
 {% extends "base/side_bar.html" %}
 {% block title %} Eye Test {% endblock title %}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 {% block page_name %}Eye Test{% endblock page_name %}
 {% block nav_bar %}
 <div class="bottomwrap">
@@ -23,7 +22,7 @@
                     </div>
                     <div class="filter-dropdown ms-2">
                         <select name="health_score_filter" id="health_score_filter" placeholder="Filter">
-                            <option value="">Health Score</option>{{range_object}}
+                            <option value="">Health Score</option>
                             {% for i in range_object %}
                                 <option value="{{ i }}" {% if health_score_filter == i %}selected{% endif %}>{{ i }}</option>
                             {% endfor %}
@@ -130,9 +129,7 @@
             dateFormat: "yy-mm-dd"
         }).attr("readonly", "readonly");
 
-        $('#health_score_filter').select2({
-            //minimumResultsForSearch: Infinity
-        });
+        $('#health_score_filter').select2();
 
         $('#clearButton').on('click', function () {
             // Clear all input fields
