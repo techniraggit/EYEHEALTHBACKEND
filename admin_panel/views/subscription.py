@@ -144,7 +144,7 @@ class UserSubscriptionView(AdminLoginView):
         end_date_filter = request.GET.get("end_date_filter")
         payment_status_filter = request.GET.get("payment_status_filter")
 
-        user_plan_qs = UserSubscription.objects.all()
+        user_plan_qs = UserSubscription.objects.all().order_by("-start_date", "-end_date")
 
         if search:
             user_plan_qs = user_plan_qs.filter(
