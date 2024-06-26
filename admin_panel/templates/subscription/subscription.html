@@ -83,7 +83,7 @@
             {% else %}
                 <td class="rejected">No</td>
             {% endif %}
-            <td>{{ plan.duration }}</td>
+            <td>{{ plan.duration }}</td> 
             <td>
                 <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-plan_id="{{ plan.pk }}"></i></a>
                 <a href="{% url "edit_subscription_view" plan.pk %}"><i class="fa-solid fa-pen me-2"></i></a>

@@ -93,6 +93,9 @@ trash_urls = [
     path("restore-user/<uuid:id>", trash.RestoreUserView.as_view(), name="restore_user"),
     path("restore-offer/<uuid:id>", trash.RestoreOfferView.as_view(), name="restore_offer"),
     path("restore-subscription-plan/<uuid:id>", trash.RestoreSubscriptionPlanView.as_view(), name="restore_subscription_plan"),
+    path("dlt-user/<uuid:id>", trash.FDeleteUserView.as_view(), name="force_dlt_user_view"),
+    path("dlt-offer/<uuid:id>", trash.FDeleteOfferView.as_view(), name="force_dlt_offer_view"),
+    path("dlt-subscription-plan/<uuid:id>", trash.FDeleteSubscriptionPlanView.as_view(), name="force_dlt_subscription_plan_view"),
 ]
 
 privacy_policy_urls = [
