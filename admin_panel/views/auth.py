@@ -31,7 +31,7 @@ class LoginView(View):
 
         auth_user = authenticate(request, username=email, password=password)
         if auth_user is not None:
-            if not auth_user.is_superuser or not auth_user.is_admin:
+            if not auth_user.is_superuser and not auth_user.is_admin:
                 messages.error(request, "Not a valid user")
                 return redirect("login_view")
             login(request, auth_user)
