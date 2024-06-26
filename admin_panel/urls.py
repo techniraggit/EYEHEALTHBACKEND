@@ -10,6 +10,7 @@ from .views import settings
 from .views import eye_exam
 from .views import trash
 from .views import user_agreement
+from .views import credentials
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -110,7 +111,10 @@ term_and_condition_urls = [
     path("detailed-term-and-conditions/<uuid:id>", user_agreement.TermsAndConditionsDetailedView.as_view(), name="detailed_term_and_condition_view"),
     path("edit-term-and-conditions/<uuid:id>", user_agreement.EditTermsAndConditionsView.as_view(), name="edit_term_and_condition_view"),
     path("add-term-and-conditions", user_agreement.AddTermsAndConditionsView.as_view(), name="add_term_and_condition_view"),
+]
 
+credentials_urls = [
+    path("", credentials.CredentialsView.as_view(), name="credentials_view"),
 ]
 
 urlpatterns = [
@@ -126,4 +130,5 @@ urlpatterns = [
     path("trash/", include(trash_urls)),
     path("privacy-policy/", include(privacy_policy_urls)),
     path("term-and-conditions/", include(term_and_condition_urls)),
+    path("credentials/", include(credentials_urls)),
 ]

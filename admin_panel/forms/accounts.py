@@ -103,16 +103,13 @@ class AdminCreationForm(forms.ModelForm):
         user.is_admin = True
         email_subject = "Your Account has been Created"
         email_message = f"Hi {user.first_name} {user.last_name},\n\nYour account has been created.\n\nUsername: {user.email}\nPassword: {generated_password}"
-        email_recipients = ([user.email],)
+        email_recipients = [user.email]
 
         if commit:
             user.save()
-        print(
-            "mail sending ===========",
             send_email(
                 subject=email_subject,
                 message=email_message,
                 recipients=email_recipients,
-            ),
-        )
+            )
         return user
