@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Credentials(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255,unique=True)
     data = models.JSONField()
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
