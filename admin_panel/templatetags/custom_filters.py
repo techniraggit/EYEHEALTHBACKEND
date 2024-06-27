@@ -35,3 +35,8 @@ def truncate_chars(value, max_length=75):
 def remove_comma_from_days_left(value):
     print(value)
     return str(value).split(',')[0]
+
+from utilities.core import encode_data
+@register.filter(name="encode_base64")
+def encode_base64(value):
+    return encode_data(value)
