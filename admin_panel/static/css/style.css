@@ -151,7 +151,7 @@ form.form1 {
 }
 
 .innerdiv div>ul {
-    padding: 20px 30px;
+    padding: 20px 7px;
 }
 
 .innerdiv div>ul li a {
@@ -159,7 +159,7 @@ form.form1 {
     color: #000;
     font-weight: 600;
     display: block;
-    padding: 6px 12px;
+    padding: 6px 15px;
     margin-bottom: 5px;
 }
 
@@ -242,9 +242,9 @@ form.form1 {
     display: flex;
     justify-content: end;
     align-items: center;
+    padding-left: 0;
     width: 100%;
 }
-
 li.ex-li:hover ul.dropdown-content {
     display: block;
 }
@@ -254,9 +254,11 @@ li.ex-li:hover ul.dropdown-content {
     border-radius: 12px 12px 12px 12px;
     position: relative;
     padding: 8px 12px;
-    display: block;
+    display: flex;
     list-style: none;
+    text-align: center;
     height: 42px;
+    align-items: center;
     color: black;
     border: 2px solid;
     border-color: #5200a5;
@@ -1238,7 +1240,29 @@ button.btn.btn-danger.delete-creds-btn {
     background-color: red;
 }
 
-.input-group {
-    /* display: flex; */
-    align-items: center !important;
+button.btn.btn-danger.removeRow {
+    background-color: transparent;
+    color: black;
+    height: unset;
+    padding: 0;
+    /* max-width: 30px; */
+    /* width: 100%; */
+}
+.add-on-red .cred-input-wrap {
+    width: 47%;
+}
+
+.input-group.add-on-red {
+    gap: 5px;
+    /* background-color: blue; */
+    /* padding: 12px; */
+    justify-content: space-between;
+}
+
+button.btn.btn-danger.removeRow i {
+    margin-top: 23px;
+}
+
+.side-list > ul {
+    overflow-y: auto;
 }
