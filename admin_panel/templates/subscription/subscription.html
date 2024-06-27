@@ -26,7 +26,7 @@
 
                     <div class="filter-dropdown select-wrapp">
                         <select name="is_active_filter" id="is_active_filter" placeholder="Filter">
-                            <option value="">Active</option>
+                            <option value="" {% if None %}selected{% endif %}>Active</option>
                             <option value="yes" {% if is_active_filter == 'yes' %}selected{% endif %}>Yes</option>
                             <option value="no" {% if is_active_filter == 'no' %}selected{% endif %}>No</option>
                         </select>
@@ -133,8 +133,13 @@
 <script>
     $(document).ready(function () {
 
-        $('#plan_type_filter, #is_active_filter').select2({
-            //placeholder: "Plan Type",
+        $('#is_active_filter').select2({
+            placeholder: "Active",
+            minimumResultsForSearch: Infinity
+        });
+
+        $('#plan_type_filter').select2({
+            placeholder: "Plan Type",
             minimumResultsForSearch: Infinity
         });
         
