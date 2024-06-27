@@ -107,8 +107,61 @@ class EyeTestExportView(AdminLoginView):
     current_timestamp = time_localize(timezone.datetime.now()).strftime("%Y%m%d%H%M%S")
     file_name = f"eye-test-reports-{current_timestamp}"
 
-    def get_queryset(self):
-        return EyeTestReport.objects.all()
+    def get_queryset(self, request):
+        search = request.GET.get("search")
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        health_score_str = request.GET.get("health_score_filter")
+
+        # Filter base query
+        eye_test_reports = EyeTestReport.objects.all().select_related(
+            "user_profile", "user_profile__user"
+        )
+
+        # Apply search filter
+        if search:
+            search_filter = (
+                Q(report_id__icontains=search)
+                | Q(user_profile__full_name__icontains=search)
+                | Q(user_profile__user__email__icontains=search)
+                | Q(user_profile__user__phone_number__icontains=search)
+            )
+            eye_test_reports = eye_test_reports.filter(search_filter)
+
+        # Apply date filters
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            eye_test_reports = eye_test_reports.filter(
+                created_on__gte=start_date_filter
+            )
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            eye_test_reports = eye_test_reports.filter(created_on__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            eye_test_reports = eye_test_reports.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        # Apply health score filter
+        try:
+            tolerance = 0.1
+            health_score_filter = float(health_score_str)
+            lower_bound = health_score_filter - tolerance
+            upper_bound = health_score_filter + tolerance
+            eye_test_reports = eye_test_reports.filter(
+                health_score__gte=lower_bound, health_score__lte=upper_bound
+            )
+            eye_test_reports = eye_test_reports.filter(health_score=health_score_filter)
+        except (ValueError, TypeError):
+            health_score_filter = 0.0
+
+        # Order and paginate the results
+        eye_test_reports = eye_test_reports.order_by("-created_on").distinct()
+        return eye_test_reports
 
     def get(self, request, file_type):
         if file_type == "csv":
@@ -137,7 +190,7 @@ class EyeTestExportView(AdminLoginView):
                 "Health Score",
             ]
         )
-        for report in self.get_queryset():
+        for report in self.get_queryset(request):
             left_eye = report.left_eye_obj()
             right_eye = report.right_eye_obj()
             writer.writerow(
@@ -178,7 +231,7 @@ class EyeTestExportView(AdminLoginView):
         )
 
         worksheet.append(headers)
-        for report in self.get_queryset():
+        for report in self.get_queryset(request):
             left_eye = report.left_eye_obj()
             right_eye = report.right_eye_obj()
             row = [
@@ -273,7 +326,9 @@ class EyeFatigueView(AdminLoginView):
 
         if end_date_filter and not start_date_filter:
             end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
-            eye_fatigue_reports = eye_fatigue_reports.filter(created_on__lte=end_date_filter)
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                created_on__lte=end_date_filter
+            )
 
         if start_date_filter and end_date_filter:
             start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
