@@ -39,14 +39,17 @@
                     <input type="number" name="phone_number" id="phone_number"/>
                     <span id="phone_number_message" style="color:red; font-weight: bold;"></span>
                 </div>
-                {% if request.user.is_superuser %}
-                    <div class="col-md-3 cancel-btn mb-4 mt-5">
+                <div class="d-flex">
+                    {% if request.user.is_superuser %}
+                    <div class="col-md-3 cancel-btn mb-4 mt-5 me-3">
                         <button type="button" id="add-admin-btn">Add Admin</button>
                     </div>
                 {% endif %}
                 <div class="col-md-3 cancel-btn mb-4 mt-5">
                     <button type="button" id="add-user-btn">Add User</button>
                 </div>
+                </div>
+              
             </div>
         </form>
     </div>
