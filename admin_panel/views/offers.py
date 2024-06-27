@@ -482,7 +482,44 @@ class RedeemedOffersExportView(AdminLoginView):
         ]
 
     def get_queryset(self, request):
-        return UserRedeemedOffers.objects.all().order_by("created_on")
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        status_filter = request.GET.get("status_filter")
+
+        redeemed_offer_qs = UserRedeemedOffers.objects.all().order_by("-redeemed_on")
+
+        if search:
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                Q(offer__title__icontains=search)
+                | Q(offer__description__icontains=search)
+                | Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__gte=start_date_filter
+            )
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__lte=end_date_filter
+            )
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        if status_filter:
+            redeemed_offer_qs = redeemed_offer_qs.filter(status=status_filter)
+        return redeemed_offer_qs
 
     def get_data_row(self, object, request):
         return [
