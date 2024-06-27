@@ -83,7 +83,6 @@ def dlt_value():
 import json
 
 def get_form_error_msg(form_errors:json):
-    print("form_errors == ", form_errors)
     errors = form_errors
     parsed_data = json.loads(errors)
     first_key = next(iter(parsed_data))
