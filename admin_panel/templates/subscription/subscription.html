@@ -26,7 +26,7 @@
 
                     <div class="filter-dropdown select-wrapp">
                         <select name="is_active_filter" id="is_active_filter" placeholder="Filter">
-                            <option value="">Active</option>
+                            <option value="" {% if None %}selected{% endif %}>Active</option>
                             <option value="yes" {% if is_active_filter == 'yes' %}selected{% endif %}>Yes</option>
                             <option value="no" {% if is_active_filter == 'no' %}selected{% endif %}>No</option>
                         </select>
@@ -50,8 +50,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url "subscription_export_view" 'excel' %}">Excel</a></li>
-                        <li><a class="dropdown-item" href="{% url "subscription_export_view" 'csv' %}">CSV</a></li>
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url "subscription_export_view" 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url "subscription_export_view" 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
@@ -132,9 +132,22 @@
 {% include "base/pagination.html" with paginated_data=plans %}
 <script>
     $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            $('#exportExcel').attr('href', `{% url 'subscription_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'subscription_export_view' 'csv' %}?` + params);
+        }
 
-        $('#plan_type_filter, #is_active_filter').select2({
-            //placeholder: "Plan Type",
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $('#is_active_filter').select2({
+            placeholder: "Active",
+            minimumResultsForSearch: Infinity
+        });
+
+        $('#plan_type_filter').select2({
+            placeholder: "Plan Type",
             minimumResultsForSearch: Infinity
         });
         

@@ -52,9 +52,9 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url 'user_subscription_export_view' 'excel' %}">Excel</a>
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url 'user_subscription_export_view' 'excel' %}">Excel</a>
                         </li>
-                        <li><a class="dropdown-item" href="{% url 'user_subscription_export_view' 'csv' %}">CSV</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url 'user_subscription_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
@@ -132,8 +132,17 @@
 
 <script>
     $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            $('#exportExcel').attr('href', `{% url 'user_subscription_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'user_subscription_export_view' 'csv' %}?` + params);
+        }
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
         $("#start_date_filter, #end_date_filter").datepicker({
-            dateFormat: "yy-mm-dd"
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
         }).attr("readonly", "readonly");
 
         $('#payment_status_filter').select2({

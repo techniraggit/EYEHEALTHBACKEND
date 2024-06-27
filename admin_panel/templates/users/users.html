@@ -191,7 +191,7 @@
 
         $(".user_export_file").click(function (event) {
             event.preventDefault();
-
+            var params = $('#searchForm').serialize();
             var file_type = $(this).data('file-type');
             let selectedIds = [];
             $('.user-checkbox:checked').each(function () {
@@ -204,7 +204,7 @@
             };
 
             $.ajax({
-                url: "user-export/" + file_type,
+                url: "user-export/" + file_type + "?"+params,
                 type: 'POST',
                 data: formData,
                 xhrFields: {

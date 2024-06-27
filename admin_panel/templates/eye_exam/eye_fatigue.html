@@ -26,7 +26,7 @@
                     </div>
                     <div class="filter-dropdown select-wrapp">
                         <select name="health_score_filter" id="health_score_filter" placeholder="Filter">
-                            <option value="">Health Score</option>
+                            <option value="" {% if None %}selected{% endif %}>Health Score</option>
                             <option value="2" {% if health_score_filter == 2 %}selected{% endif %}>2</option>
                             <option value="3" {% if health_score_filter == 3 %}selected{% endif %}>3</option>
                             <option value="4" {% if health_score_filter == 4 %}selected{% endif %}>4</option>
@@ -40,14 +40,14 @@
                     </div>
                     <div class="filter-dropdown select-wrapp">
                         <select name="is_fatigue_left_filter" id="is_fatigue_left_filter" placeholder="Filter">
-                            <option value="">Is Fatigue Left</option>
+                            <option value="" {% if None %}selected{% endif %}>Is Fatigue Left</option>
                             <option value="yes" {% if is_fatigue_left_filter == 'yes' %}selected{% endif %}>Yes</option>
                             <option value="no" {% if is_fatigue_left_filter == 'no' %}selected{% endif %}>No</option>
                         </select>
                     </div>
                     <div class="filter-dropdown select-wrapp">
                         <select name="is_fatigue_right_filter" id="is_fatigue_right_filter" placeholder="Filter">
-                            <option value="">Is Fatigue Right</option>
+                            <option value="" {% if None %}selected{% endif %}>Is Fatigue Right</option>
                             <option value="yes" {% if is_fatigue_right_filter == 'yes' %}selected{% endif %}>Yes</option>
                             <option value="no" {% if is_fatigue_right_filter == 'no' %}selected{% endif %}>No</option>
                         </select>
@@ -68,8 +68,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url 'user_export_view' 'excel' %}">Excel</a></li>
-                        <li><a class="dropdown-item" href="{% url 'user_export_view' 'csv' %}">CSV</a></li>
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url 'eye_fatigue_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url 'eye_fatigue_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
@@ -134,11 +134,29 @@
 
 <script>
     $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            $('#exportExcel').attr('href', `{% url 'eye_fatigue_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'eye_fatigue_export_view' 'csv' %}?` + params);
+        }
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
         $("#start_date_filter, #end_date_filter").datepicker({
-            dateFormat: "yy-mm-dd"
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
         }).attr("readonly", "readonly");
 
-        $('#health_score_filter, #is_fatigue_left_filter, #is_fatigue_right_filter').select2({
+        $('#health_score_filter').select2({
+            placeholder: "Health Score",
+            minimumResultsForSearch: Infinity
+        });
+        $('#is_fatigue_left_filter').select2({
+            placeholder: "Is Fatigue Left",
+            minimumResultsForSearch: Infinity
+        });
+        $('#is_fatigue_right_filter').select2({
+            placeholder: "Is Fatigue Right",
             minimumResultsForSearch: Infinity
         });
 
