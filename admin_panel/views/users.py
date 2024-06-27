@@ -207,12 +207,25 @@ class ChangeUserStatusView(AdminLoginView):
 
 class UserExportView(AdminLoginView):
     def get_queryset(self, request):
+        search = request.GET.get("search", "").strip()
+        users_qs = User.objects.exclude(id=request.user.id).order_by("-created_on")
+        if search:
+            users_qs = (
+                users_qs.filter(
+                    Q(email__icontains=search)
+                    | Q(first_name__icontains=search)
+                    | Q(last_name__icontains=search)
+                    | Q(phone_number__icontains=search)
+                    | Q(referral_code__icontains=search)
+                    | Q(points__icontains=search)
+                )
+                .order_by("-created_on")
+            )
+
         selected_ids = request.POST.getlist("selected_ids[]")
         if selected_ids:
-            users = User.objects.filter(id__in=selected_ids)
-        else:
-            users = User.objects.exclude(is_superuser=True)
-        return users
+            users_qs = users_qs.filter(id__in=selected_ids)
+        return users_qs
 
     def post(self, request, file_type):
         if file_type == "csv":
