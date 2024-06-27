@@ -116,8 +116,8 @@ term_and_condition_urls = [
 credentials_urls = [
     path("", credentials.CredentialsView.as_view(), name="credentials_view"),
     path("add-credential", credentials.AddCredentialsView.as_view(), name="add_credentials_view"),
-    path("update-credential/<int:id>", credentials.UpdateCredentialsView.as_view(), name="update_credentials_view"),
-    path("delete-credential/<int:id>", credentials.DeleteCredentialsView.as_view(), name="delete_credentials_view"),
+    path("update-credential/<uuid:id>", credentials.UpdateCredentialsView.as_view(), name="update_credentials_view"),
+    path("delete-credential/<uuid:id>", credentials.DeleteCredentialsView.as_view(), name="delete_credentials_view"),
 ]
 
 urlpatterns = [

@@ -1,7 +1,9 @@
 from django.db import models
+from uuid import uuid4
 
 # Create your models here.
 class Credentials(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     name = models.CharField(max_length=255,unique=True)
     data = models.JSONField()
     created_on = models.DateTimeField(auto_now_add=True)
