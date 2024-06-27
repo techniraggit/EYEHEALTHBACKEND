@@ -225,8 +225,26 @@ class SubscriptionExportView(AdminLoginView):
             "Duration (days)",
         ]
 
-    def get_queryset(self):
-        return SubscriptionPlan.objects.all()
+    def get_queryset(self, request):
+        search = request.GET.get("search", "").strip()
+        plan_type_filter = request.GET.get("plan_type_filter")
+        is_active_filter = request.GET.get("is_active_filter")
+
+        plan_qs = SubscriptionPlan.objects.all()
+
+        if search:
+            plan_qs = plan_qs.filter(
+                Q(name__icontains=search)
+                | Q(description__icontains=search)
+                | Q(price__icontains=search)
+            )
+
+        if plan_type_filter:
+            plan_qs = plan_qs.filter(plan_type=plan_type_filter)
+
+        if is_active_filter:
+            plan_qs = plan_qs.filter(is_active=str(is_active_filter).lower() == "yes")
+        return plan_qs
 
     def get_data_row(self, object):
         return [
@@ -245,7 +263,7 @@ class SubscriptionExportView(AdminLoginView):
         )
         writer = csv.writer(response)
         writer.writerow(self.get_headers())
-        for user in self.get_queryset():
+        for user in self.get_queryset(request):
             row = self.get_data_row(user)
             writer.writerow(row)
         return response
@@ -258,7 +276,7 @@ class SubscriptionExportView(AdminLoginView):
         )
 
         worksheet.append(self.get_headers())
-        for user in self.get_queryset():
+        for user in self.get_queryset(request):
             row = self.get_data_row(user)
             worksheet.append(row)
 
