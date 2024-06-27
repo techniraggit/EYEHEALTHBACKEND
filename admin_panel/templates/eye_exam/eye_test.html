@@ -22,7 +22,7 @@
                     </div>
                     <div class="filter-dropdown select-wrapp ms-2">
                         <select name="health_score_filter" id="health_score_filter" placeholder="Filter">
-                            <option value="">Health Score</option>
+                            <option value="" {% if None %}selected{% endif %} >Health Score</option>
                             {% for i in range_object %}
                                 <option value="{{ i }}" {% if health_score_filter == i %}selected{% endif %}>{{ i }}</option>
                             {% endfor %}
@@ -138,7 +138,9 @@
             onSelect: updateExportLinks
         }).attr("readonly", "readonly");
 
-        $('#health_score_filter').select2();
+        $('#health_score_filter').select2({
+            placeholder: "Health Score"
+        });
 
         $('#clearButton').on('click', function () {
             // Clear all input fields

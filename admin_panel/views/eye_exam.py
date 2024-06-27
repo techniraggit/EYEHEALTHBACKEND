@@ -393,8 +393,105 @@ class EyeFatigueExportView(AdminLoginView):
     current_timestamp = time_localize(timezone.datetime.now()).strftime("%Y%m%d%H%M%S")
     file_name = f"eye-fatigue-reports-{current_timestamp}"
 
-    def get_queryset(self):
-        return EyeFatigueReport.objects.all()
+    def get_queryset(self, request):
+        search = request.GET.get("search")
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        health_score_str = request.GET.get("health_score_filter", 0)
+        is_fatigue_left_str = request.GET.get("is_fatigue_left_filter")
+        is_fatigue_right_str = request.GET.get("is_fatigue_right_filter")
+
+        # Convert boolean filters
+        is_fatigue_left = (
+            is_fatigue_left_str.lower() == "yes" if is_fatigue_left_str else None
+        )
+        is_fatigue_right = (
+            is_fatigue_right_str.lower() == "yes" if is_fatigue_right_str else None
+        )
+
+        # Convert health score filter
+        try:
+            health_score_filter = int(health_score_str)
+        except ValueError:
+            health_score_filter = 0
+
+        # Filter base query
+        eye_fatigue_reports = EyeFatigueReport.objects.all().select_related("user")
+
+        # Apply search filter
+        if search:
+            search_filter = (
+                Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
+                | Q(user__phone_number__icontains=search)
+                | Q(report_id__icontains=search)
+            )
+            eye_fatigue_reports = eye_fatigue_reports.filter(search_filter)
+
+        # Apply date filters
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                created_on__gte=start_date_filter
+            )
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                created_on__lte=end_date_filter
+            )
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        # Apply health score filter
+        if health_score_filter:
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                health_score=health_score_filter
+            )
+
+        # Apply fatigue filters
+        if is_fatigue_left is not None:
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                is_fatigue_left=is_fatigue_left
+            )
+        if is_fatigue_right is not None:
+            eye_fatigue_reports = eye_fatigue_reports.filter(
+                is_fatigue_right=is_fatigue_right
+            )
+
+        # Order and paginate the results
+        eye_fatigue_reports = eye_fatigue_reports.order_by("-created_on").distinct()
+        return eye_fatigue_reports
+
+    def get_headers(self):
+        return [
+            "Report ID",
+            "User",
+            "Fatigue Right",
+            "Fatigue Left",
+            "Mild Tiredness Right",
+            "Mild Tiredness Left",
+            "Score",
+            "Test Date",
+        ]
+
+    def get_row_data(self, object):
+        return [
+            str(object.report_id),
+            object.user.get_full_name(),
+            "Yes" if object.is_fatigue_right else "No",
+            "Yes" if object.is_fatigue_left else "No",
+            "Yes" if object.is_mild_tiredness_right else "No",
+            "Yes" if object.is_mild_tiredness_left else "No",
+            object.health_score,
+            object.created_on.strftime("%Y-%m-%d"),
+        ]
 
     def get(self, request, file_type):
         if file_type == "csv":
@@ -408,55 +505,21 @@ class EyeFatigueExportView(AdminLoginView):
         response = HttpResponse(content_type="text/csv")
         response["Content-Disposition"] = f'attachment; filename="{self.file_name}.csv"'
         writer = csv.writer(response)
-        writer.writerow(
-            [
-                "Report ID",
-                "User",
-                "Fatigue Right",
-                "Mild Tiredness Right",
-                "Fatigue_Left",
-                "Mild Tiredness Left",
-            ]
-        )
-        for report in self.get_queryset():
-            writer.writerow(
-                [
-                    str(report.report_id),
-                    report.user.get_full_name(),
-                    "Yes" if report.is_fatigue_right else "No",
-                    "Yes" if report.is_mild_tiredness_right else "No",
-                    "Yes" if report.is_fatigue_left else "No",
-                    "Yes" if report.is_mild_tiredness_left else "No",
-                ]
-            )
+        writer.writerow(self.get_headers())
+        for report in self.get_queryset(request):
+            writer.writerow(self.get_row_data(report))
         return response
 
     def excel_export(self, request):
-        headers = [
-            "Report ID",
-            "User",
-            "Fatigue Right",
-            "Mild Tiredness Right",
-            "Fatigue_Left",
-            "Mild Tiredness Left",
-        ]
         workbook = Workbook()
         worksheet = workbook.active
         response = HttpResponse(
             content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         )
 
-        worksheet.append(headers)
-        for report in self.get_queryset():
-            row = [
-                str(report.report_id),
-                report.user.get_full_name(),
-                "Yes" if report.is_fatigue_right else "No",
-                "Yes" if report.is_mild_tiredness_right else "No",
-                "Yes" if report.is_fatigue_left else "No",
-                "Yes" if report.is_mild_tiredness_left else "No",
-            ]
-            worksheet.append(row)
+        worksheet.append(self.get_headers())
+        for report in self.get_queryset(request):
+            worksheet.append(self.get_row_data(report))
 
         worksheet.column_dimensions["A"].width = 10
         worksheet.column_dimensions["B"].width = 15
