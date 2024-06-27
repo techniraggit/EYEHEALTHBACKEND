@@ -48,8 +48,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li class="dropdown-item"><a href="{% url "prescription_export_view" 'excel' %}">Excel</a></li>
-                        <li class="dropdown-item"><a href="{% url "prescription_export_view" 'csv' %}">CSV</a></li>
+                        <li class="dropdown-item"><a id="exportExcel" href="{% url "prescription_export_view" 'excel' %}">Excel</a></li>
+                        <li class="dropdown-item"><a id="exportCSV" href="{% url "prescription_export_view" 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
@@ -82,6 +82,22 @@
 
 <script>
     $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            console.log(params);
+            $('#exportExcel').attr('href', `{% url 'prescription_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'prescription_export_view' 'csv' %}?` + params);
+        }
+
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
+        }).attr("readonly", "readonly");
+
+        updateExportLinks();
+
         $("#start_date_filter, #end_date_filter").datepicker({
             dateFormat: "yy-mm-dd"
         }).attr("readonly", "readonly");
