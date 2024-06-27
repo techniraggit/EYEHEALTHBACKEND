@@ -1,3 +1,8 @@
+from openpyxl.writer.excel import save_virtual_workbook
+from openpyxl import Workbook
+import csv
+from utilities.utils import time_localize
+from django.http import HttpResponse
 from django.db.models import Q
 from .base import AdminLoginView
 from django.shortcuts import render
@@ -17,18 +22,17 @@ class NotificationView(AdminLoginView):
 
         if search:
             notification_qs = notification_qs.filter(
-                Q(title__icontains=search)
-                | Q(message__icontains=search)
+                Q(title__icontains=search) | Q(message__icontains=search)
             )
-        
+
         if start_date_filter and not end_date_filter:
             start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
             notification_qs = notification_qs.filter(created_on__gte=start_date_filter)
-        
+
         if end_date_filter and not start_date_filter:
             end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
             notification_qs = notification_qs.filter(created_on__lte=end_date_filter)
-        
+
         if start_date_filter and end_date_filter:
             start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
             end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
@@ -41,9 +45,9 @@ class NotificationView(AdminLoginView):
         context = dict(
             notifications=paginated_notifications,
             is_notification=True,
-            search = search,
-            start_date_filter = start_date_filter,
-            end_date_filter = end_date_filter,
+            search=search,
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter,
         )
         return render(request, "notification/notifications.html", context)
 
@@ -123,13 +127,6 @@ class UsersSearchListing(AdminLoginView):
         return JsonResponse({"status": True, "users": list(users)})
 
 
-from django.http import HttpResponse
-from utilities.utils import time_localize
-import csv
-from openpyxl import Workbook
-from openpyxl.writer.excel import save_virtual_workbook
-
-
 class NotificationExportView(AdminLoginView):
     def get(self, request, file_type):
         if file_type == "csv":
@@ -144,16 +141,34 @@ class NotificationExportView(AdminLoginView):
         return f"notifications-{current_timestamp}"
 
     def get_headers(self):
-        return [
-            "Notification ID",
-            "Title",
-            "Message",
-            "Created On",
-            "Users"
-        ]
+        return ["Notification ID", "Title", "Message", "Created On", "Users"]
 
     def get_queryset(self, request):
-        return PushNotification.objects.all().order_by("created_on")
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        notification_qs = PushNotification.objects.all().order_by("-created_on")
+
+        if search:
+            notification_qs = notification_qs.filter(
+                Q(title__icontains=search) | Q(message__icontains=search)
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            notification_qs = notification_qs.filter(created_on__gte=start_date_filter)
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            notification_qs = notification_qs.filter(created_on__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            notification_qs = notification_qs.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+        return notification_qs
 
     def get_data_row(self, object, request):
         return [
