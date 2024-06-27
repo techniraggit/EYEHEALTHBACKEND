@@ -68,12 +68,8 @@
             </div>
             {% if prescription_obj.status == "pending" %}
             <div class="d-flex mb-4 mt-5 "> 
-                <div class="Approve-btn me-2">
-                    <button type="button" id="approve-btn" class="btn btn-primary1 save-btn col-md-3">Approve</button>
-                </div>
-                <div class="Reject-btn">
-                    <button type="button" id="reject-btn" class="btn btn-primary1 save-btn col-md-3">Reject</button>
-                </div>
+                    <button type="button" id="approve-btn" class="btn btn-primary1 save-btn col-md-3 me-2">Approve</button>
+                    <button type="button" id="reject-btn" class="btn btn-primary1 save-btn  col-md-3">Reject</button>
             </div>
             {% endif %}
         </form>

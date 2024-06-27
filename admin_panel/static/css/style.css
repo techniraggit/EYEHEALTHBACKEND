@@ -797,6 +797,7 @@ form#searchForm {
 .dlt-buttons {
     margin-top: 20px;
     display: flex;
+    justify-content: space-evenly;
 }
 
 .pop-confirm-btn {
@@ -904,6 +905,8 @@ button.btn.btn-primary1.save-btn.col-md-3.mt-5.Email-btn {
     font-size: 13px !important;
     display: block;
     /* width: 100%; */
+    outline: none;
+    border: none;
 }
 
 .Reject-btn button {
@@ -1217,4 +1220,25 @@ label.radio {
 }
 input.select2-search__field {
     outline: none;
+}
+
+
+#reject-btn {
+    background-color: red;
+    border: none;
+    outline: none;
+}
+
+.modal-dialog {
+    max-width: 700px !important;
+    width: 100%;
+}
+
+button.btn.btn-danger.delete-creds-btn {
+    background-color: red;
+}
+
+.input-group {
+    /* display: flex; */
+    align-items: center !important;
 }
