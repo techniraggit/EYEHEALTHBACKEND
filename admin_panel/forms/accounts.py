@@ -20,7 +20,7 @@ class UserCreationForm(forms.ModelForm):
         ]
 
     def clean_phone_number(self):
-        phone_number = "+"+self.cleaned_data.get("phone_number")
+        phone_number = self.cleaned_data.get("phone_number")
         if not is_valid_phone(phone_number):
             raise ValidationError("Not a valid phone number")
         return phone_number
@@ -70,7 +70,7 @@ class AdminCreationForm(forms.ModelForm):
         ]
 
     def clean_phone_number(self):
-        phone_number = "+" + self.cleaned_data.get("phone_number")
+        phone_number = self.cleaned_data.get("phone_number")
         if not is_valid_phone(phone_number):
             raise ValidationError("Not a valid phone number")
 
