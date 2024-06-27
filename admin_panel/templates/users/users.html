@@ -190,13 +190,8 @@
         });
 
         $(".user_export_file").click(function (event) {
-            var params = $('#searchForm').serialize();
-            console.log(params);
-            //$('#exportExcel').attr('href', `{% url 'eye_test_export_view' 'excel' %}?` + params);
-            //$('#exportCSV').attr('href', `{% url 'eye_test_export_view' 'csv' %}?` + params);
-
             event.preventDefault();
-
+            var params = $('#searchForm').serialize();
             var file_type = $(this).data('file-type');
             let selectedIds = [];
             $('.user-checkbox:checked').each(function () {

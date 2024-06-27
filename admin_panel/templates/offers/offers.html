@@ -136,19 +136,13 @@
             $('#exportExcel').attr('href', `{% url 'offer_export_view' 'excel' %}?` + params);
             $('#exportCSV').attr('href', `{% url 'offer_export_view' 'csv' %}?` + params);
         }
-    
+
         $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
-    
+        updateExportLinks();
+
         $("#start_date_filter, #end_date_filter").datepicker({
             dateFormat: "yy-mm-dd",
             onSelect: updateExportLinks
-        }).attr("readonly", "readonly");
-    
-        updateExportLinks();
-
-
-        $("#start_date_filter, #end_date_filter").datepicker({
-            dateFormat: "yy-mm-dd"
         }).attr("readonly", "readonly");
 
         $('#offer_status_filter').select2({
