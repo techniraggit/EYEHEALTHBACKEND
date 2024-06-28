@@ -130,14 +130,16 @@
                     <h3>Notifications</h3> <i class="fa-solid fa-xmark"></i>
                 </div>
         <div class="notification-data">
-            {% for i in 13|range_list %}
+            {% for i in 23|range_list %}
             <div class="card-notification-main mt-2">
                 <div class="card-notification">
                     <div class="card-header-main">
                         <h5 class="mb-0">
-                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseMessage{{i}}" aria-expanded="true" aria-controls="collapseMessage">
-                                Click to view message
+                            <button class="btn btn-link btn-text-notify" type="button" data-toggle="collapse" data-target="#collapseMessage{{i}}" aria-expanded="true" aria-controls="collapseMessage">
+                                Click to view message. this is just a placeholder
+                                <span><strong>12:30 PM | Today</strong></span>
                             </button>
+                            
                         </h5>
                     </div>
         
@@ -160,27 +162,30 @@
     </div>
 </div>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const notificationBell = document.getElementById('notification-bell');
-        const notificationScreen = document.getElementById('notification-screen');
+    $(document).ready(function() {
+        const $notificationBell = $('#notification-bell');
+        const $notificationScreen = $('#notification-screen');
     
-        notificationBell.addEventListener('click', function() {
-            if (notificationScreen.style.display === 'block') {
-                notificationScreen.style.display = 'none';
+        $notificationBell.on('click', function() {
+            if ($notificationScreen.css('display') === 'block') {
+                $notificationScreen.css('display', 'none');
             } else {
-                notificationScreen.style.display = 'block';
+                $notificationScreen.css('display', 'block');
             }
         });
+
+        $(".fa-xmark").on('click', function(){
+            $notificationScreen.css('display', 'none');
+        })
     
         // Optional: Hide the notification screen when clicking outside of it
-        document.addEventListener('click', function(event) {
-            if (!notificationBell.contains(event.target) && !notificationScreen.contains(event.target)) {
-                notificationScreen.style.display = 'none';
+        $(document).on('click', function(event) {
+            if (!$notificationBell.is(event.target) && !$notificationBell.has(event.target).length &&
+                !$notificationScreen.is(event.target) && !$notificationScreen.has(event.target).length) {
+                $notificationScreen.css('display', 'none');
             }
         });
-    });
-    
-    $(document).ready(function() {
+
         $('#profileImage').on('click', function() {
             $('#popupMenu').slideToggle('fast');
         });
