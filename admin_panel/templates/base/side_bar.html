@@ -115,10 +115,9 @@
             </div>
 
             <div class="col-3 root-main">
-             <a class="notify-icon me-3" href="#">
-                 <i class="fa-regular fa-bell " id="notification-bell"></i> 
-                 <span class="notify-dot">02</span>
-            </a>  
+                <a class="notify-icon me-3" href="#">
+                    <i class="fa-regular fa-bell " id="notification-bell"></i><span class="notify-dot">02</span>
+                </a>  
                 <div class="login-wrap">
                     <img src="{% if request.user.image %}{{request.user.image.url}}{% else %}{% static 'img/default_user_icon.png' %}{% endif %}" alt="User Icon" class="profile-image" id="profileImage" />
                     <span class="ms-3">{{ request.user.first_name }} {{ request.user.last_name }}</span>
@@ -132,29 +131,13 @@
                 <div class="notification-top">
                     <h3>Notifications</h3> <i class="fa-solid fa-xmark"></i>
                 </div>
-        <div class="notification-data">
-            {% for i in 23|range_list %}
-            <div class="card-notification-main mt-2">
-                <div class="card-notification">
-                    <div class="card-header-main">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link btn-text-notify" type="button" data-toggle="collapse" data-target="#collapseMessage{{i}}" aria-expanded="true" aria-controls="collapseMessage">
-                                Click to view message. this is just a placeholder
-                                <span><strong>12:30 PM | Today</strong></span>
-                            </button>
-                            
-                        </h5>
-                    </div>
-        
-                    <div id="collapseMessage{{i}}" class="collapse">
-                        <div class="card-body">
-                            This is the complete message that was hidden. You can add any content here, such as text, images, or other HTML elements.
+                <div class="notification-data">
+                    <div class="card-notification-main mt-2">
+                        <div class="card-notification">
+                            <!-- making ajax request to get data here -->
                         </div>
                     </div>
                 </div>
-            </div>
-            {% endfor %}
-        </div>
             </div>
         </header>
         {% block nav_bar %}{% endblock nav_bar %}
@@ -166,6 +149,37 @@
 </div>
 <script>
     $(document).ready(function() {
+        $.ajax({
+            url: "{% url 'my_notification_view' %}",
+            type: 'GET',
+            success: function(response){
+                console.log(response.data);
+                var newItems = $.map(response.data, function(i) {
+                    return `
+                    <div class="card-header-main">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link btn-text-notify" type="button" data-toggle="collapse" data-target="#collapseMessage${i.id}" aria-expanded="true" aria-controls="collapseMessage">
+                                ${i.title}
+                                <span><strong>${i.time_since_creation} ago</strong></span>
+                            </button>
+                            
+                        </h5>
+                    </div>
+        
+                    <div id="collapseMessage${i.id}" class="collapse">
+                        <div class="card-body">
+                            ${i.message}
+                        </div>
+                    </div>
+                    `
+                });
+                $(".card-notification").append(newItems);
+            },
+            error: function(xhr, status, error){
+                alert('An error occurred while fetch notifications.');
+            }
+        });
+
         const $notificationBell = $('#notification-bell');
         const $notificationScreen = $('#notification-screen');
     
