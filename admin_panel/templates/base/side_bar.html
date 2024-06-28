@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}{% endblock title %}
 {% block body %}
 <div class="mainwrapper">
@@ -130,6 +131,25 @@
                 </div>
         <div class="notification-data">
             <p>1. my name is nitin saini </p>
+            {% for i in 10|range_list %}
+            <div class="container mt-5">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseMessage{{i}}" aria-expanded="true" aria-controls="collapseMessage">
+                                Click to view message
+                            </button>
+                        </h5>
+                    </div>
+        
+                    <div id="collapseMessage{{i}}" class="collapse">
+                        <div class="card-body">
+                            This is the complete message that was hidden. You can add any content here, such as text, images, or other HTML elements.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
             </div>
         </header>

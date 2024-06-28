@@ -39,3 +39,7 @@ from utilities.core import encode_data
 @register.filter(name="encode_base64")
 def encode_base64(value):
     return encode_data(value)
+
+@register.filter(name="range_list")
+def range_list(value):
+    return range(value)
