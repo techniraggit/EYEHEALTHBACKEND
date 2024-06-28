@@ -1422,3 +1422,6 @@ span.notify-dot {
     position: absolute;
     border-radius: 51px;
 }
+.btn-text-notify {
+    text-align: left!important;
+}
