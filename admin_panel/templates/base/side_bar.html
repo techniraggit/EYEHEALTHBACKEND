@@ -115,7 +115,10 @@
             </div>
 
             <div class="col-3 root-main">
-                <i class="fa-regular fa-bell me-3" id="notification-bell"></i>
+             <a class="notify-icon me-3" href="#">
+                 <i class="fa-regular fa-bell " id="notification-bell"></i> 
+                 <span class="notify-dot">02</span>
+            </a>  
                 <div class="login-wrap">
                     <img src="{% if request.user.image %}{{request.user.image.url}}{% else %}{% static 'img/default_user_icon.png' %}{% endif %}" alt="User Icon" class="profile-image" id="profileImage" />
                     <span class="ms-3">{{ request.user.first_name }} {{ request.user.last_name }}</span>
