@@ -123,6 +123,7 @@ credentials_urls = [
 
 profile_urls = [
     path("", my_profile.MyProfileView.as_view(), name="my_profile_view"),
+    path("update-profile", my_profile.UpdateProfileView.as_view(), name="update_profile_view"),
 ]
 
 urlpatterns = [
