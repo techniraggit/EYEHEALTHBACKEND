@@ -11,6 +11,7 @@ from .views import eye_exam
 from .views import trash
 from .views import user_agreement
 from .views import credentials
+from .views import my_profile
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -120,6 +121,11 @@ credentials_urls = [
     path("delete-credential/<uuid:id>", credentials.DeleteCredentialsView.as_view(), name="delete_credentials_view"),
 ]
 
+profile_urls = [
+    path("", my_profile.MyProfileView.as_view(), name="my_profile_view"),
+    path("update-profile", my_profile.UpdateProfileView.as_view(), name="update_profile_view"),
+]
+
 urlpatterns = [
     path("", include(auth_urls)),
     path("home/", include(home_urls)),
@@ -134,4 +140,5 @@ urlpatterns = [
     path("privacy-policy/", include(privacy_policy_urls)),
     path("term-and-conditions/", include(term_and_condition_urls)),
     path("credentials/", include(credentials_urls)),
+    path("my-profile/", include(profile_urls)),
 ]
