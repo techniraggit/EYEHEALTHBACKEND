@@ -1275,14 +1275,12 @@ button.btn.btn-danger.removeRow i {
 
 }
 
-.root-main i {
-    font-size: 20px;
+.root-main >i {
+    font-size: 22px;
     border-right: 1px solid;
-    padding: 5px;
+    padding: 11px;
     cursor: pointer;
-
 }
-
 .notification-screen {
     display: none;
     position: fixed;
@@ -1311,30 +1309,29 @@ button.btn.btn-danger.removeRow i {
 }
 
 .popup-menu {
-    display: none;
     position: absolute;
-    top: 70px;
-    right: 30px;
+    top: 55px;
+    right:-48px;
     background-color: #fff;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     z-index: 1;
-    width: 170px;
-    max-width: 100%;
-    padding: 12px 12px;
+    width: 150px !important;
+    padding: 10px 8px;
 }
-
 .popup-menu a {
     color: #333;
-    padding: 5px 6px 4px;
-    text-decoration: none;
+    padding: 10px 7px 10px;
     display: block;
-    text-align: left;
+    text-align: center;
 }
 
 .popup-menu a:hover {
     background-color: #f1f1f1;
 }
 
+.popup-menu a:hover {
+    color: black !important;
+}   
 
 .my_profile_container {
     position: relative;
