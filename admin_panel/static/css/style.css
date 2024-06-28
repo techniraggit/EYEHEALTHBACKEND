@@ -1309,6 +1309,7 @@ button.btn.btn-danger.removeRow i {
 }
 
 .popup-menu {
+    display: none;
     position: absolute;
     top: 55px;
     right:-48px;
