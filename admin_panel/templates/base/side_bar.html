@@ -103,12 +103,7 @@
                             <li><a href="{% url "credentials_view" %}"><i class="fa-solid fa-key me-2"></i>Credentials</a></li>
                         {% endif %}
                     {% endif %}
-
-
                 </ul>
-                <div class="logout-wrap">
-                    <a href="{% url "logout_view" %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
-                </div>
             </div>
         </div>
     </div>
@@ -119,43 +114,33 @@
             </div>
             <div class="col-3">
                 <div class="login-wrap">
-                    <img src="{% static "img/default_user_icon.png" %}" />
+                    <img src="{% static "img/default_user_icon.png" %}" class="profile-image" id="profileImage" style="cursor: pointer;" />
+                    <div class="popup-menu" id="popupMenu">
+                        <a href="#"><i class="fa-solid fa-user me-2"></i>Profile</a>
+                        <a href="{% url "logout_view" %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
+                    </div>
                     <span class="ms-3">{{ request.user.first_name }} {{ request.user.last_name }}</span>
                 </div>
             </div>
         </header>
         {% block nav_bar %}{% endblock nav_bar %}
-        {% comment %} <div class="bottomwrap">
-            <div class="search-box row">
-                <div class="col-5">
-                    <div class="input-wrapp">
-                        <input type="text" placeholder="Search by names,type and value">
-                        <!-- <button>Search</button> -->
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </div>
-                </div>
-                <div class="col-3"></div>
-                <div class="export col-4">
-                    <ul>
-                        <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button>
-                            <div class="drop-downmenu">
-                        <li class="ex-li"><a class="export-btn" href="#">Export<i
-                                    class="fa-solid fa-file-export ms-2"></i></a>
-                            <ul class="dropdown-content">
-                                <li class="mb-1"><a href="#">PDF</a></li>
-                                <li class="mb-1"><a href="#">Excel</a></li>
-                                <li><a href="#">CSV</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
-        </div> {% endcomment %}
         <div class="right-table">
             {% block table %}
             {% endblock table %}
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function() {
+        $('#profileImage').on('click', function() {
+            $('#popupMenu').slideToggle('fast');
+        });
+    
+        $(window).on('click', function(event) {
+            if (!$(event.target).closest('#profileImage').length && !$(event.target).closest('#popupMenu').length) {
+                $('#popupMenu').slideUp('fast');
+            }
+        });
+    });
+</script>
 {% endblock body %}
