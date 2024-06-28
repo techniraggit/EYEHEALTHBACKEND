@@ -48,7 +48,6 @@ class AddCredentialsView(AdminLoginView):
                 )
             )
         except Exception as e:
-            print(e)
             return JsonResponse(
                 dict(status=False, message="Credentials not added", error=str(e))
             )

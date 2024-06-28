@@ -205,7 +205,6 @@ class UserSubscriptionDetailView(AdminLoginView):
 
 class SubscriptionExportView(AdminLoginView):
     def get(self, request, file_type):
-        print("file_type: ", file_type)
         if file_type == "csv":
             return self.csv_export(request)
         elif file_type == "excel":

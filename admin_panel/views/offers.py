@@ -106,7 +106,6 @@ class AddOffersView(AdminLoginView):
                 }
                 return JsonResponse(response, status=400)
         except Exception as e:
-            print(e)
             return JsonResponse({"status": False, "message": str(e)}, status=400)
 
 
@@ -347,7 +346,6 @@ class OfferEmailView(AdminLoginView):
 
 class OfferExportView(AdminLoginView):
     def get(self, request, file_type):
-        print("file_type: ", file_type)
         if file_type == "csv":
             return self.csv_export(request)
         elif file_type == "excel":

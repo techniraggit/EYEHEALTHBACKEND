@@ -14,7 +14,6 @@ def gcfXryBAy3Jo6h1(encoded_data):
 def encode_data(data):
     encoded = bHaMyJr6Q5D4HEG(data)
     for _ in range(2):
-        print(_)
         encoded = bHaMyJr6Q5D4HEG(encoded)
     return encoded
 
