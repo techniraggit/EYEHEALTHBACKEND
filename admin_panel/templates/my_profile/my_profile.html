@@ -1,0 +1,66 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %} My Profile {% endblock title %}
+
+{% block page_name %}My Profile{% endblock page_name %}
+{% block table %}
+<div class="right-table1">
+    <div class=" form-main">
+        <form method="POST">
+            {% csrf_token %}
+            <div class="edit-nav row">
+                <div class="profile col-4">
+                    <img src="{% if request.user.image %} {{request.user.image.url}} {% else %}{% static "img/default_user_icon.png"%}{% endif %}" alt="Profile Image" class="profile-image" id="my_profle_img">
+                    <div class="profile_img_overlay" onclick="document.getElementById('fileInput').click();">
+                        <i class="pen_icon">&#9998;</i> <!-- Pen icon -->
+                    </div>
+                    <input type="file" id="fileInput" accept="image/*" onchange="loadFile(event)">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 f-name mt-4">
+                    <label>
+                        First Name
+                    </label>
+                    <input type="text" name="first_name" value="{{ request.user.first_name}}" />
+                </div>
+                <div class="col-md-4 f-lname mt-4">
+                    <label>Last Name</label>
+                    <input type="text" name="last_name" value="{{ request.user.last_name}}" />
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label>E-mail</label>
+                    <p id="email-p"></p>
+                    <input type="email" name="email" id="email" value="{{ request.user.email }}"/>
+                </div>
+                <div class="col-md-4 f-mail mt-4">
+                    <label>Date Of Birth</label>
+                    <input type="date" name="dob" value="{{ request.user.dob|date:'Y-m-d'}}" />
+                </div>
+                <div class="col-md-4 f-name mt-4">
+                    <label>
+                        Phone Number
+                    </label>
+                    <input type="tel" name="phone_number" id="phone_number" value="{{ request.user.phone_number }}"/>
+                </div>
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit">Update Profile</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {
+        $('#email').prop('readonly', true);
+        $('#phone_number').prop('readonly', true);
+    });
+    function loadFile(event) {
+        var output = document.getElementById('my_profle_img');
+        output.src = URL.createObjectURL(event.target.files[0]);
+        output.onload = function() {
+            URL.revokeObjectURL(output.src) // Free memory
+        }
+    }
+</script>
+{% endblock table%}
