@@ -1377,3 +1377,23 @@ img#profile_image_id {
 #fileInput {
     display: none;
 }
+
+.card-header-main button {
+    text-decoration: none;
+    color: black;
+  
+    /* font-size: 0px; */
+}
+
+.card-header-main button:hover {
+    color: black !important;
+    outline: none;
+    border: none;
+}
+
+.card-header-main {
+    padding: .5rem 1rem;
+    margin-bottom: 0;
+    background-color: rgba(0,0,0,.03);
+    /* border-bottom: 1px solid rgba(0,0,0,.125); */
+}
