@@ -112,7 +112,7 @@
             <div class=" header-heading col-9">
                 {% block page_name %}-----{% endblock page_name %}
             </div>
-            <div class="col-3">
+            {% comment %} <div class="col-3">
                 <div class="login-wrap">
                     <img src="{% if request.user.image %}{{request.user.image.url}}{% else %}{% static "img/default_user_icon.png" %}{% endif %}" class="profile-image" id="profileImage" style="cursor: pointer;" />
                     <div class="popup-menu" id="popupMenu">
@@ -121,6 +121,41 @@
                     </div>
                     <span class="ms-3">{{ request.user.first_name }} {{ request.user.last_name }}</span>
                 </div>
+            </div> {% endcomment %}
+
+{% comment %} first {% endcomment %}
+
+            {% comment %} <div class="col-3 root-main">
+                <i class="fa-regular fa-bell me-3"></i>
+                <div class="login-wrap">
+                    <img src="{% static 'img/default_user_icon.png' %}" alt="User Icon" />
+                    <span class="ms-3">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                    <div class="popup">
+                        <div>
+                            <p>My Profile</p>
+                        </div>
+                        <div>
+                            <p>Logout</p>
+                        </div>
+                    </div>
+                </div>
+            </div> {% endcomment %}
+
+            <div class="col-3 root-main">
+                <i class="fa-regular fa-bell me-3" id="notification-bell"></i>
+                <div class="login-wrap">
+                    <img src="{% static 'img/default_user_icon.png' %}" alt="User Icon" />
+                    <span class="ms-3">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                </div>
+            </div>
+            <div class="notification-screen" id="notification-screen">
+                <div class="notification-top">
+                    <h3>Notifications</h3> <i class="fa-solid fa-xmark"></i>
+                </div>
+        <div class="notification-data">
+            <p>1. my name is nitin saini </p>
+        </div>
+          
             </div>
         </header>
         {% block nav_bar %}{% endblock nav_bar %}
@@ -131,6 +166,26 @@
     </div>
 </div>
 <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const notificationBell = document.getElementById('notification-bell');
+        const notificationScreen = document.getElementById('notification-screen');
+    
+        notificationBell.addEventListener('click', function() {
+            if (notificationScreen.style.display === 'block') {
+                notificationScreen.style.display = 'none';
+            } else {
+                notificationScreen.style.display = 'block';
+            }
+        });
+    
+        // Optional: Hide the notification screen when clicking outside of it
+        document.addEventListener('click', function(event) {
+            if (!notificationBell.contains(event.target) && !notificationScreen.contains(event.target)) {
+                notificationScreen.style.display = 'none';
+            }
+        });
+    });
+    
     $(document).ready(function() {
         $('#profileImage').on('click', function() {
             $('#popupMenu').slideToggle('fast');
