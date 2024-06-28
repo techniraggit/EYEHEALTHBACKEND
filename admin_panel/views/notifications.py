@@ -6,11 +6,39 @@ from django.http import HttpResponse
 from django.db.models import Q
 from .base import AdminLoginView
 from django.shortcuts import render
-from api.models.notifications import PushNotification, UserModel
+from api.models.notifications import PushNotification, UserModel, UserPushNotification
 from django.core.paginator import Paginator
 from utilities.services.notification import create_notification
 from django.http import JsonResponse
 from datetime import datetime
+
+
+from django.utils.timesince import timesince
+from django.utils import timezone
+
+class MyNotificationView(AdminLoginView):
+    def get(self, request):
+        try:
+            notifications = UserPushNotification.objects.filter(user=request.user).order_by("-created_on")
+            data = []
+            for notification in notifications:
+                data.append({
+                    'id': str(notification.id),
+                    'title': notification.notification.title,
+                    'message': notification.notification.message,
+                    'time_since_creation': timesince(notification.created_on, timezone.now()),
+                    'created_on': time_localize(notification.created_on).strftime('%Y-%m-%d, %H:%M:%S'),
+                    'is_read': notification.is_read,
+                })
+            return JsonResponse({
+                "status": True,
+                "data": data,
+            })
+        except Exception as e:
+            return JsonResponse({
+                "status": False,
+                "message": str(e),
+            })
 
 
 class NotificationView(AdminLoginView):
