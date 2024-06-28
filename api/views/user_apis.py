@@ -118,6 +118,12 @@ class NotificationView(UserMixin):
         ]
         return api_response(True, 200, data=data)
 
+    def patch(self, request):
+        UserPushNotification.objects.filter(user=request.user, is_read=False).update(
+            is_read=True
+        )
+        return api_response(True, 200, "All notifications marked as read")
+
 
 class OffersView(UserMixin):
     def get(self, request):
@@ -153,7 +159,7 @@ class OffersView(UserMixin):
         eye_health_score = EyeTestReport.objects.filter(
             user_profile__user=request.user,
             user_profile__full_name=request.user.get_full_name(),
-            health_score__gt=0
+            health_score__gt=0,
         ).order_by("-created_on")
 
         eye_health_score = (
@@ -345,6 +351,7 @@ class UserAccountDeleteView(UserMixin):
 from core.logs import Logger
 
 contact_logger = Logger("user_contacts.log")
+
 
 class UploadUserContactView(UserMixin):
     def post(self, request):
