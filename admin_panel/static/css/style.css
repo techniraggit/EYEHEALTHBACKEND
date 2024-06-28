@@ -1266,3 +1266,98 @@ button.btn.btn-danger.removeRow i {
 .side-list > ul {
     overflow-y: auto;
 }
+
+/* Basic styling for the column and login-wrap */
+.col-3 {
+    width: 25%;
+}
+
+.login-wrap {
+    position: relative;
+    /* padding: 10px; */
+    /* border: 1px solid #ccc; */
+    /* display: inline-block; */
+    cursor: pointer;
+}
+
+/* Styling for the user icon */
+.login-wrap img {
+    width: 40px;
+    height: 40px;
+    border-radius: 40%;
+    /* vertical-align: middle; */
+}
+/* Styling for the user's name */
+/* .ms-3 {
+    margin-left: 10px;
+    font-size: 1.2em;
+    vertical-align: middle;
+} */
+
+/* Styling for the popup */
+.popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    
+}
+
+/* Show popup on hover */
+.login-wrap:hover .popup {
+    display: block;
+}
+
+.popup p {
+    text-align: center;
+    font-size: 16px;
+
+}
+
+.root-main {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    position: relative;
+
+}
+
+.root-main i {
+    font-size: 20px;
+    border-right: 1px solid;
+    padding: 5px;
+    cursor: pointer;
+
+}
+
+.notification-screen {
+    display: none;
+    position: fixed;
+    top: 7%;
+    right: 0;
+    left: 77%;
+    width: 360px !important;
+    height: 100% !important;
+    background-color: white;
+    border-left: 1px solid #ccc;
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    overflow-y: auto;
+    z-index: 99999;
+}
+
+.notification-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.notification-data p {
+    background: #f5f8fa;
+    border-radius: 12px;
+    padding: 14px 6px;
+}
