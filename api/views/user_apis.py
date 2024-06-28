@@ -207,7 +207,6 @@ class UserPrescriptionsView(UserMixin):
                 data=serializer.data,
                 message="Prescription uploaded successfully, please wait for admin approval",
             )
-        print("Pres>>>>", serializer.errors)
         return api_response(False, 400, data=serializer.errors)
 
 
@@ -343,9 +342,13 @@ class UserAccountDeleteView(UserMixin):
         return api_response(True, 200, "Account deleted successfully.")
 
 
+from core.logs import Logger
+
+contact_logger = Logger("user_contacts.log")
+
 class UploadUserContactView(UserMixin):
     def post(self, request):
-        logger.info(f"Upload contacts >> {request.data}")
+        contact_logger.info(f"Upload contacts >> {request.data}")
         return api_response(True, 200, "Contact successfully uploaded")
         # serializer = StoreUserContactSerializer(data=request.data)
         # if serializer.is_valid():

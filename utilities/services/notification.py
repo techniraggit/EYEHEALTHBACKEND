@@ -27,7 +27,6 @@ def create_notification(user_ids: list, title: str, message: str):
         user_objs = UserModel.objects.filter(id__in=user_ids).prefetch_related(
             "device_info"
         )
-        print(user_objs)
         push_notification_obj = PushNotification.objects.create(
             title=title, message=message
         )
