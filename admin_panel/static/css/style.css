@@ -1425,3 +1425,15 @@ span.notify-dot {
 .btn-text-notify {
     text-align: left!important;
 }
+
+.notification-top i {
+    cursor: pointer;
+    font-size: 22px;
+}
+
+.notification-top h3 {
+    align-items: center;
+    text-align: center;
+}
+
+
