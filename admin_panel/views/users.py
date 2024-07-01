@@ -1,3 +1,4 @@
+from utilities.services.email import send_email
 from core.constants import ERROR_500_MSG
 from utilities.utils import get_form_error_msg
 from utilities.utils import dlt_value
@@ -39,7 +40,8 @@ class UserView(AdminLoginView):
                 .order_by("-created_on")
             )
         else:
-            users = User.objects.exclude(id=request.user.id).order_by("-created_on")
+            users = User.objects.exclude(
+                id=request.user.id).order_by("-created_on")
         paginator = Paginator(users, 10)
         page_number = request.GET.get("page")
         paginated_users = paginator.get_page(page_number)
@@ -104,10 +106,29 @@ class UserEditView(AdminLoginView):
             messages.error(request, "User does not exist")
             return redirect(f"user_edit_view/{user_obj.id}")
 
+        user_current_email = user_obj.email
+        new_email = request.POST.get("email")
+        new_email_message = f"Hi {user_obj.first_name} {user_obj.last_name},\n\nYour email address has been updated to {new_email}."
+        old_email_message = f"Hi {user_obj.first_name} {user_obj.last_name},\n\nYour email address associated with your account has been changed from {user_current_email} to {new_email}. If you did not make this change, please contact support immediately."
+
         user_form = UserCreationForm(data=request.POST, instance=user_obj)
         if user_form.is_valid():
             user_form.save()
             messages.success(request, "User updated successfully")
+            if new_email != user_current_email:
+                # Send email to the new email address
+                send_email(
+                    subject="Your Email Address has been Updated",
+                    message=new_email_message,
+                    recipients=[new_email],
+                )
+
+                # Send email to the old email address
+                send_email(
+                    subject="Your Email Address has been Changed",
+                    message=old_email_message,
+                    recipients=[user_current_email],
+                )
             return redirect("users_view")
 
         messages.error(request, get_form_error_msg(user_form.errors.as_json()))
@@ -167,7 +188,8 @@ class UserDeleteView(AdminLoginView):
         user_obj.email = usr_email + dlt_value()
         user_obj.save()
         user_obj.delete()
-        OTPLog.objects.filter(Q(username=usr_phone) | Q(username=usr_email)).delete()
+        OTPLog.objects.filter(Q(username=usr_phone) |
+                              Q(username=usr_email)).delete()
         messages.success(request, "User deleted successfully")
         return redirect("users_view")
 
@@ -208,19 +230,17 @@ class ChangeUserStatusView(AdminLoginView):
 class UserExportView(AdminLoginView):
     def get_queryset(self, request):
         search = request.GET.get("search", "").strip()
-        users_qs = User.objects.exclude(id=request.user.id).order_by("-created_on")
+        users_qs = User.objects.exclude(
+            id=request.user.id).order_by("-created_on")
         if search:
-            users_qs = (
-                users_qs.filter(
-                    Q(email__icontains=search)
-                    | Q(first_name__icontains=search)
-                    | Q(last_name__icontains=search)
-                    | Q(phone_number__icontains=search)
-                    | Q(referral_code__icontains=search)
-                    | Q(points__icontains=search)
-                )
-                .order_by("-created_on")
-            )
+            users_qs = users_qs.filter(
+                Q(email__icontains=search)
+                | Q(first_name__icontains=search)
+                | Q(last_name__icontains=search)
+                | Q(phone_number__icontains=search)
+                | Q(referral_code__icontains=search)
+                | Q(points__icontains=search)
+            ).order_by("-created_on")
 
         selected_ids = request.POST.getlist("selected_ids[]")
         if selected_ids:
@@ -236,7 +256,8 @@ class UserExportView(AdminLoginView):
             return HttpResponse("Invalid file type")
 
     def get_file_name(self):
-        current_timestamp = time_localize(datetime.now()).strftime("%Y%m%d%H%M%S")
+        current_timestamp = time_localize(
+            datetime.now()).strftime("%Y%m%d%H%M%S")
         file_name = f"users-{current_timestamp}"
         return file_name
 
