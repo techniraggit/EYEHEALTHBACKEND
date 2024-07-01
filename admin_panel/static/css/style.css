@@ -1286,7 +1286,6 @@ button.btn.btn-danger.removeRow i {
     position: fixed;
     top: 7%;
     right: 0;
-    left: 77%;
     width: 360px !important;
     height: 100% !important;
     background-color: white;
@@ -1302,6 +1301,7 @@ button.btn.btn-danger.removeRow i {
     justify-content: space-between;
     align-items: center;
 }
+
 .notification-data p {
     background: #f5f8fa;
     border-radius: 12px;
@@ -1342,8 +1342,9 @@ img#profile_image_id {
     height: auto;
 }
 .my_profile_container {
-    max-width: 150px;
+    /* max-width: 150px; */
     width: 100%;
+    height: auto !important;
 }
 .my_profile_image {
     display: block;
@@ -1356,9 +1357,9 @@ img#profile_image_id {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 300px;
     height: 100%;
-    border-radius: 50%;
+    /* border-radius: 50%; */
     background: rgba(0, 0, 0, 0.5);
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -1435,5 +1436,10 @@ span.notify-dot {
     align-items: center;
     text-align: center;
 }
-
-
+.profile.my_profile_container img {
+    width: 100%;
+    max-width: 300px;
+    height: 300px !important;
+    /* margin: auto; */
+    border-radius: 0px;
+}
