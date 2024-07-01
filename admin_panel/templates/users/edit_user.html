@@ -46,9 +46,10 @@
     </div>
 </div>
 <script>
-    //$(document).ready(function() {
-    //    $('#email').prop('readonly', true);
-    //    $('#phone_number').prop('readonly', true);
-    //});
+    $(document).ready(function() {
+        $("form").on("submit", function() {
+            $(".overlay, .loader").show();
+        });
+    });
 </script>
 {% endblock table%}
