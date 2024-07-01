@@ -187,43 +187,49 @@ class EyeFatigueReportsView(UserMixin):
         return api_response(True, 200, data=serializer.data)
 
 
-GRAPH_TIME_INTERVALS = [
-    ((time(0, 0), time(6, 0)), time(3, 0)),
-    ((time(6, 0), time(9, 0)), time(7, 30)),
-    ((time(9, 0), time(12, 0)), time(10, 30)),
-    ((time(12, 0), time(15, 0)), time(13, 30)),
-    ((time(15, 0), time(18, 0)), time(16, 30)),
-    ((time(18, 0), time(21, 0)), time(19, 30)),
-    ((time(21, 0), time(23, 59)), time(22, 30)),
-]
+# GRAPH_TIME_INTERVALS = [
+#     ((time(0, 0), time(6, 0)), time(3, 0)),
+#     ((time(6, 0), time(9, 0)), time(7, 30)),
+#     ((time(9, 0), time(12, 0)), time(10, 30)),
+#     ((time(12, 0), time(15, 0)), time(13, 30)),
+#     ((time(15, 0), time(18, 0)), time(16, 30)),
+#     ((time(18, 0), time(21, 0)), time(19, 30)),
+#     ((time(21, 0), time(23, 59)), time(22, 30)),
+# ]
 
 
-def get_average_values(reports, start_time, end_time, user_tz):
-    avg_values = defaultdict(list)
+# def get_average_values(reports, start_time, end_time, user_tz):
+#     avg_values = defaultdict(list)
 
-    for report in reports:
-        report_datetime = report.created_on.astimezone(user_tz)
-        report_time = report_datetime.time()
+#     for report in reports:
+#         report_datetime = report.created_on.astimezone(user_tz)
+#         report_time = report_datetime.time()
 
-        if start_time <= report_time < end_time:
-            date_key = report_datetime.date()
-            avg_values[date_key].append(report.get_percent())
+#         if start_time <= report_time < end_time:
+#             date_key = report_datetime.date()
+#             avg_values[date_key].append(report.get_percent())
 
-    return {
-        date: sum(values) / len(values) if values else 0
-        for date, values in avg_values.items()
-    }
+#     return {
+#         date: sum(values) / len(values) if values else 0
+#         for date, values in avg_values.items()
+#     }
 
 
 def get_day_data(user, user_tz, day_date):
-    day_data = {"date": day_date, "value": []}
     reports = EyeFatigueReport.objects.filter(user=user, created_on__date=day_date)
+    values_list = list(reports.values_list("health_score", flat=True))
+    avg_value = 0.0
+    try:
+        avg_value = round(sum(values_list) / len(values_list), 2)
+    except:
+        avg_value = 0.0
+    return avg_value
 
-    for (start_time, end_time), point_time in GRAPH_TIME_INTERVALS:
-        average_values = get_average_values(reports, start_time, end_time, user_tz)
-        day_data["value"].append(average_values.get(day_date, 0))
+    # for (start_time, end_time), point_time in GRAPH_TIME_INTERVALS:
+    #     average_values = get_average_values(reports, start_time, end_time, user_tz)
+    #     day_data["value"].append(average_values.get(day_date, 0))
 
-    return day_data
+    # return day_data
 
 
 def current_day_user_graph(user, user_timezone):
@@ -239,40 +245,46 @@ def first_day_user_graph(user, user_timezone):
         first_day_date = first_report.created_on.astimezone(user_tz).date()
         return get_day_data(user, user_tz, first_day_date)
     except EyeFatigueReport.DoesNotExist:
-        return {"date": None, "value": [0, 0, 0, 0, 0, 0, 0]}
+        return 0.0
 
 
 def get_percentile_graph(user_timezone):
-    return [7.0, 6.0, 5.0, 4.0, 3.0, 4.0, 5.0]
+    values = [7.0, 6.0, 5.0, 4.0, 3.0, 4.0, 5.0]
+    average = sum(values) / len(values)
+    rounded_average = round(average, 2)
+    return rounded_average
 
 
 def get_ideal_graph(user_timezone):
-    return [10.0, 9.0, 8.0, 8.0, 7.0, 8.0, 8.0]
+    values = [10.0, 9.0, 8.0, 8.0, 7.0, 8.0, 8.0]
+    average = sum(values) / len(values)
+    rounded_average = round(average, 2)
+    return rounded_average
 
 
-def get_user_real_graph(user_timezone, user):
-    user_tz = pytz.timezone(user_timezone)
-    reports = EyeFatigueReport.objects.filter(user=user).order_by("created_on")
+# def get_user_real_graph(user_timezone, user):
+#     user_tz = pytz.timezone(user_timezone)
+#     reports = EyeFatigueReport.objects.filter(user=user).order_by("created_on")
 
-    # Group reports by date
-    grouped_reports = defaultdict(list)
-    for report in reports:
-        report_date = report.created_on.astimezone(user_tz).date()
-        grouped_reports[report_date].append(report)
+#     # Group reports by date
+#     grouped_reports = defaultdict(list)
+#     for report in reports:
+#         report_date = report.created_on.astimezone(user_tz).date()
+#         grouped_reports[report_date].append(report)
 
-    graph_data = []
-    for day_date, day_reports in grouped_reports.items():
-        day_data = {"date": day_date, "value": []}
-        for (start_time, end_time), point_time in GRAPH_TIME_INTERVALS:
-            average_values = get_average_values(
-                day_reports, start_time, end_time, user_tz
-            )
-            day_data["value"].append(
-                (point_time.strftime("%H:%M"), average_values.get(day_date, 0))
-            )
-        graph_data.append(day_data)
+#     graph_data = []
+#     for day_date, day_reports in grouped_reports.items():
+#         day_data = {"date": day_date, "value": []}
+#         for (start_time, end_time), point_time in GRAPH_TIME_INTERVALS:
+#             average_values = get_average_values(
+#                 day_reports, start_time, end_time, user_tz
+#             )
+#             day_data["value"].append(
+#                 (point_time.strftime("%H:%M"), average_values.get(day_date, 0))
+#             )
+#         graph_data.append(day_data)
 
-    return graph_data
+#     return graph_data
 
 
 class EyeFatigueGraph(UserMixin):
