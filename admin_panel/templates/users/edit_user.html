@@ -26,7 +26,6 @@
                 </div>
                 <div class="col-md-4 f-mail mt-4">
                     <label>E-mail</label>
-                    {% comment %} <p id="email-p"></p> {% endcomment %}
                     <input type="email" name="email" id="email" value="{{ user_obj.email }}"/>
                 </div>
                 <div class="col-md-4 f-mail mt-4">
@@ -47,9 +46,9 @@
     </div>
 </div>
 <script>
-    $(document).ready(function() {
-        $('#email').prop('readonly', true);
-        $('#phone_number').prop('readonly', true);
-    });
+    //$(document).ready(function() {
+    //    $('#email').prop('readonly', true);
+    //    $('#phone_number').prop('readonly', true);
+    //});
 </script>
 {% endblock table%}
