@@ -6,6 +6,7 @@ from api.models.rewards import *
 from api.models.eye_health import *
 from api.models.prescription import *
 from api.models.user_agreements import *
+from api.models.dashboard import *
 
 
 # Register your models here.
@@ -188,3 +189,8 @@ class UserContactsAdmin(admin.ModelAdmin):
         "name",
         "phone_number",
     ]
+
+@admin.register(CarouselModel)
+class CarouselModelAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "image", "created_on"]
+    search_fields = ["name"]
