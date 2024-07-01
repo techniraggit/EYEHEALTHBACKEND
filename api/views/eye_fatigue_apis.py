@@ -218,13 +218,13 @@ def get_average_values(reports, start_time, end_time, user_tz):
 def get_day_data(user, user_tz, day_date):
     day_data = {"date": day_date, "value": []}
     reports = EyeFatigueReport.objects.filter(user=user, created_on__date=day_date)
-    # values_list = list(reports.values_list("health_score", flat=True))
-    # avg_value = 0.0
-    # try:
-    #     avg_value = round(sum(values_list) / len(values_list), 2)
-    # except:
-    #     avg_value = 0.0
-    # return avg_value
+    values_list = list(reports.values_list("health_score", flat=True))
+    avg_value = 0.0
+    try:
+        avg_value = round(sum(values_list) / len(values_list), 2)
+    except:
+        avg_value = 0.0
+    return avg_value
 
     for (start_time, end_time), point_time in GRAPH_TIME_INTERVALS:
         average_values = get_average_values(reports, start_time, end_time, user_tz)
@@ -253,14 +253,14 @@ def get_percentile_graph(user_timezone):
     values = [7.0, 6.0, 5.0, 4.0, 3.0, 4.0, 5.0]
     average = sum(values) / len(values)
     rounded_average = round(average, 2)
-    return values
+    return rounded_average
 
 
 def get_ideal_graph(user_timezone):
     values = [10.0, 9.0, 8.0, 8.0, 7.0, 8.0, 8.0]
     average = sum(values) / len(values)
     rounded_average = round(average, 2)
-    return values
+    return rounded_average
 
 
 def get_user_real_graph(user_timezone, user):
