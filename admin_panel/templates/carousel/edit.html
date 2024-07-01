@@ -26,18 +26,20 @@
                     <input type="text" name="name" id="name" class="form-control" value="{{carousel_obj.name}}" />
                 </div>
 
-                <div class="col-md-4 f-name mt-4">
+                <div class="col-md-4 f-name select-wrapp mt-4">
                     <label for="status">Status <span id="required_star">*</span></label>
-                    <select name="status" id="status" class="form-control">
+                    <select name="status" id="status" class="form-control nitin">
                         <option value="active" {% if carousel_obj.is_active %}selected{% endif %}>Active</option>
                         <option value="inactive" {% if not carousel_obj.is_active %}selected{% endif %}>Inactive</option>
                     </select>
                 </div>
 
-                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                <div class="col-md-4 cancel-btn mb-4 mt-5">
                     <button type="submit" class="btn btn-primary save-btn">Save</button>
                 </div>
+           
             </div>
+          
         </form>
     </div>
     <script>
