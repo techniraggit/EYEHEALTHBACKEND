@@ -23,6 +23,8 @@ from api.serializers.rewards import (
 from api.models.rewards import UserRedeemedOffers
 from api.models.accounts import UserPoints
 from api.models.eye_health import EyeFatigueReport, EyeTestReport
+from api.models.dashboard import CarouselModel
+from api.serializers.dashboard import CarouselModelSerializer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -40,6 +42,14 @@ class Dashboard(UserMixin):
             user_profile__age=request.user.age(),
         )
         prescription_obj = UserPrescriptions.objects.filter(user=request.user)
+
+        # Carousel data
+        carousel_data = CarouselModelSerializer(
+            CarouselModel.objects.filter(is_active=True),
+            many=True,
+            fields=["name", "image"],
+            context={'request': request}
+        ).data
         return api_response(
             True,
             200,
@@ -50,6 +60,7 @@ class Dashboard(UserMixin):
             ),
             is_prescription_uploaded=prescription_obj.exists(),
             visits_to_optometry=prescription_obj.filter(status="approved").count(),
+            carousel=carousel_data,
         )
 
 
