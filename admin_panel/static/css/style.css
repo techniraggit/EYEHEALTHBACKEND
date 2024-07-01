@@ -1443,3 +1443,8 @@ span.notify-dot {
     /* margin: auto; */
     border-radius: 0px;
 }
+
+.modal-body img {
+    height: 100%;
+}
+
