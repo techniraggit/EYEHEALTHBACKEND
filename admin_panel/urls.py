@@ -12,6 +12,7 @@ from .views import trash
 from .views import user_agreement
 from .views import credentials
 from .views import my_profile
+from .views import carousels
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -127,6 +128,16 @@ profile_urls = [
     path("update-profile", my_profile.UpdateProfileView.as_view(), name="update_profile_view"),
 ]
 
+carousels_urls = [
+    path("", carousels.CarouselsView.as_view(), name="carousels_view"),
+    path("change-carousel-status/<uuid:id>", carousels.ChangeCarouselStatusView.as_view(), name="carousels_view"),
+    path("carousel-detailed-view/<uuid:id>", carousels.CarouselDetailedView.as_view(), name="carousel_detailed_view"),
+    path("carousel-export/<str:file_type>", carousels.CarouselExportView.as_view(), name="carousel_export_view"),
+    path("delete-carousel-view/<uuid:id>", carousels.DeleteCarouselView.as_view(), name="delete_carousel_view"),
+    path("add-carousel-view", carousels.AddCarouselView.as_view(), name="add_carousel_view"),
+    path("edit-carousel-view/<uuid:id>", carousels.EditCarouselView.as_view(), name="edit_carousel_view"),
+]
+
 urlpatterns = [
     path("", include(auth_urls)),
     path("home/", include(home_urls)),
@@ -142,4 +153,5 @@ urlpatterns = [
     path("term-and-conditions/", include(term_and_condition_urls)),
     path("credentials/", include(credentials_urls)),
     path("my-profile/", include(profile_urls)),
+    path("carousels/", include(carousels_urls)),
 ]

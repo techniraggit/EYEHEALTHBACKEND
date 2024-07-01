@@ -1,0 +1,253 @@
+{% extends "base/side_bar.html" %}
+{% block title %} Carousels {% endblock title %}
+{% load custom_filters %}
+
+{% block page_name %}Carousels{% endblock page_name %}
+{% block nav_bar %}
+<div class="bottomwrap">
+    <div class="search-box row">
+        <div class="col-9">
+            <div class="input-wrapp">
+                <form action="{% url 'carousels_view' %}" method="get" id="searchForm">
+                    <div>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Name"
+                            value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class=" filter-dropdown select-wrapp">
+                        <select name="carousel_status_filter" id="carousel_status_filter" placeholder="Filter">
+                            <option value="" selected>Status</option>
+                            <option value="active" {% if carousel_status_filter == 'active' %}selected{% endif %}>Active</option>
+                            <option value="inactive" {% if carousel_status_filter == 'inactive' %}selected{% endif %}>Inactive</option>
+                        </select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="export col-3">
+            <ul>
+                <li class="add-btn me-3">
+                    <a href="{% url 'add_carousel_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                </li>
+                <li class="ex-li">
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <ul class="dropdown-content">
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url 'carousel_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url 'carousel_export_view' 'csv' %}">CSV</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock nav_bar %}
+{% block table %}
+<table>
+    <tr>
+        <th>Sr.No</th>
+        <th>Name</th>
+        <th>Status</th>
+        <th>Image</th>
+        <th>Created  On</th>
+        <th>Action</th>
+    </tr>
+    {% for carousel in paginated_carousels %}
+    <tr>
+        
+        <td>{{ forloop.counter0|add:paginated_carousels.start_index|default:forloop.counter }}</td>
+        <td>{{ carousel.name }}</td>
+
+        {% if carousel.is_active %}
+        <td ><span class="user-account-active change_carousel_status" data-user-id="{{ carousel.pk }}">Active</span></td>
+        {% else %}
+            <td ><span class="user-account-suspended change_carousel_status" data-user-id="{{ carousel.pk }}">Inactive</span></td>
+        {% endif %}
+
+
+        <td><img class="thumbnail-img" src="{{ carousel.image.url }}" alt="" height="100" width="80"></td>
+        <td>{{ carousel.created_on|format_datetime }}</td>
+
+        <td>
+            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-carousel-id="{{ carousel.pk }}"></i></a>
+            <a href="{% url "edit_carousel_view" carousel.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
+            <a href="#" class="view-carousel-details" data-carousel-id="{{ carousel.pk }}"><i class="fa-regular fa-eye"></i></a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% include "base/pagination.html" with paginated_data=paginated_carousels %}
+
+<!-- Offer Detail Modal -->
+<div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="offerDetailModalLabel">Carousel Details</h5>
+            </div>
+            <div class="modal-body">
+                <p><strong>ID:<span id="modal-id"></span></strong></p>
+                <p><strong>Name:</strong> <span id="modal-name"></span></p>
+                <p><strong>Status:</strong> <span id="modal-status"></span></p>
+                <p><strong>Image:</strong></p>
+                <img id="modal-img" src="" alt="" width="80" height="100"> 
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% include "base/delete_popup.html" %}
+
+<script>
+    $(document).ready(function () {
+        // Change User status
+        $(".change_carousel_status").click(function () {
+            user_id = $(this).data("user-id");
+            $current_user = $(this)
+
+            $.ajax({
+                url: "change-carousel-status/" + user_id,
+                type: 'GET',
+                success: function (data) {
+                    if(data.status){
+                        showToaster(data.message, "alert-success")
+                        if(data.carousel_current_status){
+                            $current_user.text("Active")
+                            $current_user.removeClass("user-account-suspended")
+                            $current_user.addClass("user-account-active")
+                        }else{
+                            $current_user.text("Inactive")
+                            $current_user.removeClass("user-account-active")
+                            $current_user.addClass("user-account-suspended")
+                        }
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error making GET request:', error);
+                }
+            });
+        });
+    
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            console.log(params);
+            $('#exportExcel').attr('href', `{% url 'carousel_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'carousel_export_view' 'csv' %}?` + params);
+        }
+
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
+        }).attr("readonly", "readonly");
+
+        $('#carousel_status_filter').select2({
+            placeholder: "Status",
+            minimumResultsForSearch: Infinity
+        });
+
+        // Clear the search input value when the clear button is clicked
+        $('#clearButton').click(function () {
+            $('#searchInput').val('');
+            $('input[type="text"]').val('');
+            $('select[name="carousel_status_filter"]').val('');
+            $('#searchForm').submit();
+        });
+
+        // Delete the offer when the delete button is clicked
+        let carousel_id = null;
+        $(document).on('click', '#deleteButton', function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'flex');
+            carousel_id = $(this).data("carousel-id");
+        });
+
+        // Delete the user when the confirm delete button is clicked
+        $('#confirmDelete').click(function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'none');
+            $.ajax({
+                url: "delete-carousel-view/" + carousel_id,
+                type: 'GET',
+                success: function (data) {
+                    if (data.status) {
+                        showToaster(data.message, "alert-success");
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        showToaster(data.message, "alert-error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error making GET request:', error);
+                    $('#dlt-btn-overlay').css('display', 'none');
+                    showToaster(error, "alert-error");
+                }
+            });
+        });
+
+        // Hide the delete button overlay when the cancel delete button is clicked
+        $('#cancelDelete').click(function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'none');
+        });
+
+        // View offer details when the view offer details button is clicked
+        $('.view-carousel-details').click(function (event) {
+            event.preventDefault();
+            var carousel_id = $(this).data('carousel-id');
+            var modal = $('#offerDetailModal');
+
+            $.ajax({
+                url: '/carousels/carousel-detailed-view/' + carousel_id,
+                method: 'GET',
+                success: function (response) {
+                    modal.find('#modal-id').text(response.carousel.id);
+                    modal.find('#modal-name').text(response.carousel.name);
+                    var status = "";
+                    if (response.carousel.is_active) {
+                        status = "Active";
+                    } else {
+                        status = "Inactive";
+                    }
+                    modal.find('#modal-status').text(status);
+                    modal.find('#modal-status').addClass(response.carousel.is_active);
+                    modal.find('#modal-img').attr("src", response.carousel.image);
+                    modal.modal('show');
+
+                },
+                error: function (xhr, status, error) {
+                    alert("An error occurred while fetching carousel details. Please try again.");
+                }
+            });
+        });
+
+        // Hide the modal when the dismiss button is clicked
+        $("#modal_dismis").on("click", function (event) {
+            event.preventDefault();
+            $('#offerDetailModal').modal('hide');
+        });
+
+    });//document.ready
+</script>
+{% endblock table%}

@@ -1,0 +1,110 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %} Edit Carousel {% endblock title %}
+
+{% block page_name %}Edit Carousel{% endblock page_name %}
+{% block table %}
+
+<div class="right-table1">
+    <div class=" form-main">
+        <form id="addCarouselForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="edit-nav row">
+                <div class="col-4">
+                <div class="profile  my_profile_container">
+                    <img src="{{ carousel_obj.image.url }}" alt="carousel image" class="my_profile_image" id="profile_image_id">
+                    <div class="profile_img_overlay" onclick="document.getElementById('fileInput').click();">
+                        <i class="profile_pen_icon">&#9998;</i> <!-- Pen icon -->
+                    </div>
+                    <input type="file" id="fileInput" name="image" accept="image/*" onchange="loadFile(event)">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4 f-name mt-4">
+                    <label for="name">Name <span id="required_star">*</span></label>
+                    <input type="text" name="name" id="name" class="form-control" value="{{carousel_obj.name}}" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="status">Status <span id="required_star">*</span></label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="active" {% if carousel_obj.is_active %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if not carousel_obj.is_active %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit" class="btn btn-primary save-btn">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        function loadFile(event) {
+            var output = document.getElementById('profile_image_id');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            output.onload = function() {
+                URL.revokeObjectURL(output.src) // Free memory
+            }
+        }
+
+        $(document).ready(function () {
+            $('#status').select2({
+                minimumResultsForSearch: Infinity
+            });
+    
+            $("#addCarouselForm").submit(function (event) {
+                event.preventDefault();
+
+                let isValid = true;
+                $(".form-control").each(function () {
+                    if ($(this).hasClass("optional")) {
+                        return true;
+                    }
+                    if ($(this).val().trim() === "") {
+                        isValid = false;
+                        $(this).addClass("is-invalid");
+                    } else {
+                        $(this).removeClass("is-invalid");
+                    }
+                });
+
+                if (!isValid) {
+                    showToaster("Please fill out all required fields.", "alert-error");
+                    return;
+                }
+
+                // If valid, proceed with AJAX submission
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: "{% url 'edit_carousel_view' carousel_obj.pk %}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,  // Important!
+                    contentType: false,  // Important!
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    success: function (response) {
+                        if (response.status) {
+                            showToaster(response.message, "alert-success");
+                            setTimeout(function () {
+                                window.location.href = "/carousels/";
+                            }, 2000);
+                        } else {
+                            showToaster(response.message, "alert-error");
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        const response = xhr.responseJSON
+                        showToaster(response.message, "alert-error");
+                    }
+                });
+            });
+
+        }); //document.ready
+    </script>
+
+    {% endblock table%}
