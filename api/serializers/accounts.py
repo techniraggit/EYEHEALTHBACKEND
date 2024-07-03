@@ -226,7 +226,7 @@ class UserSerializer(serializers.ModelSerializer):
         if device_token_data:
             DeviceInfo.objects.create(user=user, **device_token_data)
 
-        plan = SubscriptionPlan.objects.get(plan_type="basic")
+        plan = SubscriptionPlan.objects.filter(plan_type="basic").order_by("-created_on").first()
         end_date = timezone.now() + timezone.timedelta(days=plan.duration)
         UserSubscription.objects.create(
             user = user,
