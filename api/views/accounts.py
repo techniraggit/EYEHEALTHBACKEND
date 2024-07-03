@@ -43,7 +43,7 @@ class VerificationOTPView(APIView):
             if not is_valid_phone(username):
                 return api_response(False, 400, "Not a valid phone number")
 
-        OTPLog.objects.create(username=username)
+        OTPLog.objects.get_or_create(username=username)
         otp = generate_otp(username)
 
         try:
