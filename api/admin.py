@@ -114,7 +114,7 @@ class OffersAdmin(admin.ModelAdmin):
 @admin.register(EyeTestReport)
 class EyeTestReportAdmin(admin.ModelAdmin):
     list_display = ["id", "report_id", "user_profile", "health_score"]
-    search_fields = ["user_profile__full_name", "report_id"]
+    search_fields = ["user_profile__full_name", "report_id", "user_profile__user__phone_number"]
 
 
 @admin.register(EyeFatigueReport)
