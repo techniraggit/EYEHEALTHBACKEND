@@ -33,7 +33,7 @@ logger = logging.getLogger(__name__)
 class Dashboard(UserMixin):
     def get(self, request):
         eye_test_count = EyeTestReport.objects.filter(
-            user_profile__user=request.user
+            user_profile__user__id=request.user.id
         ).count()
         eye_fatigue_count = EyeFatigueReport.objects.filter(user=request.user).count()
         eye_health_score = EyeTestReport.objects.filter(
