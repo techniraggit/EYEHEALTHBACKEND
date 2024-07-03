@@ -32,14 +32,13 @@ logger = logging.getLogger(__name__)
 
 class Dashboard(UserMixin):
     def get(self, request):
-        eye_test_count = EyeTestReport.objects.filter(
-            user_profile__user__id=request.user.id
-        ).count()
+        request_user_id = request.user.id
+        eye_test_count = EyeTestReport.objects.filter(user_profile__user__id=request_user_id).count()
         eye_fatigue_count = EyeFatigueReport.objects.filter(user=request.user).count()
         eye_health_score = EyeTestReport.objects.filter(
-            user_profile__user=request.user,
+            user_profile__user__id=request_user_id,
             user_profile__full_name=request.user.get_full_name(),
-            user_profile__age=request.user.age(),
+            # user_profile__age=request.user.age(),
         )
         prescription_obj = UserPrescriptions.objects.filter(user=request.user)
 
