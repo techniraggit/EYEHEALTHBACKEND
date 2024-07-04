@@ -6,6 +6,7 @@ from api.views.eye_test_apis import *
 from api.views import eye_fatigue_apis
 from api.views.strip_apis import *
 from api.views import user_agreements
+from api.views import razor_pay_apis
 
 accounts = [
     path("verification_otp", VerificationOTPView.as_view()),
@@ -38,6 +39,7 @@ strip_urls = [
     path("create-checkout-session", CreateCheckoutSession.as_view()),
     path("webhook", WebHook.as_view()),
     path("create-customer", CreateCustomerView.as_view()),
+    path("rzp-webhook", razor_pay_apis.RazorPayWebHook.as_view()),
 ]
 
 eye_health_apis = [
