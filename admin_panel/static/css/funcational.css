@@ -40,3 +40,8 @@
     max-width: 95px;
     cursor: pointer;
 }
+
+.help_text{
+    font-style: italic;
+    color: black;
+}

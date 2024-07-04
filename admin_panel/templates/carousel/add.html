@@ -12,7 +12,15 @@
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
                     <label for="name">Name <span id="required_star">*</span></label>
-                    <input type="text" name="name" id="name" class="form-control" />
+                    <select name="name" id="name" class="form-control">
+                        <option value="">Select Name</option>
+                        <option value="Prescription">Prescription</option>
+                        <option value="Refer and Earn">Refer and Earn</option>
+                        <option value="Reward">Reward</option>
+                        <option value="Eye Test">Eye Test</option>
+                        <option value="Eye Fatigue Test">Eye Fatigue Test</option>
+                    </select>
+                    <span class="help_text ">"This name is used for redirection."</span>
                 </div>
 
                 <div class="col-md-4 f-mail mt-4">
@@ -36,10 +44,15 @@
     </div>
     <script>
         $(document).ready(function () {
+            $('#name').select2({
+                placeholder: 'Select Name',
+                minimumResultsForSearch: Infinity
+            });
+
             $('#status').select2({
                 minimumResultsForSearch: Infinity
             });
-    
+
             $("#addCarouselForm").submit(function (event) {
                 event.preventDefault();
 

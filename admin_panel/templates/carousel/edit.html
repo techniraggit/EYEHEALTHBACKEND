@@ -23,7 +23,15 @@
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
                     <label for="name">Name <span id="required_star">*</span></label>
-                    <input type="text" name="name" id="name" class="form-control" value="{{carousel_obj.name}}" />
+                    <select name="name" id="name" class="form-control">
+                        <option value="">Select Name</option>
+                        <option value="Prescription" {% if carousel_obj.name == 'Prescription' %}selected{% endif %}>Prescription</option>
+                        <option value="Refer and Earn" {% if carousel_obj.name == 'Refer and Earn' %}selected{% endif %}>Refer and Earn</option>
+                        <option value="Reward" {% if carousel_obj.name == 'Reward' %}selected{% endif %}>Reward</option>
+                        <option value="Eye Test" {% if carousel_obj.name == 'Eye Test' %}selected{% endif %}>Eye Test</option>
+                        <option value="Eye Fatigue Test" {% if carousel_obj.name == 'Eye Fatigue Test' %}selected{% endif %}>Eye Fatigue Test</option>
+                    </select>
+                    <span class="help_text ">"This name is used for redirection."</span>
                 </div>
 
                 <div class="col-md-4 f-name select-wrapp mt-4">
@@ -50,10 +58,15 @@
         }
 
         $(document).ready(function () {
+            $('#name').select2({
+                placeholder: 'Select Name',
+                minimumResultsForSearch: Infinity
+            });
+
             $('#status').select2({
                 minimumResultsForSearch: Infinity
             });
-    
+
             $("#addCarouselForm").submit(function (event) {
                 event.preventDefault();
 
