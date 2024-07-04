@@ -10,7 +10,7 @@
         <form id="addCarouselForm" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
-                <div class="col-md-4 f-name mt-4">
+                <div class="col-md-4 f-name mt-4 select-wrapp">
                     <label for="name">Name <span id="required_star">*</span></label>
                     <select name="name" id="name" class="form-control">
                         <option value="">Select Name</option>
@@ -28,7 +28,7 @@
                     <input type="file" name="image" id="image" class="form-control" />
                 </div>
 
-                <div class="col-md-4 f-name mt-4">
+                <div class="col-md-4 f-name mt-4 select-wrapp">
                     <label for="status">Status <span id="required_star">*</span></label>
                     <select name="status" id="status" class="form-control">
                         <option value="active">Active</option>
