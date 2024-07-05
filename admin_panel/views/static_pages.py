@@ -107,3 +107,76 @@ class EditStaticPageView(AdminLoginView):
                     "message": f"Failed to update {str(static_page_obj.title).title()} Page",
                 }
             )
+from weasyprint import HTML, CSS
+from django.http import HttpResponse
+
+def generate_legal_pdf(p):
+    # Step 1: Render the document without page numbers to get the total page count
+    html_content = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            @page {{
+                size: 9.5in 11.6in;
+                margin: 1in; /* Adjust the margin as needed */
+            }}
+        </style>
+    </head>
+    <body>
+        {p.content}
+    </body>
+    </html>
+    """
+
+    html = HTML(string=html_content)
+    rendered_html = html.render()
+    total_pages = len(rendered_html.pages)
+
+    # Step 2: Render the document again with page numbers and header
+    html_content_with_numbers = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <style>
+            @page {{
+                size: 9.5in 11.6in;
+                margin: 1in; /* Adjust the margin as needed */
+                @top-center {{
+                    content: "Created On: {p.created_on.strftime("%Y-%m-%d")} by {p.created_by.get_full_name()}";
+                    font-size: 12px;
+                    color: gray;
+                }}
+                @bottom-right {{
+                    content: "Page " counter(page) " of {total_pages}";
+                    font-size: 12px;
+                    font-weight: bold;
+                }}
+            }}
+        </style>
+    </head>
+    <body style="font-family: sans-serif, ubuntu;">
+        {p.content}
+    </body>
+    </html>
+    """
+
+    html_with_numbers = HTML(string=html_content_with_numbers)
+    pdf_file = html_with_numbers.write_pdf()
+    return pdf_file
+
+import time
+class DownloadContentPage(AdminLoginView):
+    def get(self, request, id):
+        try:
+            static_page_obj = StaticPages.objects.get(pk=id)
+        except StaticPages.DoesNotExist:
+            messages.error(request, "Static Page does not exist")
+            return redirect("static_pages_view")
+        
+        pdf_file = generate_legal_pdf(static_page_obj)
+
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{static_page_obj.slug}.pdf"'
+        time.sleep(4)
+        return response
