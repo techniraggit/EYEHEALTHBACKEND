@@ -27,7 +27,7 @@ class MyNotificationView(AdminLoginView):
                     'title': notification.notification.title,
                     'message': notification.notification.message,
                     'time_since_creation': timesince(notification.created_on, timezone.now()),
-                    'created_on': time_localize(notification.created_on).strftime('%Y-%m-%d, %H:%M:%S'),
+                    'created_on': time_localize(notification.created_on).strftime('%d %b, %I:%M %p'),
                     'is_read': notification.is_read,
                 })
             return JsonResponse({
