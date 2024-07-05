@@ -125,6 +125,7 @@ carousels_urls = [
 ]
 static_pages_url = [
     path("", static_pages.StaticPageView.as_view(), name="static_pages_view"),
+    path("detailed-view/<uuid:id>", static_pages.StaticPageDetailedView.as_view(), name="detailed_static_page_view"),
     path("add-page", static_pages.AddStaticPageView.as_view(), name="add_static_page_view"),
     path("edit-page/<uuid:id>", static_pages.EditStaticPageView.as_view(), name="edit_static_page_view"),
 ]

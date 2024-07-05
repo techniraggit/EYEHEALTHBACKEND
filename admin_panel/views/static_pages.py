@@ -29,6 +29,17 @@ class StaticPageView(AdminLoginView):
         CONTEXT["static_pages"] = paginated_static_pages_data
         return render(request, "static_pages/listing.html", CONTEXT)
 
+class StaticPageDetailedView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            static_page_obj = StaticPages.objects.get(pk=id)
+        except StaticPages.DoesNotExist:
+            messages.error(request, "Static Page does not exist")
+            return redirect("static_pages_view")
+
+        CONTEXT["static_page_obj"] = static_page_obj
+        return render(request, "static_pages/view.html", CONTEXT)
+
 
 class AddStaticPageView(AdminLoginView):
     def get(self, request):
@@ -45,7 +56,7 @@ class AddStaticPageView(AdminLoginView):
 
         if StaticPages.objects.filter(title=title).exists():
             return JsonResponse(
-                {"status": False, "message": "Page with the same title already exists. You can edit this page manually."}
+                {"status": False, "message": f"'{str(title).title()}' page already exists. You can edit this page manually."}
             )
 
         try:
@@ -70,7 +81,7 @@ class EditStaticPageView(AdminLoginView):
             messages.error(request, "Static Page does not exist")
             return redirect("static_pages_view")
 
-        CONTEXT["static_page"] = static_page_obj
+        CONTEXT["static_page_obj"] = static_page_obj
         return render(request, "static_pages/edit.html", context=CONTEXT)
 
     def post(self, request, id):

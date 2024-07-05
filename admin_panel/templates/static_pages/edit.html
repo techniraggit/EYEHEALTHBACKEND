@@ -71,7 +71,7 @@
 
             if (isValid) {
                 $.ajax({
-                    url: "static-pages/edit-page/{{ static_page_obj.pk }}",
+                    url: "{% url 'edit_static_page_view' static_page_obj.pk %}",
                     method: "POST",
                     data: {
                         csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),

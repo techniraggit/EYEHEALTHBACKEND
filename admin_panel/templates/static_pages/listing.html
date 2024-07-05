@@ -25,12 +25,6 @@
                 <li class="add-btn me-3">
                     <a href="{% url "add_static_page_view" %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
                 </li>
-                {% comment %} <li class="ex-li">
-                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
-                    <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="#">PDF</a></li>
-                    </ul>
-                </li> {% endcomment %}
             </ul>
         </div>
 
@@ -54,8 +48,7 @@
             <td>{{ page.created_on|format_datetime }}</td>
             <td>
                 <a href="{% url "edit_static_page_view" page.id %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="#"> <i class="fa-regular fa-eye me-2"></i></a>
-                <a href="#"> <i class="fa-solid fa-trash me-2"></i></a>
+                <a href="{% url "detailed_static_page_view" page.id %}"> <i class="fa-regular fa-eye me-2"></i></a>
             </td>
         </tr>
     {% endfor %}

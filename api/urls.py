@@ -85,10 +85,6 @@ fatigue_apis = [
     path("take-user-selfie", eye_fatigue_apis.TakeUserSelfie.as_view()),
 ]
 
-static_pages_urls = [
-    path("", static_pages.StaticPagesView.as_view()),
-]
-
 urlpatterns = (
     accounts
     + subscriptions
@@ -97,6 +93,7 @@ urlpatterns = (
         path("eye/", include(eye_health_apis)),
         path("payment/", include(strip_urls)),
         path("fatigue/", include(fatigue_apis)),
-        path("static-pages/", include(static_pages_urls)),
+        path("static-pages/<slug:slug>", static_pages.StaticPagesView.as_view()),
+        
     ]
 )

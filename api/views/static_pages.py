@@ -6,7 +6,10 @@ from api.serializers.user_agreement import StaticPagesSerializer
 
 
 class StaticPagesView(APIView):
-    def get(self, request):
-        static_pages = StaticPages.objects.all().order_by("-created_on")
-        serializer = StaticPagesSerializer(static_pages, many=True, fields=["title", "content"])
-        return api_response(True, 200, data=serializer.data)
+    def get(self, request, slug):
+        try:
+            static_page = StaticPages.objects.get(slug=slug)
+            serializer = StaticPagesSerializer(static_page, fields=["title", "content"])
+            return api_response(True, 200, content=serializer.data["content"])
+        except StaticPages.DoesNotExist:
+            return api_response(False, 404, "Static page not found")
