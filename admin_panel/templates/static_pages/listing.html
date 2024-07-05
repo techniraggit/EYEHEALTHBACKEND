@@ -1,8 +1,8 @@
 {% extends "base/side_bar.html" %}
 {% load custom_filters %}
-{% block title %} Privacy Policies {% endblock title %}
+{% block title %} Static Pages {% endblock title %}
 
-{% block page_name %}Privacy Policies{% endblock page_name %}
+{% block page_name %}Static Pages{% endblock page_name %}
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
@@ -23,14 +23,14 @@
         <div class="export col-4">
             <ul>
                 <li class="add-btn me-3">
-                    <a href="{% url 'add_privacy_policy_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                    <a href="{% url "add_static_page_view" %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
                 </li>
-                <li class="ex-li">
+                {% comment %} <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
                         <li><a class="dropdown-item" href="#">PDF</a></li>
                     </ul>
-                </li>
+                </li> {% endcomment %}
             </ul>
         </div>
 
@@ -41,26 +41,27 @@
 <table>
     <tr>
         <th>Sr.No</th>
-        <th>Content</th>
+        <th>Title</th>
         <th>Created By</th>
         <th>Created On</th>
         <th>Action</th>
     </tr>
-    {% for privacy_policy in privacy_policies %}
+    {% for page in static_pages %}
         <tr>
-            <td>{{ forloop.counter0|add:privacy_policies.start_index|default:forloop.counter }}</td>
-            <td>{{ privacy_policy.content|truncate_chars }}</td>
-            <td>{{ privacy_policy.created_by }}</td>
-            <td>{{ privacy_policy.created_on|format_datetime }}</td>
+            <td>{{ forloop.counter0|add:static_pages.start_index|default:forloop.counter }}</td>
+            <td>{{ page.title }}</td>
+            <td>{{ page.created_by }}</td>
+            <td>{{ page.created_on|format_datetime }}</td>
             <td>
-                <a href="{% url "edit_privacy_policy_view" privacy_policy.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
-                <a href="{% url "detailed_privacy_policy_view" privacy_policy.pk %}"> <i class="fa-regular fa-eye me-2"></i></a>
+                <a href="{% url "edit_static_page_view" page.id %}"><i class="fa-solid fa-pen me-2"></i></a>
+                <a href="#"> <i class="fa-regular fa-eye me-2"></i></a>
+                <a href="#"> <i class="fa-solid fa-trash me-2"></i></a>
             </td>
         </tr>
     {% endfor %}
 
 </table>
-{% include "base/pagination.html" with paginated_data=privacy_policies search=search %}
+{% include "base/pagination.html" with paginated_data=static_pages search=search %}
 
 {% endblock table%}
 

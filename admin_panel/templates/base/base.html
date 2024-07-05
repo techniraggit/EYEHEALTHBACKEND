@@ -71,12 +71,14 @@
     {% endblock body %}
 </body>
 <script>
-    $(document).ready(function() {
-        $(document).ajaxStart(function() {
-            $(".overlay, .loader").show();
-        }).ajaxStop(function() {
-            $(".overlay, .loader").hide();
-        });
+   // Show loader when the page starts loading
+    $(window).on("beforeunload", function() {
+        $(".overlay, .loader").show();
+    });
+
+    // Hide loader when window finishes loading
+    $(window).on("load", function() {
+        $(".overlay, .loader").hide();
     });
 </script>
 

@@ -9,7 +9,7 @@ from .views.subscription import *
 from .views import settings
 from .views import eye_exam
 from .views import trash
-from .views import user_agreement
+from .views import static_pages
 from .views import credentials
 from .views import my_profile
 from .views import carousels
@@ -102,20 +102,6 @@ trash_urls = [
     path("dlt-subscription-plan/<uuid:id>", trash.FDeleteSubscriptionPlanView.as_view(), name="force_dlt_subscription_plan_view"),
 ]
 
-privacy_policy_urls = [
-    path("", user_agreement.PrivacyPolicyView.as_view(), name="privacy_policy_view"),
-    path("detailed-privacy-policy/<uuid:id>", user_agreement.PrivacyPolicyDetailedView.as_view(), name="detailed_privacy_policy_view"),
-    path("edit-privacy-policy/<uuid:id>", user_agreement.EditPrivacyPolicyView.as_view(), name="edit_privacy_policy_view"),
-    path("add-privacy-policy", user_agreement.AddPrivacyPolicyView.as_view(), name="add_privacy_policy_view"),
-]
-
-term_and_condition_urls = [
-    path("", user_agreement.TermsAndConditionsView.as_view(), name="term_and_condition_view"),
-    path("detailed-term-and-conditions/<uuid:id>", user_agreement.TermsAndConditionsDetailedView.as_view(), name="detailed_term_and_condition_view"),
-    path("edit-term-and-conditions/<uuid:id>", user_agreement.EditTermsAndConditionsView.as_view(), name="edit_term_and_condition_view"),
-    path("add-term-and-conditions", user_agreement.AddTermsAndConditionsView.as_view(), name="add_term_and_condition_view"),
-]
-
 credentials_urls = [
     path("", credentials.CredentialsView.as_view(), name="credentials_view"),
     path("add-credential", credentials.AddCredentialsView.as_view(), name="add_credentials_view"),
@@ -137,6 +123,11 @@ carousels_urls = [
     path("add-carousel-view", carousels.AddCarouselView.as_view(), name="add_carousel_view"),
     path("edit-carousel-view/<uuid:id>", carousels.EditCarouselView.as_view(), name="edit_carousel_view"),
 ]
+static_pages_url = [
+    path("", static_pages.StaticPageView.as_view(), name="static_pages_view"),
+    path("add-page", static_pages.AddStaticPageView.as_view(), name="add_static_page_view"),
+    path("edit-page/<uuid:id>", static_pages.EditStaticPageView.as_view(), name="edit_static_page_view"),
+]
 
 urlpatterns = [
     path("", include(auth_urls)),
@@ -149,8 +140,7 @@ urlpatterns = [
     path("settings/", include(settings_urls)),
     path("eye/", include(eye_exam_urls)),
     path("trash/", include(trash_urls)),
-    path("privacy-policy/", include(privacy_policy_urls)),
-    path("term-and-conditions/", include(term_and_condition_urls)),
+    path("static-pages/", include(static_pages_url)),
     path("credentials/", include(credentials_urls)),
     path("my-profile/", include(profile_urls)),
     path("carousels/", include(carousels_urls)),

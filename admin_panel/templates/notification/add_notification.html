@@ -44,10 +44,10 @@
                         </div>
                         <div class="users-listing">
                             {% for user in users %}
-                            <div class="d-flex">
-                                <input class="me-2" type="checkbox" name="users" value="{{ user.id }}">
-                                <strong>{{ user.email }}</strong><br>
-                            </div>
+                                <div class="d-flex">
+                                    <input class="me-2" type="checkbox" name="users" value="{{ user.id }}">
+                                    <strong>{{ user.email }}</strong><br>
+                                </div>
                             {% endfor %}
                         </div>
 
@@ -107,6 +107,7 @@
         });
 
         $('#send_notification').on('submit', function (e) {
+            $(".overlay, .loader").show();
             e.preventDefault(); // Prevent the default form submission
 
             // Perform form validation
@@ -148,6 +149,7 @@
                             setTimeout(function () {
                                 window.location.href = "/notification/";
                             }, 2000);
+                            $(".overlay, .loader").hide();
                         } else {
                             showToaster(response.message, "alert-error");
                         }

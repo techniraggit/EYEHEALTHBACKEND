@@ -78,16 +78,16 @@
                         <li><a href="{% url "eye_fatigue_view" %}"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
                     {% endif %}
 
-                    {% if is_privacy_policy %}
+                    {% comment %} {% if is_privacy_policy %}
                         <li><a href="{% url "privacy_policy_view" %}" class="acive-link"><i class="fa-solid fa-file-contract me-2"></i>Privacy Policy</a></li>
                     {% else %}
                         <li><a href="{% url "privacy_policy_view" %}"><i class="fa-solid fa-file-contract me-2"></i>Privacy Policy</a></li>
-                    {% endif %}
+                    {% endif %} {% endcomment %}
 
-                    {% if is_term_and_conditions %}
-                        <li><a href="{% url "term_and_condition_view" %}" class="acive-link"><i class="fa-solid fa-handshake me-2"></i>Terms and Conditions</a></li>
+                    {% if is_static_page %}
+                        <li><a href="{% url "static_pages_view" %}" class="acive-link"><i class="fa-solid fa-newspaper me-2"></i>Flat Pages</a></li>
                     {% else %}
-                        <li><a href="{% url "term_and_condition_view" %}"><i class="fa-solid fa-handshake me-2"></i>Terms and Conditions</a></li>
+                        <li><a href="{% url "static_pages_view" %}"><i class="fa-solid fa-newspaper me-2"></i>Flat Pages</a></li>
                     {% endif %}
                     
 

@@ -32,7 +32,7 @@
                         value="{{ offer_obj.expiry_date|date:'Y-m-d' }}" class="form-control" />
                 </div>
 
-                <div class="col-md-4 f-name mt-4">
+                <div class="col-md-4 f-name mt-4 select-wrapp">
                     <label for="status">Status <span id="required_star">*</span></label>
                     <select name="status" id="status" class="form-control">
                         <option value="active" {% if offer_obj.status == 'active' %}selected{% endif %}>Active</option>
@@ -71,6 +71,11 @@
         }
 
         $(document).ready(function () {
+            $('#status').select2({
+                placeholder: "Select Status",
+                minimumResultsForSearch: Infinity
+            });
+
             // Handle form submission
             $("#addOfferForm").submit(function (event) {
                 event.preventDefault(); // Prevent the form from submitting via the browser

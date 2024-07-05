@@ -5,7 +5,7 @@ from api.views.subscription import *
 from api.views.eye_test_apis import *
 from api.views import eye_fatigue_apis
 from api.views.strip_apis import *
-from api.views import user_agreements
+from api.views import static_pages
 from api.views import razor_pay_apis
 
 accounts = [
@@ -85,8 +85,8 @@ fatigue_apis = [
     path("take-user-selfie", eye_fatigue_apis.TakeUserSelfie.as_view()),
 ]
 
-agreement_urls = [
-    path("", user_agreements.UserAgreementView.as_view()),
+static_pages_urls = [
+    path("", static_pages.StaticPagesView.as_view()),
 ]
 
 urlpatterns = (
@@ -97,6 +97,6 @@ urlpatterns = (
         path("eye/", include(eye_health_apis)),
         path("payment/", include(strip_urls)),
         path("fatigue/", include(fatigue_apis)),
-        path("agreement/", include(agreement_urls)),
+        path("static-pages/", include(static_pages_urls)),
     ]
 )
