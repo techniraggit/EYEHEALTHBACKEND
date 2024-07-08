@@ -166,7 +166,8 @@
                     }else{
                         $("#red_dot").css("display", "none");
                     }
-                    console.log("response.status :: ", response.status)
+                    var notificationIdSelector = "#"+notification_id
+                    $(notificationIdSelector).css("display", "none");
                 }else{
                     console.log("response.status :: ", response.status)
                 }
@@ -175,10 +176,6 @@
     }
 
     $(document).ready(function() {
-        $('.btn-text-notify').on('click', function() {
-            console.log("Clicked...")
-        });
-
         $.ajax({
             url: "{% url 'my_notification_view' %}",
             type: 'GET',
@@ -192,14 +189,18 @@
                         $("#red_dot").css("display", "none");
                     }
 
+                    var blue_dot_css = "";
+                    if (i.is_read) {
+                        blue_dot_css = "display: none;";
+                    }
+
                     return `
                     <div class="notification-main mb-3">
                         <div class="card-header-main">
                             <h5 class="mb-0">
                                 <button class="btn btn-link btn-text-notify" type="button" onclick="mark_as_read('${i.id}')" data-toggle="collapse" data-id="${i.id}" data-target="#collapseMessage${i.id}" aria-expanded="true" aria-controls="collapseMessage">
-                                  
                                     ${i.title} <p>${i.created_on}</p>
-                                    <span class="blue-dot">dot</span>
+                                    <span class="blue-dot" id="${i.id}" style="${blue_dot_css}">dot</span>
                                 </button>
                             </h5>
                             
