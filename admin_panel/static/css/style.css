@@ -1390,15 +1390,21 @@ img#profile_image_id {
     color: black !important;
     outline: none;
     border: none;
+    width: 100%;
 }
-
 .card-header-main {
-    padding: .5rem 1rem;
+    /* padding: .5rem 1rem; */
     margin-bottom: 0;
     background-color: rgba(0,0,0,.03);
     /* border-bottom: 1px solid rgba(0,0,0,.125); */
 }
 
+button.btn.btn-link.btn-text-notify.collapsed {
+    width: 100%;
+}
+button.btn.btn-link.btn-text-notify {
+    width: 100%;
+}
 .notify-icon {
     color: black;
     position: relative;
@@ -1408,6 +1414,13 @@ img#profile_image_id {
 }
 .notify-icon:hover {
     color: black;
+}
+
+span.blue-dot {
+    background-color: blue;
+    color: blue;
+    font-size: 5px;
+    border-radius: 25px;
 }
 
 span.notify-dot {

@@ -197,9 +197,12 @@
                         <div class="card-header-main">
                             <h5 class="mb-0">
                                 <button class="btn btn-link btn-text-notify" type="button" onclick="mark_as_read('${i.id}')" data-toggle="collapse" data-id="${i.id}" data-target="#collapseMessage${i.id}" aria-expanded="true" aria-controls="collapseMessage">
+                                  
                                     ${i.title} <p>${i.created_on}</p>
+                                    <span class="blue-dot">dot</span>
                                 </button>
                             </h5>
+                            
                         </div>
             
                         <div id="collapseMessage${i.id}" class="collapse">
