@@ -156,21 +156,24 @@
             success: function(response){
                 var newItems = $.map(response.data, function(i) {
                     return `
-                    <div class="card-header-main">
-                        <h5 class="mb-0">
-                            <button class="btn btn-link btn-text-notify" type="button" data-toggle="collapse" data-target="#collapseMessage${i.id}" aria-expanded="true" aria-controls="collapseMessage">
-                                ${i.title}
-                                <span><strong>${i.time_since_creation} ago</strong></span>
-                            </button>
-                            
-                        </h5>
-                    </div>
-        
-                    <div id="collapseMessage${i.id}" class="collapse">
-                        <div class="card-body">
-                            ${i.message}
+                    <div class="notification-main mb-3">
+                        <div class="card-header-main">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link btn-text-notify" type="button" data-toggle="collapse" data-target="#collapseMessage${i.id}" aria-expanded="true" aria-controls="collapseMessage">
+                                    ${i.title}
+                                    <span><strong>${i.time_since_creation} ago</strong></span>
+                                </button>
+                                
+                            </h5>
+                        </div>
+            
+                        <div id="collapseMessage${i.id}" class="collapse">
+                            <div class="card-body">
+                                ${i.message}
+                            </div>
                         </div>
                     </div>
+                   
                     `
                 });
                 $(".card-notification").append(newItems);
