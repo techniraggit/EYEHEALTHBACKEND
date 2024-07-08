@@ -20,6 +20,7 @@ class MyNotificationView(AdminLoginView):
     def get(self, request):
         try:
             notifications = UserPushNotification.objects.filter(user=request.user).order_by("-created_on")
+            is_read_available = notifications.filter(is_read=False).exists()
             data = []
             for notification in notifications:
                 data.append({
@@ -33,6 +34,7 @@ class MyNotificationView(AdminLoginView):
             return JsonResponse({
                 "status": True,
                 "data": data,
+                "is_read_available": is_read_available,
             })
         except Exception as e:
             return JsonResponse({
@@ -40,6 +42,28 @@ class MyNotificationView(AdminLoginView):
                 "message": str(e),
             })
 
+class MarkThisRead(AdminLoginView):
+    def post(self, request):
+        id = request.POST.get("id")
+        if not id:
+            return JsonResponse({
+                "status": False,
+                "message": "Invalid notification id",
+            })
+        try:
+            notification_obj = UserPushNotification.objects.get(id=id)
+        except:
+            return JsonResponse({
+                "status": False,
+                "message": "Notification does not exist",
+            })
+        notification_obj.is_read = True
+        notification_obj.save()
+        is_read_available = UserPushNotification.objects.filter(user=request.user, is_read=False).exists()
+        return JsonResponse({
+            "status": True,
+            "is_read_available": is_read_available
+        })
 
 class NotificationView(AdminLoginView):
     def get(self, request):

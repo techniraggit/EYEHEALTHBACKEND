@@ -58,6 +58,7 @@ prescription_urls = [
 
 notification_urls = [
     path("my-notification", MyNotificationView.as_view(), name="my_notification_view"),
+    path("mark-this-read", MarkThisRead.as_view(), name="mark_this_read_view"),
     path("", NotificationView.as_view(), name="notification_view"),
     path("notification-detailed/<uuid:id>", NotificationDetailedView.as_view(), name="notification_detailed_view"),
     path("add-notification", NewNotificationView.as_view(), name="add_notification_view"),

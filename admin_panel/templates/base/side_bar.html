@@ -117,7 +117,7 @@
 
             <div class="col-3 root-main">
                 <a class="notify-icon me-3" href="#">
-                    <i class="fa-regular fa-bell " id="notification-bell"></i><span class="notify-dot">02</span>
+                    <i class="fa-regular fa-bell " id="notification-bell"></i><span class="notify-dot" id="red_dot"></span>
                 </a>  
                 <div class="login-wrap">
                     <img src="{% if request.user.image %}{{request.user.image.url}}{% else %}{% static 'img/default_user_icon.png' %}{% endif %}" alt="User Icon" class="profile-image" id="profileImage" />
@@ -149,21 +149,56 @@
     </div>
 </div>
 <script>
+    function mark_as_read(notification_id) {
+        console.log("notification_id :: ", notification_id)
+        const URL = '{% url "mark_this_read_view" %}'
+        $.ajax({
+            url: URL,
+            type: 'POST',
+            data: {
+                "id": notification_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            },
+            success: function(response){
+                if (response.status){
+                    if(response.is_read_available){
+                        $("#red_dot").css("display", "block");
+                    }else{
+                        $("#red_dot").css("display", "none");
+                    }
+                    console.log("response.status :: ", response.status)
+                }else{
+                    console.log("response.status :: ", response.status)
+                }
+            }
+        });
+    }
+
     $(document).ready(function() {
+        $('.btn-text-notify').on('click', function() {
+            console.log("Clicked...")
+        });
+
         $.ajax({
             url: "{% url 'my_notification_view' %}",
             type: 'GET',
             success: function(response){
                 var newItems = $.map(response.data, function(i) {
+                    $(".card-notification").empty();
+
+                    if (response.is_read_available){
+                        $("#red_dot").css("display", "block");
+                    }else{
+                        $("#red_dot").css("display", "none");
+                    }
+
                     return `
                     <div class="notification-main mb-3">
                         <div class="card-header-main">
                             <h5 class="mb-0">
-                                <button class="btn btn-link btn-text-notify" type="button" data-toggle="collapse" data-target="#collapseMessage${i.id}" aria-expanded="true" aria-controls="collapseMessage">
-                                    ${i.title}
-                                    <span><strong>${i.time_since_creation} ago</strong></span>
+                                <button class="btn btn-link btn-text-notify" type="button" onclick="mark_as_read('${i.id}')" data-toggle="collapse" data-id="${i.id}" data-target="#collapseMessage${i.id}" aria-expanded="true" aria-controls="collapseMessage">
+                                    ${i.title} <p>${i.created_on}</p>
                                 </button>
-                                
                             </h5>
                         </div>
             
@@ -173,7 +208,6 @@
                             </div>
                         </div>
                     </div>
-                   
                     `
                 });
                 $(".card-notification").append(newItems);
