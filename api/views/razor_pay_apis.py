@@ -4,7 +4,7 @@ from django.conf import settings
 import razorpay
 from rest_framework.views import APIView
 from core.logs import Logger
-from api.models.subscription import TransactionDetails, UserModel, SubscriptionPlan, UserSubscription
+from api.models.subscription import UserModel, SubscriptionPlan, UserSubscription
 from django.utils import timezone
 
 logger = Logger("razor_pay.log")
