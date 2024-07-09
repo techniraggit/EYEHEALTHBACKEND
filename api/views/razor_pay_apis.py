@@ -48,5 +48,6 @@ class RazorPayWebHook(APIView):
             logger.error(f"JSON Decode Error: {str(e)}")
             return HttpResponse(status=400)
         except Exception as e:
+            raise e
             logger.error(f"Exception: {str(e)}")
             return HttpResponse(status=400)
