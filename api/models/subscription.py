@@ -1,3 +1,7 @@
+import requests
+import os
+from requests.auth import HTTPBasicAuth
+from utilities.utils import time_localize
 from .base import BaseModel, SoftDeleteMixin, SoftDeleteManager
 from django.db import models
 from .accounts import UserModel
@@ -34,7 +38,7 @@ class SubscriptionPlan(BaseModel, SoftDeleteMixin):
             duration=self.duration,
         )
 
-from utilities.utils import time_localize
+
 class UserSubscription(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     payment_status_choices = (
@@ -51,9 +55,8 @@ class UserSubscription(BaseModel):
     is_active = models.BooleanField(default=False)
     payment_method = models.CharField(max_length=30)
     paid_amount = models.FloatField()
-    payment_status = models.CharField(
-        max_length=50, choices=payment_status_choices, default="pending"
-    )
+    payment_status = models.CharField(max_length=50, default="")
+    payment_id = models.CharField(max_length=255, null=True, blank=True)
 
     def to_json(self):
         return dict(
@@ -67,3 +70,13 @@ class UserSubscription(BaseModel):
             paid_amount=self.paid_amount,
             payment_status=self.payment_status,
         )
+
+    def get_more_details(self) -> dict:
+        URL = f"https://api.razorpay.com/v1/payments/{self.payment_id}"
+        username = os.getenv("RAZOR_PAY_KEY_ID")
+        password = os.getenv("RAZOR_PAY_KEY_SECRET")
+        try:
+            response = requests.get(URL, auth=HTTPBasicAuth(username, password))
+            return response.json()
+        except Exception as e:
+            return {"error": str(e)}

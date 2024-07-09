@@ -4,6 +4,8 @@ from django.conf import settings
 import razorpay
 from rest_framework.views import APIView
 from core.logs import Logger
+from api.models.subscription import TransactionDetails, UserModel, SubscriptionPlan, UserSubscription
+from django.utils import timezone
 
 logger = Logger("razor_pay.log")
 
@@ -37,6 +39,40 @@ class RazorPayWebHook(APIView):
                 if event == "payment.authorized":
                     logger.info("Payment authorized")
                     logger.info(f"Data: {data}")
+
+                    entity = data["payload"]["payment"]["entity"]
+                    user_id = entity["notes"]["user_id"]
+                    plan_id = entity["notes"]["plan_id"]
+                    paid_amount = entity["amount"] / 100
+                    payment_method = entity["method"]
+                    payment_id = entity["id"]
+                    payment_status = entity["payment_status"]
+
+                    log_message = f"""
+                    user_id = {user_id}
+                    plan_id = {plan_id}
+                    paid_amount = {paid_amount}
+                    payment_method = {payment_method}
+                    payment_id = {payment_id}
+                    payment_status = {payment_status}
+                    """
+
+                    logger.info(log_message)
+
+                    user_obj = UserModel.objects.get(id=user_id)
+                    plan_obj = SubscriptionPlan.objects.get(id=plan_id)
+                    end_date = timezone.now() + timezone.timedelta(days=plan_obj.duration)
+
+                    UserSubscription.objects.create(
+                        user=user_obj,
+                        plan=plan_obj,
+                        end_date=end_date,
+                        is_active=True,
+                        payment_method=payment_method,
+                        paid_amount=paid_amount,
+                        payment_id = payment_id,
+                        payment_status=payment_status,
+                    )
                 return HttpResponse(status=200)
 
             else:
