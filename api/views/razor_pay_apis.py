@@ -46,7 +46,7 @@ class RazorPayWebHook(APIView):
                     paid_amount = entity["amount"] / 100
                     payment_method = entity["method"]
                     payment_id = entity["id"]
-                    payment_status = entity["payment_status"]
+                    payment_status = entity["status"]
 
                     logger.warning(f"user_id == {user_id}")
                     logger.warning(f"plan_id == {plan_id}")
