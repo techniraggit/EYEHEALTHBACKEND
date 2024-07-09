@@ -48,16 +48,12 @@ class RazorPayWebHook(APIView):
                     payment_id = entity["id"]
                     payment_status = entity["payment_status"]
 
-                    log_message = f"""
-                    user_id = {user_id}
-                    plan_id = {plan_id}
-                    paid_amount = {paid_amount}
-                    payment_method = {payment_method}
-                    payment_id = {payment_id}
-                    payment_status = {payment_status}
-                    """
-
-                    logger.info(log_message)
+                    logger.warning(f"user_id == {user_id}")
+                    logger.warning(f"plan_id == {plan_id}")
+                    logger.warning(f"paid_amount == {paid_amount}")
+                    logger.warning(f"payment_method == {payment_method}")
+                    logger.warning(f"payment_id == {payment_id}")
+                    logger.warning(f"payment_status == {payment_status}")
 
                     user_obj = UserModel.objects.get(id=user_id)
                     plan_obj = SubscriptionPlan.objects.get(id=plan_id)
