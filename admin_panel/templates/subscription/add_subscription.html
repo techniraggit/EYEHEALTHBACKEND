@@ -19,7 +19,7 @@
                     <span id="price_message" style="color: red; font-weight: bold"></span>
                 </div>
 
-                <div class="col-md-4 f-name mt-4">
+                <div class="col-md-4 f-name mt-4 select-wrapp">
                     <label for="plan_type">Plan Type <span id="required_star">*</span></label>
                     <select name="plan_type" id="plan_type" class="form-control">
                         <option value="" selected>Select Plan Type</option>
@@ -69,6 +69,11 @@
 
 <script>
     $(document).ready(function () {
+        $('#plan_type').select2({
+            placeholder: "Select Plan Type",
+            minimumResultsForSearch: Infinity
+        });
+
         CKEDITOR.replace("description", {
             toolbar: [{ name: "paragraph", items: ["BulletedList"] }],
             startupFocus: true,
