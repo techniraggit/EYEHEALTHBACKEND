@@ -9,6 +9,14 @@ from django.utils import timezone
 
 logger = Logger("razor_pay.log")
 
+payment_status_map = dict(
+    authorized = "success",
+    captured = "success",
+    failed = "failed",
+    refunded = "failed",
+    expired = "failed",
+    processing = "pending",
+)
 
 class RazorPayWebHook(APIView):
     def post(self, request):
@@ -46,7 +54,7 @@ class RazorPayWebHook(APIView):
                     paid_amount = entity["amount"] / 100
                     payment_method = entity["method"]
                     payment_id = entity["id"]
-                    payment_status = entity["status"]
+                    payment_status = payment_status_map.get(entity["status"])
 
                     logger.warning(f"user_id == {user_id}")
                     logger.warning(f"plan_id == {plan_id}")
