@@ -36,7 +36,7 @@ class RazorPayWebHook(APIView):
 
                 if event == "payment.authorized":
                     logger.info("Payment authorized")
-                    logger.info(f"Event: {event}")
+                    logger.info(f"Data: {data}")
                 return HttpResponse(status=200)
 
             else:
