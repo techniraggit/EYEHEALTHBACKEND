@@ -107,7 +107,6 @@
         });
 
         $('#send_notification').on('submit', function (e) {
-            $(".overlay, .loader").show();
             e.preventDefault(); // Prevent the default form submission
 
             // Perform form validation
@@ -133,6 +132,7 @@
 
             if (isValid) {
                 var formData = new FormData(this);
+                $(".overlay, .loader").show();
 
                 $.ajax({
                     url: "{% url 'add_notification_view' %}",
