@@ -11,7 +11,8 @@ logger = Logger("razor_pay.log")
 class RazorPayWebHook(APIView):
     def post(self, request):
         try:
-            data = json.loads(request.body)
+            body = request.body.decode("utf-8")
+            data = json.loads(body)
             # Create Razorpay client
             client = razorpay.Client(
                 auth=(settings.RAZOR_PAY_KEY_ID, settings.RAZOR_PAY_KEY_SECRET)
@@ -19,13 +20,14 @@ class RazorPayWebHook(APIView):
 
             # Verify the webhook signature
             signature = request.headers.get("X-Razorpay-Signature")
+
             if not signature:
                 logger.warning("No signature found in headers")
                 return HttpResponse(status=400)
             logger.info(f"Signature: {signature}")
 
             verified = client.utility.verify_webhook_signature(
-                request.body, signature, settings.RAZOR_PAY_WEBHOOK_SECRET
+                body, signature, settings.RAZOR_PAY_WEBHOOK_SECRET
             )
 
             if verified:
@@ -41,12 +43,15 @@ class RazorPayWebHook(APIView):
 
                 # Handle other events if necessary
                 return HttpResponse(status=200)
+
             else:
                 logger.warning("Signature verification failed")
                 return HttpResponse(status=400)
+
         except json.JSONDecodeError as e:
             logger.error(f"JSON Decode Error: {str(e)}")
             return HttpResponse(status=400)
+
         except Exception as e:
             raise e
             logger.error(f"Exception: {str(e)}")
