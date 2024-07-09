@@ -32,17 +32,11 @@ class RazorPayWebHook(APIView):
             )
 
             if verified:
-                # Process the webhook payload
                 event = data.get("event")
-                logger.info(f"Event: {event}")
 
-                if event == "payment.captured":
-                    # Handle the payment captured event
-                    print("Payment Captured")
-                    logger.info("Payment Captured")
-                    # Add your logic here
-
-                # Handle other events if necessary
+                if event == "payment.authorized":
+                    logger.info("Payment authorized")
+                    logger.info(f"Event: {event}")
                 return HttpResponse(status=200)
 
             else:
