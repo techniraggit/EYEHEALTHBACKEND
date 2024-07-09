@@ -11,7 +11,7 @@ logger = Logger("razor_pay.log")
 class RazorPayWebHook(APIView):
     def post(self, request):
         try:
-            body = request.body.decode("utf-8")
+            body = request.body#.decode("utf-8")
             data = json.loads(body)
             # Create Razorpay client
             client = razorpay.Client(
