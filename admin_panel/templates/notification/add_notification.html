@@ -44,10 +44,10 @@
                         </div>
                         <div class="users-listing">
                             {% for user in users %}
-                            <div class="d-flex">
-                                <input class="me-2" type="checkbox" name="users" value="{{ user.id }}">
-                                <strong>{{ user.email }}</strong><br>
-                            </div>
+                                <div class="d-flex">
+                                    <input class="me-2" type="checkbox" name="users" value="{{ user.id }}">
+                                    <strong>{{ user.email }}</strong><br>
+                                </div>
                             {% endfor %}
                         </div>
 
@@ -132,6 +132,7 @@
 
             if (isValid) {
                 var formData = new FormData(this);
+                $(".overlay, .loader").show();
 
                 $.ajax({
                     url: "{% url 'add_notification_view' %}",
@@ -148,6 +149,7 @@
                             setTimeout(function () {
                                 window.location.href = "/notification/";
                             }, 2000);
+                            $(".overlay, .loader").hide();
                         } else {
                             showToaster(response.message, "alert-error");
                         }
@@ -159,6 +161,7 @@
                 });
             }
         });
-    });
+
+    }); //document.ready
 </script>
 {% endblock table %}

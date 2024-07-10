@@ -6,7 +6,7 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-        <div class="col-8">
+        <div class="col-9">
             <div class="input-wrapp">
                 <form action="{% url 'offers_view' %}" method="get" id="searchForm">
                     <div>
@@ -14,15 +14,32 @@
                             placeholder="Search by Title, Description, and Status"
                             value="{% if search %}{{ search }}{% endif %}">
                     </div>
-                    <div>
-                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                        <button type="button" id="clearButton">Clear</button>
+                    <div class="filter-dropdown">
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class=" filter-dropdown select-wrapp">
+                        <select name="offer_status_filter" id="offer_status_filter" placeholder="Filter">
+                            <option value="" selected>Payment Status</option>
+                            <option value="active" {% if offer_status_filter == 'active' %}selected{% endif %}>active</option>
+                            <option value="inactive" {% if offer_status_filter == 'inactive' %}selected{% endif %}>inactive</option>
+                            <option value="expired" {% if offer_status_filter == 'expired' %}selected{% endif %}>expired</option>
+                        </select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
-
-        <div class="export col-4">
+        <div class="export col-3">
             <ul>
                 <li class="add-btn me-3">
                     <a href="{% url 'add_offer_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
@@ -30,13 +47,12 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url 'offer_export_view' 'excel' %}">Excel</a></li>
-                        <li><a class="dropdown-item" href="{% url 'offer_export_view' 'csv' %}">CSV</a></li>
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url 'offer_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url 'offer_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
-
     </div>
 </div>
 {% endblock nav_bar %}
@@ -50,6 +66,7 @@
         <th>Thumbnail</th>
         <th>Status</th>
         <th>Required Points</th>
+        <th>Created  On</th>
         <th>Action</th>
     </tr>
     {% for offer in paginated_offers %}
@@ -61,6 +78,7 @@
         <td><img class="thumbnail-img" src="{{ offer.image.url }}" alt="" height="100" width="80"></td>
         <td class="{{ offer.status }}">{{ offer.status|title }}</td>
         <td>{{ offer.required_points }}</td>
+        <td>{{ offer.created_on|format_datetime }}</td>
         <td>
             <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
             <a href="{% url "edit_offer_view" offer.offer_id %}"><i class="fa-solid fa-pen me-2"></i></a>
@@ -109,9 +127,31 @@
 
 <script>
     $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            console.log(params);
+            $('#exportExcel').attr('href', `{% url 'offer_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'offer_export_view' 'csv' %}?` + params);
+        }
+
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
+        }).attr("readonly", "readonly");
+
+        $('#offer_status_filter').select2({
+            placeholder: "Payment Status",
+            minimumResultsForSearch: Infinity
+        });
+
         // Clear the search input value when the clear button is clicked
         $('#clearButton').click(function () {
             $('#searchInput').val('');
+            $('input[type="text"]').val('');
+            $('select[name="offer_status_filter"]').val('');
             $('#searchForm').submit();
         });
 
@@ -185,7 +225,7 @@
             event.preventDefault();
             $('#offerDetailModal').modal('hide');
         });
-    });
 
+    });//document.ready
 </script>
 {% endblock table%}

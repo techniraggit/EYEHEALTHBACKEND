@@ -1,5 +1,6 @@
 {% extends "base/base.html" %}
 {% load static %}
+{% load custom_filters %}
 {% block title %}{% endblock title %}
 {% block body %}
 <div class="mainwrapper">
@@ -8,143 +9,253 @@
             <h5><a href="/" style="color: rgb(38, 50, 56);">Admin</a></h5>
             <div class="side-list">
                 <ul>
-                    <li><a href="/backend"><i class="fa-solid fa-database me-2"></i> Developer Admin</a></li>
+                    {% if request.user.is_superuser %}
+                        <li><a href="/backend"><i class="fa-solid fa-database me-2"></i> Developer Admin</a></li>
+                    {% endif %}
                     {% if is_home %}
-                    <li><a href="/" class="acive-link"><i class="fa-solid fa-house me-2"></i>Home</a></li>
+                        <li><a href="/" class="acive-link"><i class="fa-solid fa-house me-2"></i>Home</a></li>
                     {% else %}
-                    <li><a href="/"><i class="fa-solid fa-house me-2"></i>Home</a></li>
+                        <li><a href="/"><i class="fa-solid fa-house me-2"></i>Home</a></li>
                     {% endif %}
 
                     {% if is_user %}
-                    <li><a href="{% url "users_view" %}" class="acive-link"><i class="fa-solid fa-user me-2"></i>User</a></li>
+                        <li><a href="{% url "users_view" %}" class="acive-link"><i class="fa-solid fa-user me-2"></i>User</a></li>
                     {% else %}
-                    <li><a href="{% url "users_view" %}"><i class="fa-solid fa-user me-2"></i>User</a></li>
+                        <li><a href="{% url "users_view" %}"><i class="fa-solid fa-user me-2"></i>User</a></li>
                     {% endif %}
 
                     {% if is_offer %}
-                    <li><a href="{% url "offers_view" %}" class="acive-link"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
+                        <li><a href="{% url "offers_view" %}" class="acive-link"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
                     {% else %}
-                    <li><a href="{% url "offers_view" %}"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
+                        <li><a href="{% url "offers_view" %}"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
                     {% endif %}
 
                     {% if is_prescription %}
-                    <li><a href="{% url "prescription_view" %}" class="acive-link"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
+                        <li><a href="{% url "prescription_view" %}" class="acive-link"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
                     {% else %}
-                    <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
+                        <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
                     {% endif %}
 
                     {% if is_notification %}
-                    <li><a href="{% url "notification_view" %}" class="acive-link"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
+                        <li><a href="{% url "notification_view" %}" class="acive-link"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
                     {% else %}
-                    <li><a href="{% url "notification_view" %}"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
+                        <li><a href="{% url "notification_view" %}"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
                     {% endif %}
 
                     {% if is_redeemed_offers %}
-                    <li><a href="{% url "redeemed_offers_view" %}" class="acive-link"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
+                        <li><a href="{% url "redeemed_offers_view" %}" class="acive-link"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
                     {% else %}
-                    <li><a href="{% url "redeemed_offers_view" %}"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
+                        <li><a href="{% url "redeemed_offers_view" %}"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
+                    {% endif %}
+
+                    {% if is_carousel %}
+                        <li><a href="{% url "carousels_view" %}" class="acive-link"><i class="fa-solid fa-mountain-sun me-2"></i>Carousels</a></li>
+                    {% else %}
+                        <li><a href="{% url "carousels_view" %}"><i class="fa-solid fa-mountain-sun me-2"></i>Carousels</a></li>
                     {% endif %}
 
                     {% if is_subscription %}
-                    <li><a href="{% url "subscription_view" %}" class="acive-link"><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
+                        <li><a href="{% url "subscription_view" %}" class="acive-link"><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
                     {% else %}
-                    <li><a href="{% url "subscription_view" %}"><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
+                        <li><a href="{% url "subscription_view" %}"><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
                     {% endif %}
 
                     {% if is_user_subscription %}
-                    <li><a href="{% url "user_subscription_plans_view" %}" class="acive-link"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
+                        <li><a href="{% url "user_subscription_plans_view" %}" class="acive-link"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
                     {% else %}
-                    <li><a href="{% url "user_subscription_plans_view" %}"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
+                        <li><a href="{% url "user_subscription_plans_view" %}"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
                     {% endif %}
 
                     {% if is_eye_exam %}
-                    <li><a href="{% url "eye_test_view" %}" class="acive-link"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
+                        <li><a href="{% url "eye_test_view" %}" class="acive-link"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
                     {% else %}
-                    <li><a href="{% url "eye_test_view" %}"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
+                        <li><a href="{% url "eye_test_view" %}"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
                     {% endif %}
                     
                     {% if is_eye_fatigue %}
-                    <li><a href="{% url "eye_fatigue_view" %}" class="acive-link"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
+                        <li><a href="{% url "eye_fatigue_view" %}" class="acive-link"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
                     {% else %}
-                    <li><a href="{% url "eye_fatigue_view" %}"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
+                        <li><a href="{% url "eye_fatigue_view" %}"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
                     {% endif %}
 
-                    {% if is_privacy_policy %}
-                    <li><a href="{% url "privacy_policy_view" %}" class="acive-link"><i class="fa-solid fa-file-contract me-2"></i>Privacy Policy</a></li>
+                    {% if is_static_page %}
+                        <li><a href="{% url "static_pages_view" %}" class="acive-link"><i class="fa-solid fa-newspaper me-2"></i>Flat Pages</a></li>
                     {% else %}
-                    <li><a href="{% url "privacy_policy_view" %}"><i class="fa-solid fa-file-contract me-2"></i>Privacy Policy</a></li>
-                    {% endif %}
-
-                    {% if is_term_and_conditions %}
-                    <li><a href="{% url "term_and_condition_view" %}" class="acive-link"><i class="fa-solid fa-handshake me-2"></i>Terms and Conditions</a></li>
-                    {% else %}
-                    <li><a href="{% url "term_and_condition_view" %}"><i class="fa-solid fa-handshake me-2"></i>Terms and Conditions</a></li>
+                        <li><a href="{% url "static_pages_view" %}"><i class="fa-solid fa-newspaper me-2"></i>Flat Pages</a></li>
                     {% endif %}
                     
 
                     {% if is_settings %}
-                    <li><a href="{% url "settings_view" %}" class="acive-link"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
+                        <li><a href="{% url "settings_view" %}" class="acive-link"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
                     {% else %}
-                    <li><a href="{% url "settings_view" %}"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
+                        <li><a href="{% url "settings_view" %}"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
                     {% endif %}
 
                     {% if is_trash %}
-                    <li><a href="{% url "trash_view" %}" class="acive-link"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
+                        <li><a href="{% url "trash_view" %}" class="acive-link"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
                     {% else %}
-                    <li><a href="{% url "trash_view" %}"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
+                        <li><a href="{% url "trash_view" %}"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
                     {% endif %}
 
+                    {% if request.user.is_superuser %}
+                        {% if is_credentials %}
+                            <li><a href="{% url "credentials_view" %}" class="acive-link"><i class="fa-solid fa-key me-2"></i>Credentials</a></li>
+                        {% else %}
+                            <li><a href="{% url "credentials_view" %}"><i class="fa-solid fa-key me-2"></i>Credentials</a></li>
+                        {% endif %}
+                    {% endif %}
                 </ul>
-                <div class="logout-wrap">
-                    <a href="{% url "logout_view" %}"><i class="fa-solid fa-right-from-bracket me-2"></i>Logout</a>
-                </div>
             </div>
         </div>
     </div>
     <div class="right-bar">
         <header class="header-main row">
             <div class=" header-heading col-9">
-                {% block page_name %}-----{% endblock page_name %}
+                {% block page_name %}
+                {% endblock page_name %}
             </div>
-            <div class="col-3">
+
+            <div class="col-3 root-main">
+                <a class="notify-icon me-3" href="#">
+                    <i class="fa-regular fa-bell " id="notification-bell"></i><span class="notify-dot" id="red_dot"></span>
+                </a>  
                 <div class="login-wrap">
-                    <img src="{% static "img/default_user_icon.png" %}" />
+                    <img src="{% if request.user.image %}{{request.user.image.url}}{% else %}{% static 'img/default_user_icon.png' %}{% endif %}" alt="User Icon" class="profile-image" id="profileImage" />
                     <span class="ms-3">{{ request.user.first_name }} {{ request.user.last_name }}</span>
+                    <div class="popup-menu" id="popupMenu">
+                        <a href="{% url "my_profile_view" %}"><i class="fa-solid fa-user me-2"></i>Profile</a>
+                        <a href="{% url "logout_view" %}"><i class="fa-solid fa-arrow-right-from-bracket me-2"></i>Logout</a>
+                    </div>
+                </div>
+            </div>
+            <div class="notification-screen" id="notification-screen">
+                <div class="notification-top">
+                    <h3>Notifications</h3> <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="notification-data">
+                    <div class="card-notification-main mt-2">
+                        <div class="card-notification">
+                            <!-- making ajax request to get data here -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </header>
         {% block nav_bar %}{% endblock nav_bar %}
-        {% comment %} <div class="bottomwrap">
-            <div class="search-box row">
-                <div class="col-5">
-                    <div class="input-wrapp">
-                        <input type="text" placeholder="Search by names,type and value">
-                        <!-- <button>Search</button> -->
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                    </div>
-                </div>
-                <div class="col-3"></div>
-                <div class="export col-4">
-                    <ul>
-                        <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button>
-                            <div class="drop-downmenu">
-                        <li class="ex-li"><a class="export-btn" href="#">Export<i
-                                    class="fa-solid fa-file-export ms-2"></i></a>
-                            <ul class="dropdown-content">
-                                <li class="mb-1"><a href="#">PDF</a></li>
-                                <li class="mb-1"><a href="#">Excel</a></li>
-                                <li><a href="#">CSV</a></li>
-                            </ul>
-                        </li>
-                    </ul>
-
-                </div>
-            </div>
-        </div> {% endcomment %}
         <div class="right-table">
             {% block table %}
             {% endblock table %}
         </div>
     </div>
 </div>
+<script>
+    function mark_as_read(notification_id) {
+        console.log("notification_id :: ", notification_id)
+        const URL = '{% url "mark_this_read_view" %}'
+        $.ajax({
+            url: URL,
+            type: 'POST',
+            data: {
+                "id": notification_id,
+                "csrfmiddlewaretoken": '{{ csrf_token }}'
+            },
+            success: function(response){
+                if (response.status){
+                    if(response.is_read_available){
+                        $("#red_dot").css("display", "block");
+                    }else{
+                        $("#red_dot").css("display", "none");
+                    }
+                    var notificationIdSelector = "#"+notification_id
+                    $(notificationIdSelector).css("display", "none");
+                }else{
+                    console.log("response.status :: ", response.status)
+                }
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $.ajax({
+            url: "{% url 'my_notification_view' %}",
+            type: 'GET',
+            success: function(response){
+
+                if (response.is_read_available){
+                    $("#red_dot").css("display", "block");
+                }else{
+                    $("#red_dot").css("display", "none");
+                }
+
+                var newItems = $.map(response.data, function(i) {
+                    $(".card-notification").empty();
+
+
+                    var blue_dot_css = "";
+                    if (i.is_read) {
+                        blue_dot_css = "display: none;";
+                    }
+
+                    return `
+                    <div class="notification-main mb-3">
+                        <div class="card-header-main">
+                            <h5 class="mb-0">
+                                <button class="btn btn-link btn-text-notify" type="button" onclick="mark_as_read('${i.id}')" data-toggle="collapse" data-id="${i.id}" data-target="#collapseMessage${i.id}" aria-expanded="true" aria-controls="collapseMessage">
+                                    ${i.title} <p>${i.created_on}</p>
+                                    <span class="blue-dot" id="${i.id}" style="${blue_dot_css}">dot</span>
+                                </button>
+                            </h5>
+                            
+                        </div>
+            
+                        <div id="collapseMessage${i.id}" class="collapse">
+                            <div class="card-body">
+                                ${i.message}
+                            </div>
+                        </div>
+                    </div>
+                    `
+                });
+                $(".card-notification").append(newItems);
+            },
+            error: function(xhr, status, error){
+                alert('An error occurred while fetch notifications.');
+            }
+        });
+
+        const $notificationBell = $('#notification-bell');
+        const $notificationScreen = $('#notification-screen');
+    
+        $notificationBell.on('click', function() {
+            if ($notificationScreen.css('display') === 'block') {
+                $notificationScreen.css('display', 'none');
+            } else {
+                $notificationScreen.css('display', 'block');
+            }
+        });
+
+        $(".fa-xmark").on('click', function(){
+            $notificationScreen.css('display', 'none');
+        })
+    
+        // Optional: Hide the notification screen when clicking outside of it
+        $(document).on('click', function(event) {
+            if (!$notificationBell.is(event.target) && !$notificationBell.has(event.target).length &&
+                !$notificationScreen.is(event.target) && !$notificationScreen.has(event.target).length) {
+                $notificationScreen.css('display', 'none');
+            }
+        });
+
+        $('#profileImage').on('click', function() {
+            $('#popupMenu').slideToggle('fast');
+        });
+    
+        $(window).on('click', function(event) {
+
+            if (!$(event.target).closest('#profileImage').length && !$(event.target).closest('#popupMenu').length) {
+                $('#popupMenu').slideUp('fast');
+            }
+        });
+    });
+</script>
 {% endblock body %}

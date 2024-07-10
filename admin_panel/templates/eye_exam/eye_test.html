@@ -1,6 +1,5 @@
 {% extends "base/side_bar.html" %}
 {% block title %} Eye Test {% endblock title %}
-<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css" rel="stylesheet" />
 {% block page_name %}Eye Test{% endblock page_name %}
 {% block nav_bar %}
 <div class="bottomwrap">
@@ -14,18 +13,16 @@
                             value="{% if search %}{{ search }}{% endif %}">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <label>From Date</label>
-                        <input type="date" name="start_date_filter" placeholder="Start Date"
+                        <input type="text" name="start_date_filter", id="start_date_filter" placeholder="Start Date"
                             value="{{ start_date_filter|date:'Y-m-d' }}">
                     </div>
                     <div class="filter-dropdown ms-2">
-                        <label>To Date</label>
-                        <input type="date" name="end_date_filter" placeholder="End Date"
+                        <input type="text" name="end_date_filter", id="end_date_filter" placeholder="End Date"
                             value="{{ end_date_filter|date:'Y-m-d' }}">
                     </div>
-                    <div class="filter-dropdown ms-2">
-                        <select name="health_score_filter" placeholder="Filter">
-                            <option value="">Health Score</option>{{range_object}}
+                    <div class="filter-dropdown select-wrapp ms-2">
+                        <select name="health_score_filter" id="health_score_filter" placeholder="Filter">
+                            <option value="" {% if None %}selected{% endif %} >Health Score</option>
                             {% for i in range_object %}
                                 <option value="{{ i }}" {% if health_score_filter == i %}selected{% endif %}>{{ i }}</option>
                             {% endfor %}
@@ -45,8 +42,8 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url 'eye_test_export_view' 'excel' %}">Excel</a></li>
-                        <li><a class="dropdown-item" href="{% url 'eye_test_export_view' 'csv' %}">CSV</a></li>
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url 'eye_test_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url 'eye_test_export_view' 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
@@ -128,10 +125,27 @@
 
 <script>
     $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            $('#exportExcel').attr('href', `{% url 'eye_test_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'eye_test_export_view' 'csv' %}?` + params);
+        }
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
+        }).attr("readonly", "readonly");
+
+        $('#health_score_filter').select2({
+            placeholder: "Health Score"
+        });
+
         $('#clearButton').on('click', function () {
             // Clear all input fields
             $('#searchInput').val('');
-            $('input[type="date"]').val('');
+            $('input[type="text"]').val('');
             $('select[name="health_score_filter"]').val('');
 
             // Submit the form to show all results
@@ -177,14 +191,9 @@
             e.preventDefault();
             $('#reportDetailModal').modal('hide');
         })
-    });
-    $(".filter-dropdown input").click(function () {
-        $(".filter-dropdown label").hide();
-    });
+
+    }); // document.ready
 </script>
 
 
 {% endblock table%}\
-
-
-This is my django template code, and my getting a issue if i apply the filters and then click on next page the data is comming normally. without applying filters, fix it if i apply filter then give me filtered data on next page also 

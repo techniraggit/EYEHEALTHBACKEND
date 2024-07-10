@@ -3,21 +3,25 @@ function showToaster(message, type) {
     toaster.className = 'toaster ' + type;
     toaster.innerHTML = '<p class="message">' + message + '</p>';
     document.body.appendChild(toaster);
-    setTimeout(function() {
+    setTimeout(function () {
         toaster.remove();
-    }, 3000); // 2 seconds
+    }, 3000); // 3 seconds
 }
 
+function credEncode(data) {
+    let encodedData = data;
+    for (let i = 0; i < 3; i++) {
+        console.log(i)
+        encodedData = btoa(encodedData);
+    }
+    return encodedData;
+}
 
-// this is ckeditor code for the future use and reference
-// CKEDITOR.replace('description', {
-//     toolbar: [
-//         { name: 'paragraph', items: ['BulletedList'] },
-        //{ name: 'basicstyles', items: ['Bold', 'Italic'] },
-        //{ name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
-        //{ name: 'links', items: ['Link', 'Unlink'] },
-        //{ name: 'insert', items: ['Image', 'Table'] },
-        //{ name: 'styles', items: ['Format', 'Font', 'FontSize'] },
-        //{ name: 'colors', items: ['TextColor', 'BGColor'] }
-//     ]
-// });
+function credDecode(encoded_data) {
+    let decodedData = encoded_data;
+    for (let i = 0; i < 3; i++) {
+
+        decodedData = atob(decodedData);
+    }
+    return decodedData;
+}

@@ -9,7 +9,10 @@ from .views.subscription import *
 from .views import settings
 from .views import eye_exam
 from .views import trash
-from .views import user_agreement
+from .views import static_pages
+from .views import credentials
+from .views import my_profile
+from .views import carousels
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -25,7 +28,9 @@ users_urls = [
     path("user-view/<uuid:id>", UserDetailedView.as_view(), name="user_detailed_view"),
     path("user-edit/<uuid:id>", UserEditView.as_view(), name="user_edit_view"),
     path("add-user", AddUserView.as_view(), name="add_user_view"),
+    path("add-admin", AddAdminView.as_view(), name="add_admin_view"),
     path("user-delete/<uuid:id>", UserDeleteView.as_view(), name="user_delete_view"),
+    path("change-user-status/<uuid:id>", ChangeUserStatusView.as_view(), name="change_user_status_view"),
     path("user-bulk-delete-view", UserBulkDeleteView.as_view(), name="user_bulk_delete_view"),
     path("user-export/<str:file_type>", UserExportView.as_view(), name="user_export_view"),
 ]
@@ -41,19 +46,24 @@ offers_urls = [
     path("offer-dispatch", OfferDispatchView.as_view(), name="offer_dispatch_view"),
     path("offer-email", OfferEmailView.as_view(), name="offer_email_view"),
     path("offer-export/<str:file_type>", OfferExportView.as_view(), name="offer_export_view"),
+    path("redeemed-offer-export/<str:file_type>", RedeemedOffersExportView.as_view(), name="redeemed_offer_export_view"),
 ]
 
 prescription_urls = [
     path("", PrescriptionView.as_view(), name="prescription_view"),
     path("detailed-view/<uuid:id>", PrescriptionDetailView.as_view(), name="prescription_detailed_view"),
     path("change-status/<uuid:id>", ChangePrescriptionStatusView.as_view(), name="change_status_view"),
+    path("prescription-export/<str:file_type>", PrescriptionExportView.as_view(), name="prescription_export_view"),
 ]
 
 notification_urls = [
+    path("my-notification", MyNotificationView.as_view(), name="my_notification_view"),
+    path("mark-this-read", MarkThisRead.as_view(), name="mark_this_read_view"),
     path("", NotificationView.as_view(), name="notification_view"),
     path("notification-detailed/<uuid:id>", NotificationDetailedView.as_view(), name="notification_detailed_view"),
-    path("add-notificatioin", NewNotificationView.as_view(), name="add_notification_view"),
+    path("add-notification", NewNotificationView.as_view(), name="add_notification_view"),
     path("search-users-listing", UsersSearchListing.as_view(), name="search_users_listing"),
+    path("notification-export/<str:file_type>", NotificationExportView.as_view(), name="notification_export_view"),
 ]
 
 
@@ -88,21 +98,38 @@ trash_urls = [
     path("restore-user/<uuid:id>", trash.RestoreUserView.as_view(), name="restore_user"),
     path("restore-offer/<uuid:id>", trash.RestoreOfferView.as_view(), name="restore_offer"),
     path("restore-subscription-plan/<uuid:id>", trash.RestoreSubscriptionPlanView.as_view(), name="restore_subscription_plan"),
+    path("dlt-user/<uuid:id>", trash.FDeleteUserView.as_view(), name="force_dlt_user_view"),
+    path("dlt-offer/<uuid:id>", trash.FDeleteOfferView.as_view(), name="force_dlt_offer_view"),
+    path("dlt-subscription-plan/<uuid:id>", trash.FDeleteSubscriptionPlanView.as_view(), name="force_dlt_subscription_plan_view"),
 ]
 
-privacy_policy_urls = [
-    path("", user_agreement.PrivacyPolicyView.as_view(), name="privacy_policy_view"),
-    path("detailed-privacy-policy/<uuid:id>", user_agreement.PrivacyPolicyDetailedView.as_view(), name="detailed_privacy_policy_view"),
-    path("edit-privacy-policy/<uuid:id>", user_agreement.EditPrivacyPolicyView.as_view(), name="edit_privacy_policy_view"),
-    path("add-privacy-policy", user_agreement.AddPrivacyPolicyView.as_view(), name="add_privacy_policy_view"),
+credentials_urls = [
+    path("", credentials.CredentialsView.as_view(), name="credentials_view"),
+    path("add-credential", credentials.AddCredentialsView.as_view(), name="add_credentials_view"),
+    path("update-credential/<uuid:id>", credentials.UpdateCredentialsView.as_view(), name="update_credentials_view"),
+    path("delete-credential/<uuid:id>", credentials.DeleteCredentialsView.as_view(), name="delete_credentials_view"),
 ]
 
-term_and_condition_urls = [
-    path("", user_agreement.TermsAndConditionsView.as_view(), name="term_and_condition_view"),
-    path("detailed-term-and-conditions/<uuid:id>", user_agreement.TermsAndConditionsDetailedView.as_view(), name="detailed_term_and_condition_view"),
-    path("edit-term-and-conditions/<uuid:id>", user_agreement.EditTermsAndConditionsView.as_view(), name="edit_term_and_condition_view"),
-    path("add-term-and-conditions", user_agreement.AddTermsAndConditionsView.as_view(), name="add_term_and_condition_view"),
+profile_urls = [
+    path("", my_profile.MyProfileView.as_view(), name="my_profile_view"),
+    path("update-profile", my_profile.UpdateProfileView.as_view(), name="update_profile_view"),
+]
 
+carousels_urls = [
+    path("", carousels.CarouselsView.as_view(), name="carousels_view"),
+    path("change-carousel-status/<uuid:id>", carousels.ChangeCarouselStatusView.as_view(), name="carousels_view"),
+    path("carousel-detailed-view/<uuid:id>", carousels.CarouselDetailedView.as_view(), name="carousel_detailed_view"),
+    path("carousel-export/<str:file_type>", carousels.CarouselExportView.as_view(), name="carousel_export_view"),
+    path("delete-carousel-view/<uuid:id>", carousels.DeleteCarouselView.as_view(), name="delete_carousel_view"),
+    path("add-carousel-view", carousels.AddCarouselView.as_view(), name="add_carousel_view"),
+    path("edit-carousel-view/<uuid:id>", carousels.EditCarouselView.as_view(), name="edit_carousel_view"),
+]
+static_pages_url = [
+    path("", static_pages.StaticPageView.as_view(), name="static_pages_view"),
+    path("detailed-view/<uuid:id>", static_pages.StaticPageDetailedView.as_view(), name="detailed_static_page_view"),
+    path("add-page", static_pages.AddStaticPageView.as_view(), name="add_static_page_view"),
+    path("edit-page/<uuid:id>", static_pages.EditStaticPageView.as_view(), name="edit_static_page_view"),
+    path("download-page/<uuid:id>", static_pages.DownloadContentPage.as_view(), name="download_static_page_view"),
 ]
 
 urlpatterns = [
@@ -116,6 +143,8 @@ urlpatterns = [
     path("settings/", include(settings_urls)),
     path("eye/", include(eye_exam_urls)),
     path("trash/", include(trash_urls)),
-    path("privacy-policy/", include(privacy_policy_urls)),
-    path("term-and-conditions/", include(term_and_condition_urls)),
+    path("static-pages/", include(static_pages_url)),
+    path("credentials/", include(credentials_urls)),
+    path("my-profile/", include(profile_urls)),
+    path("carousels/", include(carousels_urls)),
 ]

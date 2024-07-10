@@ -5,21 +5,44 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-        <div class="col-8">
+        <div class="col-9">
             <div class="input-wrapp">
                 <form action="#" method="get" id="searchForm">
-                    <div> 
-                        <input type="text" name="search" id="searchInput" placeholder="Search by Names, Plan Type" value="{% if search %}{{ search }}{% endif %}">
-                    </div>
                     <div>
-                        <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
-                        <button type="button" id="clearButton">Clear</button>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Title, Price and Description"
+                            value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+
+                    <div class="filter-dropdown select-wrapp">
+                        <select name="plan_type_filter" id="plan_type_filter" placeholder="Filter">
+                            <option value=""  selected>Plan Type</option>
+                            <option value="basic" {% if plan_type_filter == 'basic' %}selected{% endif %}>Basic</option>
+                            <option value="monthly" {% if plan_type_filter == 'monthly' %}selected{% endif %}>Monthly</option>
+                            <option value="quarterly" {% if plan_type_filter == 'quarterly' %}selected{% endif %}>Quarterly</option>
+                            <option value="yearly" {% if plan_type_filter == 'yearly' %}selected{% endif %}>Yearly</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-dropdown select-wrapp">
+                        <select name="is_active_filter" id="is_active_filter" placeholder="Filter">
+                            <option value="" {% if None %}selected{% endif %}>Active</option>
+                            <option value="yes" {% if is_active_filter == 'yes' %}selected{% endif %}>Yes</option>
+                            <option value="no" {% if is_active_filter == 'no' %}selected{% endif %}>No</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
 
-        <div class="export col-4">
+        <div class="export col-3">
             <ul>
                 <li class="add-btn me-3">
                     <a href="{% url 'add_subscription_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
@@ -27,13 +50,12 @@
                 <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
                     <ul class="dropdown-content">
-                        <li><a class="dropdown-item" href="{% url "subscription_export_view" 'excel' %}">Excel</a></li>
-                        <li><a class="dropdown-item" href="{% url "subscription_export_view" 'csv' %}">CSV</a></li>
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url "subscription_export_view" 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url "subscription_export_view" 'csv' %}">CSV</a></li>
                     </ul>
                 </li>
             </ul>
         </div>
-
     </div>
 </div>
 {% endblock nav_bar %}
@@ -56,8 +78,12 @@
             <td>{{ plan.description }}</td>
             <td>{{ plan.price }}</td>
             <td>{{ plan.plan_type|title }}</td>
-            <td>{% if plan.is_active %} Yes {% else %} No{% endif %}</td>
-            <td>{{ plan.duration }}</td>
+            {% if plan.is_active %}
+                <td class="active">Yes</td>
+            {% else %}
+                <td class="rejected">No</td>
+            {% endif %}
+            <td>{{ plan.duration }}</td> 
             <td>
                 <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-plan_id="{{ plan.pk }}"></i></a>
                 <a href="{% url "edit_subscription_view" plan.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
@@ -106,10 +132,31 @@
 {% include "base/pagination.html" with paginated_data=plans %}
 <script>
     $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            $('#exportExcel').attr('href', `{% url 'subscription_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'subscription_export_view' 'csv' %}?` + params);
+        }
+
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $('#is_active_filter').select2({
+            placeholder: "Active",
+            minimumResultsForSearch: Infinity
+        });
+
+        $('#plan_type_filter').select2({
+            placeholder: "Plan Type",
+            minimumResultsForSearch: Infinity
+        });
         
         // Clear the search input value when the clear button is clicked
-        $('#clearButton').click(function(){
+        $('#clearButton').click(function () {
             $('#searchInput').val('');
+            $('input[type="text"]').val('');
+            $('select[name="is_active_filter"]').val('');
+            $('select[name="plan_type_filter"]').val('');
             $('#searchForm').submit();
         });
 
@@ -188,7 +235,8 @@
             event.preventDefault();
             $('#subscriptionPlanDetailModal').modal('hide');
         });
-    });
+
+    }); //document.ready
 </script>
 {% endblock table%}
 

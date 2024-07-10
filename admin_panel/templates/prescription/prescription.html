@@ -6,26 +6,53 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-        <div class="col-5">
+        <div class="col-9">
             <div class="input-wrapp">
-                <input type="text" placeholder="Search by names,type and value">
-                <!-- <button>Search</button> -->
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <form action="{% url "prescription_view" %}" method="get" id="searchForm">
+                    <div>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Report ID, Name, Email, and Phone"
+                            value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div class="filter-dropdown">
+                        {% comment %} <label for="start_date_filter">From Date</label> {% endcomment %}
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        {% comment %} <label for="end_date_filter">To Date</label> {% endcomment %}
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown-status select-wrapp">
+                        {% comment %} <label for="status_filter">Status</label> {% endcomment %}
+                        <select name="status_filter" id="status_filter" placeholder="Filter">
+                            <option value="" {% if None %}selected{% endif %}>Status</option>
+                            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Approved</option>
+                            <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Rejected</option>
+                        </select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="col-3"></div>
-        <div class="export col-4">
+
+        <div class="export col-3">
             <ul>
-                <div class="drop-downmenu">
-            <li class="ex-li" ><a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
-                <ul class="dropdown-content">
-                    <li class="mb-1"><a href="#">PDF</a></li>
-                    <li class="mb-1"><a href="#">Excel</a></li>
-                    <li><a href="#">CSV</a></li>
-                </ul>
-            </li>
-        </ul>
-            
+                <li class="ex-li">
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <ul class="dropdown-content">
+                        <li class="dropdown-item"><a id="exportExcel" href="{% url "prescription_export_view" 'excel' %}">Excel</a></li>
+                        <li class="dropdown-item"><a id="exportCSV" href="{% url "prescription_export_view" 'csv' %}">CSV</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
@@ -40,16 +67,49 @@
         <th>Action</th>
     </tr>
     {% for prescription in prescriptions %}
-        <tr>
-            <td>{{ forloop.counter0|add:prescriptions.start_index|default:forloop.counter }}</td>
-            <td>{{ prescription.user }}</td>
-            <td>{{ prescription.status|title }}</td>
-            <td>{{ prescription.created_on|format_datetime }}</td>
-            <td>
-                <a href="{% url "prescription_detailed_view" prescription.pk %}"> <i class="fa-regular fa-eye"></i></a>
-            </td>
-        </tr>
+    <tr>
+        <td>{{ forloop.counter0|add:prescriptions.start_index|default:forloop.counter }}</td>
+        <td>{{ prescription.user }}</td>
+        <td>{{ prescription.status|title }}</td>
+        <td>{{ prescription.created_on|format_datetime }}</td>
+        <td>
+            <a href="{% url "prescription_detailed_view" prescription.pk %}"> <i class="fa-regular fa-eye"></i></a>
+        </td>
+    </tr>
     {% endfor %}
 </table>
 {% include "base/pagination.html" with paginated_data=prescriptions %}
+
+<script>
+    $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            $('#exportExcel').attr('href', `{% url 'prescription_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'prescription_export_view' 'csv' %}?` + params);
+        }
+
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
+        }).attr("readonly", "readonly");
+
+        $('#status_filter').select2({
+            placeholder: "Status",
+            minimumResultsForSearch: Infinity
+        });
+
+        $('#clearButton').on('click', function () {
+            $('#searchForm')[0].reset();
+            $('#searchInput').val('');
+            $('#start_date_filter').val('');
+            $('#end_date_filter').val('');
+            $('#status_filter').prop('selectedIndex', 0);
+            $('#searchForm').submit();
+        });
+
+    }); //document.ready
+</script>
 {% endblock table%}

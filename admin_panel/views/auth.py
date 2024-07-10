@@ -11,7 +11,7 @@ User = get_user_model()
 # Create your views here.
 class LoginView(View):
     def get(self, request):
-        if request.user.is_authenticated and request.user.is_superuser:
+        if request.user.is_authenticated and (request.user.is_superuser or request.user.is_admin):
             return redirect("home_view")
         return render(request, "auth/login.html")
 
@@ -31,7 +31,7 @@ class LoginView(View):
 
         auth_user = authenticate(request, username=email, password=password)
         if auth_user is not None:
-            if not auth_user.is_superuser:
+            if not auth_user.is_superuser and not auth_user.is_admin:
                 messages.error(request, "Not a valid user")
                 return redirect("login_view")
             login(request, auth_user)

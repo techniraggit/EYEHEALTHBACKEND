@@ -36,20 +36,28 @@
                 </div>
                 <div class="col-md-4 f-name mt-4">
                     <label>Phone Number</label>
-                    <input type="number" name="phone_number" id="phone_number"/>
+                    <input type="tel" name="phone_number" id="phone_number" placeholder="+91 6686043087" value="+91"/>
                     <span id="phone_number_message" style="color:red; font-weight: bold;"></span>
                 </div>
+                <div class="d-flex">
+                    {% if request.user.is_superuser %}
+                    <div class="col-md-3 cancel-btn mb-4 mt-5 me-3">
+                        <button type="button" id="add-admin-btn">Add Admin</button>
+                    </div>
+                {% endif %}
                 <div class="col-md-3 cancel-btn mb-4 mt-5">
-                    <button type="submit">Save</button>
+                    <button type="button" id="add-user-btn">Add User</button>
                 </div>
+                </div>
+              
             </div>
         </form>
     </div>
 </div>
 <script>
     $(document).ready(function() {
-        $('#user-form').on('submit', function(event) {
-            event.preventDefault();
+
+        function SubmitForm(URL) {
             let isValid = true;
             let formData = {
                 'first_name': $('#first_name').val(),
@@ -83,7 +91,7 @@
 
             if (isValid) {
                 $.ajax({
-                    url: '{% url "add_user_view" %}',
+                    url: URL,
                     type: 'POST',
                     data: formData,
                     success: function(response) {
@@ -103,7 +111,16 @@
             } else {
                 showToaster("Required fields are missing", "alert-error");
             }
+        }
+        
+        $('#add-admin-btn').on('click', function() {
+            SubmitForm('{% url "add_admin_view" %}');
         });
-    });
+
+        $('#add-user-btn').on('click', function() {
+            SubmitForm('{% url "add_user_view" %}');
+        });
+
+    }); //document.ready
 </script>
 {% endblock table %}

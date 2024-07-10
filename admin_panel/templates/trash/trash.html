@@ -33,7 +33,7 @@
                             <th>Expiry Date</th>
                             <th>Status</th>
                             <th>Required Points</th>
-                            <th>Deleted At</th>
+                            <th>Left Days</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -46,8 +46,11 @@
                             <td>{{ offer.expiry_date }}</td>
                             <td>{{ offer.status }}</td>
                             <td>{{ offer.required_points }}</td>
-                            <td>{{ offer.deleted|format_datetime }}</td>
-                            <td data-id="{{ offer.pk }}" data-type="offer" class="restore"><a href="#"><i class="fa-solid fa-trash-can-arrow-up"></i></a></td>
+                            <td>{{ offer.days_left|remove_comma_from_days_left }}</td>
+                            <td>
+                                <a><i class="fa-solid fa-arrow-rotate-right me-2 restore" data-id="{{ offer.pk }}" data-type="offer"></i></a>
+                                <a><i class="fa-solid fa-trash me-2 force_delete" data-id="{{ offer.pk }}" data-type="offer"></i></a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -67,7 +70,7 @@
                             <th>Last Name</th>
                             <th>E-mail</th>
                             <th>Phone Number</th>
-                            <th>Deleted At</th>
+                            <th>Left Days</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -79,8 +82,11 @@
                             <td>{{ user.last_name }}</td>
                             <td>{{ user.email }}</td>
                             <td>{{ user.phone_number }}</td>
-                            <td>{{ user.deleted|format_datetime }}</td>
-                            <td data-id="{{ user.pk }}" data-type="user" class="restore"><a href="#"><i class="fa-solid fa-trash-can-arrow-up"></i></a></td>
+                            <td>{{ user.days_left|remove_comma_from_days_left }}</td>
+                            <td>
+                                <a><i class="fa-solid fa-arrow-rotate-right me-2 restore" data-id="{{ user.pk }}" data-type="user"></i></a>
+                                <a><i class="fa-solid fa-trash me-2 force_delete" data-id="{{ user.pk }}" data-type="user"></i></a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -101,7 +107,7 @@
                             <th>Price</th>
                             <th>Plan Type</th>
                             <th>Duration (In Days)</th>
-                            <th>Deleted At</th>
+                            <th>Left Days</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -114,8 +120,11 @@
                             <td>{{ plan.price }}</td>
                             <td>{{ plan.plan_type }}</td>
                             <td>{{ plan.duration }}</td>
-                            <td>{{ plan.deleted|format_datetime }}</td>
-                            <td data-id="{{ plan.pk }}" data-type="plan" class="restore"><a href="#"><i class="fa-solid fa-trash-can-arrow-up"></i></a></td>
+                            <td>{{ plan.days_left|remove_comma_from_days_left }}</td>
+                            <td>
+                                <a><i class="fa-solid fa-arrow-rotate-right me-2 restore" data-id="{{ plan.pk }}" data-type="plan"></i></a>
+                                <a><i class="fa-solid fa-trash me-2 force_delete" data-id="{{ plan.pk }}" data-type="plan"></i></a>
+                            </td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -140,10 +149,12 @@
                 $("#offer_table").removeClass("hide-table");
                 $("#user_table").addClass("hide-table");
                 $("#plan_table").addClass("hide-table");
+
             } else if (target === "#users") {
                 $("#offer_table").addClass("hide-table");
                 $("#user_table").removeClass("hide-table");
                 $("#plan_table").addClass("hide-table");
+
             } else if (target === "#plans") {
                 $("#offer_table").addClass("hide-table");
                 $("#user_table").addClass("hide-table");
@@ -181,7 +192,44 @@
                     alert('Error restoring item');
                 }
             });
-        });
-    });
+
+        }); // restore.click
+
+        // Force Delete Logic
+        $('.force_delete').click(function(){
+            var $row = $(this).closest('tr');
+            var id = $(this).data('id');
+            var type = $(this).data('type');
+            var url = "";
+
+            if (type === 'user') {
+                url = "/trash/dlt-user/" + id;
+            } else if (type === 'offer') {
+                url = "/trash/dlt-offer/" + id;
+            } else if (type === 'plan') {
+                url = "/trash/dlt-subscription-plan/" + id;
+            }
+
+            console.log("url === ", url)
+
+            $.ajax({
+                type: 'GET',
+                url: url,
+                success: function(response){
+                    if (response.status){
+                        showToaster(response.message, "alert-success");
+                        $row.remove();
+                    } else {
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function(error){
+                    alert('Error restoring item');
+                }
+            });
+
+        }); // force_delete.click
+
+    }); //document.ready
 </script>
 {% endblock table %}

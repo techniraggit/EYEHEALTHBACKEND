@@ -23,6 +23,8 @@ from api.serializers.rewards import (
 from api.models.rewards import UserRedeemedOffers
 from api.models.accounts import UserPoints
 from api.models.eye_health import EyeFatigueReport, EyeTestReport
+from api.models.dashboard import CarouselModel
+from api.serializers.dashboard import CarouselModelSerializer
 import logging
 
 logger = logging.getLogger(__name__)
@@ -30,16 +32,23 @@ logger = logging.getLogger(__name__)
 
 class Dashboard(UserMixin):
     def get(self, request):
-        eye_test_count = EyeTestReport.objects.filter(
-            user_profile__user=request.user
-        ).count()
+        request_user_id = request.user.id
+        eye_test_count = EyeTestReport.objects.filter(user_profile__user__id=request_user_id).count()
         eye_fatigue_count = EyeFatigueReport.objects.filter(user=request.user).count()
         eye_health_score = EyeTestReport.objects.filter(
-            user_profile__user=request.user,
+            user_profile__user__id=request_user_id,
             user_profile__full_name=request.user.get_full_name(),
-            user_profile__age=request.user.age(),
+            # user_profile__age=request.user.age(),
         )
         prescription_obj = UserPrescriptions.objects.filter(user=request.user)
+
+        # Carousel data
+        carousel_data = CarouselModelSerializer(
+            CarouselModel.objects.filter(is_active=True),
+            many=True,
+            fields=["name", "image"],
+            context={'request': request}
+        ).data
         return api_response(
             True,
             200,
@@ -50,6 +59,7 @@ class Dashboard(UserMixin):
             ),
             is_prescription_uploaded=prescription_obj.exists(),
             visits_to_optometry=prescription_obj.filter(status="approved").count(),
+            carousel=carousel_data,
         )
 
 
@@ -118,6 +128,12 @@ class NotificationView(UserMixin):
         ]
         return api_response(True, 200, data=data)
 
+    def patch(self, request):
+        UserPushNotification.objects.filter(user=request.user, is_read=False).update(
+            is_read=True
+        )
+        return api_response(True, 200, "All notifications marked as read")
+
 
 class OffersView(UserMixin):
     def get(self, request):
@@ -153,7 +169,7 @@ class OffersView(UserMixin):
         eye_health_score = EyeTestReport.objects.filter(
             user_profile__user=request.user,
             user_profile__full_name=request.user.get_full_name(),
-            health_score__gt=0
+            health_score__gt=0,
         ).order_by("-created_on")
 
         eye_health_score = (
@@ -207,7 +223,6 @@ class UserPrescriptionsView(UserMixin):
                 data=serializer.data,
                 message="Prescription uploaded successfully, please wait for admin approval",
             )
-        print("Pres>>>>", serializer.errors)
         return api_response(False, 400, data=serializer.errors)
 
 
@@ -343,9 +358,14 @@ class UserAccountDeleteView(UserMixin):
         return api_response(True, 200, "Account deleted successfully.")
 
 
+from core.logs import Logger
+
+contact_logger = Logger("user_contacts.log")
+
+
 class UploadUserContactView(UserMixin):
     def post(self, request):
-        logger.info(f"Upload contacts >> {request.data}")
+        contact_logger.info(f"Upload contacts >> {request.data}")
         return api_response(True, 200, "Contact successfully uploaded")
         # serializer = StoreUserContactSerializer(data=request.data)
         # if serializer.is_valid():

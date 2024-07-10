@@ -21,7 +21,7 @@
                     <span id="price_message" style="color: red; font-weight: bold"></span>
                 </div>
 
-                <div class="col-md-4 f-name mt-4">
+                <div class="col-md-4 f-name mt-4 select-wrapp">
                     <label for="plan_type">Plan Type <span id="required_star">*</span></label>
                     <select name="plan_type" id="plan_type" class="form-control">
                         <option value="basic" {% if plan_obj.plan_type == 'basic' %}selected{% endif %}>Basic</option>
@@ -49,7 +49,7 @@
                     <span id="duration_message" style="color: red; font-weight: bold"></span>
                 </div>
 
-                <div class="col-md-4 f-lname mt-4">
+                <div class="col-md-12 f-lname mt-4">
                     <label for="description">Description <span id="required_star">*</span></label>
                     <textarea name="description" id="description" cols="30"
                         rows="6">{{ plan_obj.description }}</textarea>
@@ -72,6 +72,11 @@
     });
 
     $(document).ready(function () {
+        $('#plan_type').select2({
+            placeholder: "Select Plan Type",
+            minimumResultsForSearch: Infinity
+        });
+
         $('#planForm').submit(function (event) {
             event.preventDefault();
 
@@ -143,7 +148,8 @@
                 });
             }
         });
-    });
+
+    }); //document.ready
 </script>
 
 {% endblock table %}

@@ -5,7 +5,8 @@ from api.models.subscription import *
 from api.models.rewards import *
 from api.models.eye_health import *
 from api.models.prescription import *
-from api.models.user_agreements import *
+from api.models.static_pages import *
+from api.models.dashboard import *
 
 
 # Register your models here.
@@ -113,7 +114,7 @@ class OffersAdmin(admin.ModelAdmin):
 @admin.register(EyeTestReport)
 class EyeTestReportAdmin(admin.ModelAdmin):
     list_display = ["id", "report_id", "user_profile", "health_score"]
-    search_fields = ["user_profile__full_name", "report_id"]
+    search_fields = ["user_profile__full_name", "report_id", "user_profile__user__phone_number"]
 
 
 @admin.register(EyeFatigueReport)
@@ -161,15 +162,26 @@ class UserPrescriptionsAdmin(admin.ModelAdmin):
     list_display = ["prescription_id", "status", "user"]
     search_fields = ["prescription_id", "user__email", "user__phone_number"]
 
-USER_AGREEMENT_FIELD = [
-    "id",
-    "content",
-    "created_by",
-    "created_on"
-]
-@admin.register(PrivacyPolicy)
-class PrivacyPolicyAdmin(admin.ModelAdmin):
-    list_display = USER_AGREEMENT_FIELD
-@admin.register(TermsAndConditions)
-class TermsAndConditionsAdmin(admin.ModelAdmin):
-    list_display = USER_AGREEMENT_FIELD
+@admin.register(StaticPages)
+class StaticPagesAdmin(admin.ModelAdmin):
+    list_display = ["id", "title", "created_by", "updated_by"]
+
+@admin.register(UserContacts)
+class UserContactsAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "user",
+        "name",
+        "phone_number",
+    ]
+    search_fields = [
+        "user__email",
+        "user__phone_number",
+        "name",
+        "phone_number",
+    ]
+
+@admin.register(CarouselModel)
+class CarouselModelAdmin(admin.ModelAdmin):
+    list_display = ["id", "name", "image", "created_on"]
+    search_fields = ["name"]

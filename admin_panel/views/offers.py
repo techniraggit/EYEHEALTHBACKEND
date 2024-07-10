@@ -1,3 +1,4 @@
+from utilities.services.notification import create_notification
 from openpyxl import Workbook
 import csv
 from django.http import HttpResponse
@@ -18,24 +19,51 @@ from django.db.models import Q
 
 from django.core.paginator import Paginator
 
+
 class OffersView(AdminLoginView):
     def get(self, request):
         search = str(request.GET.get("search", "")).strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        offer_status_filter = request.GET.get("offer_status_filter")
+
+        offers_qs = Offers.objects.all().order_by("-created_on")
+
         if search:
-            offers = Offers.objects.filter(
+            offers_qs = offers_qs.filter(
                 Q(title__icontains=search)
                 | Q(description__icontains=search)
                 | Q(status=str(search).lower())
-            ).order_by("-created_on")
-        else:
-            offers = Offers.objects.all().order_by("-created_on")
-        paginator = Paginator(offers, 10)
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(created_on__date__gte=start_date_filter)
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(created_on__date__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        if offer_status_filter:
+            offers_qs = offers_qs.filter(status=offer_status_filter)
+
+        paginator = Paginator(offers_qs, 10)
         page_number = request.GET.get("page")
         paginated_offers = paginator.get_page(page_number)
         context = dict(
             paginated_offers=paginated_offers,
             is_offer=True,
             search=search if search else "",
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter,
+            offer_status_filter=offer_status_filter,
         )
         return render(request, "offers/offers.html", context)
 
@@ -78,7 +106,6 @@ class AddOffersView(AdminLoginView):
                 }
                 return JsonResponse(response, status=400)
         except Exception as e:
-            print(e)
             return JsonResponse({"status": False, "message": str(e)}, status=400)
 
 
@@ -164,13 +191,54 @@ class DeleteOfferView(AdminLoginView):
 
 class RedeemedOffersView(AdminLoginView):
     def get(self, request):
-        redeemed_offers = UserRedeemedOffers.objects.all().order_by("-created_on")
-        paginator = Paginator(redeemed_offers, 10)
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        status_filter = request.GET.get("status_filter")
+
+        redeemed_offer_qs = UserRedeemedOffers.objects.all().order_by("-redeemed_on")
+
+        if search:
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                Q(offer__title__icontains=search)
+                | Q(offer__description__icontains=search)
+                | Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__gte=start_date_filter
+            )
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__lte=end_date_filter
+            )
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        if status_filter:
+            redeemed_offer_qs = redeemed_offer_qs.filter(status=status_filter)
+
+        paginator = Paginator(redeemed_offer_qs, 10)
         page_number = request.GET.get("page")
         paginated_redeemed_offers = paginator.get_page(page_number)
         context = dict(
             redeemed_offers=paginated_redeemed_offers,
             is_redeemed_offers=True,
+            search=search,
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter,
+            status_filter=status_filter,
         )
         return render(request, "offers/redeemed_offers.html", context)
 
@@ -191,7 +259,7 @@ class EditRedeemedOffer(AdminLoginView):
         )
         return render(request, "offers/edit_redeemed_offers.html", context)
 
-from utilities.services.notification import create_notification
+
 class OfferDispatchView(AdminLoginView):
     def post(self, request):
         required_fields = ["redeemed_offer_id", "dispatch_address"]
@@ -261,10 +329,10 @@ class OfferEmailView(AdminLoginView):
             redeemed_offer_obj.email_subject = email_subject
             redeemed_offer_obj.save()
             create_notification(
-            user_ids=[redeemed_offer_obj.user.id],
-            title="You have received an email regarding your redeemed offer",
-            message=f"You have received an email regarding your redeemed offer with title '{redeemed_offer_obj.offer.title}'",
-        )
+                user_ids=[redeemed_offer_obj.user.id],
+                title="You have received an email regarding your redeemed offer",
+                message=f"You have received an email regarding your redeemed offer with title '{redeemed_offer_obj.offer.title}'",
+            )
             return JsonResponse({"status": True, "message": "Email sent successfully"})
 
         return JsonResponse({"status": False, "message": "Email not sent"})
@@ -278,7 +346,6 @@ class OfferEmailView(AdminLoginView):
 
 class OfferExportView(AdminLoginView):
     def get(self, request, file_type):
-        print("file_type: ", file_type)
         if file_type == "csv":
             return self.csv_export(request)
         elif file_type == "excel":
@@ -301,8 +368,40 @@ class OfferExportView(AdminLoginView):
             "Created By",
         ]
 
-    def get_queryset(self):
-        return Offers.objects.all()
+    def get_queryset(self, request):
+        search = str(request.GET.get("search", "")).strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        offer_status_filter = request.GET.get("offer_status_filter")
+
+        offers_qs = Offers.objects.all().order_by("-created_on")
+
+        if search:
+            offers_qs = offers_qs.filter(
+                Q(title__icontains=search)
+                | Q(description__icontains=search)
+                | Q(status=str(search).lower())
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(created_on__date__gte=start_date_filter)
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(created_on__date__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            offers_qs = offers_qs.filter(
+                created_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        if offer_status_filter:
+            offers_qs = offers_qs.filter(status=offer_status_filter)
+
+        return offers_qs
 
     def get_data_row(self, object, request):
         return [
@@ -322,7 +421,7 @@ class OfferExportView(AdminLoginView):
         )
         writer = csv.writer(response)
         writer.writerow(self.get_headers())
-        for user in self.get_queryset():
+        for user in self.get_queryset(request):
             row = self.get_data_row(user, request)
             writer.writerow(row)
         return response
@@ -335,7 +434,123 @@ class OfferExportView(AdminLoginView):
         )
 
         worksheet.append(self.get_headers())
-        for user in self.get_queryset():
+        for user in self.get_queryset(request):
+            row = self.get_data_row(user, request)
+            worksheet.append(row)
+
+        worksheet.column_dimensions["A"].width = 10
+        worksheet.column_dimensions["B"].width = 15
+        worksheet.column_dimensions["C"].width = 15
+        worksheet.column_dimensions["D"].width = 15
+        worksheet.column_dimensions["E"].width = 20
+        worksheet.column_dimensions["F"].width = 20
+        worksheet.column_dimensions["G"].width = 10
+
+        virtual_excel_file = save_virtual_workbook(workbook)
+        response["Content-Disposition"] = (
+            f"attachment; filename={self.get_file_name()}.xlsx"
+        )
+        response["Content-Type"] = "application/octet-stream"
+        response.write(virtual_excel_file)
+        return response
+
+
+class RedeemedOffersExportView(AdminLoginView):
+    def get(self, request, file_type):
+        if file_type == "csv":
+            return self.csv_export(request)
+        elif file_type == "excel":
+            return self.excel_export(request)
+        else:
+            return HttpResponse("Invalid file type")
+
+    def get_file_name(self):
+        current_timestamp = time_localize(datetime.now()).strftime("%Y%m%d%H%M%S")
+        return f"user-redeemed-offers-{current_timestamp}"
+
+    def get_headers(self):
+        return [
+            "ID",
+            "User Email",
+            "Offer ID",
+            "Status",
+            "Redeemed On",
+            "Emailed On",
+            "Dispatch On",
+        ]
+
+    def get_queryset(self, request):
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        status_filter = request.GET.get("status_filter")
+
+        redeemed_offer_qs = UserRedeemedOffers.objects.all().order_by("-redeemed_on")
+
+        if search:
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                Q(offer__title__icontains=search)
+                | Q(offer__description__icontains=search)
+                | Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__gte=start_date_filter
+            )
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__lte=end_date_filter
+            )
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            redeemed_offer_qs = redeemed_offer_qs.filter(
+                redeemed_on__date__range=(start_date_filter, end_date_filter)
+            )
+
+        if status_filter:
+            redeemed_offer_qs = redeemed_offer_qs.filter(status=status_filter)
+        return redeemed_offer_qs
+
+    def get_data_row(self, object, request):
+        return [
+            str(object.pk),
+            object.user.email,
+            str(object.offer.pk),
+            object.status.title(),
+            object.redeemed_on.strftime("%Y-%m-%d") if object.redeemed_on else None,
+            object.emailed_on.strftime("%Y-%m-%d") if object.emailed_on else None,
+            object.dispatch_on.strftime("%Y-%m-%d") if object.dispatch_on else None,
+        ]
+
+    def csv_export(self, request):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = (
+            f'attachment; filename="{self.get_file_name()}.csv"'
+        )
+        writer = csv.writer(response)
+        writer.writerow(self.get_headers())
+        for user in self.get_queryset(request):
+            row = self.get_data_row(user, request)
+            writer.writerow(row)
+        return response
+
+    def excel_export(self, request):
+        workbook = Workbook()
+        worksheet = workbook.active
+        response = HttpResponse(
+            content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+        worksheet.append(self.get_headers())
+        for user in self.get_queryset(request):
             row = self.get_data_row(user, request)
             worksheet.append(row)
 

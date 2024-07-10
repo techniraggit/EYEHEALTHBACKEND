@@ -43,7 +43,7 @@ class VerificationOTPView(APIView):
             if not is_valid_phone(username):
                 return api_response(False, 400, "Not a valid phone number")
 
-        OTPLog.objects.create(username=username)
+        OTPLog.objects.get_or_create(username=username)
         otp = generate_otp(username)
 
         try:
@@ -92,33 +92,38 @@ class SendLoginOTP(APIView):
     def post(self, request):
         username = request.data.get("username")
         if not username:
-            return api_response(False, 400, "username required")
+            return api_response(False, 400, "Username required")
 
         otp = generate_otp(username)
-        if phone_or_email(username) == "email":
-            try:
-                try:
-                    UserModel.objects.get(email=username)
-                except:
-                    return api_response(False, 404, "User does not exists")
+        contact_method = phone_or_email(username)
 
+        try:
+            if contact_method == "email":
+                user_obj = UserModel.objects.get(email=username)
+            else:
+                user_obj = UserModel.objects.get(phone_number=username)
+
+            if not user_obj.is_active:
+                return api_response(
+                    False,
+                    400,
+                    "Your account is currently not active. Please contact the administrator.",
+                )
+
+            if contact_method == "email":
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
-                return api_response(True, 200, f"OTP sent successfully to {username}.")
+            else:
+                message = SMS_TEMPLATE["send_otp"].format(otp=otp)
+                send_sms(username, message)
 
-            except Exception as e:
-                # raise e
-                return api_response(False, 500, "Something went wrong")
+            return api_response(True, 200, f"OTP sent successfully to {username}.")
 
-        else:
-            try:
-                UserModel.objects.get(phone_number=username)
-            except:
-                return api_response(False, 404, "User does not exists")
+        except UserModel.DoesNotExist:
+            return api_response(False, 404, "User does not exist")
 
-            message = SMS_TEMPLATE["send_otp"].format(otp=otp)
-            send_sms(username, message)
-            return api_response(False, 200, f"OTP sent successfully to {username}.")
+        except Exception as e:
+            return api_response(False, 500, ERROR_500_MSG)
 
 
 class VerifyLoginOTPView(APIView):

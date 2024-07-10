@@ -26,7 +26,9 @@ class HomeView(AdminLoginView):
         total_expired_offers = offers_queryset.filter(status="expired").count()
 
         # Redeemed Offers
-        total_redeemed_offers = redeemed_offers_queryset.exclude(status="pending").count()
+        pending_total_redeemed_offers = redeemed_offers_queryset.filter(status="pending").count()
+        approved_total_redeemed_offers = redeemed_offers_queryset.filter(status="approved").count()
+        rejected_total_redeemed_offers = redeemed_offers_queryset.filter(status="rejected").count()
         
         # Prescription 
         total_approved_prescriptions = prescriptions_queryset.filter(status="approved").count()
@@ -45,7 +47,9 @@ class HomeView(AdminLoginView):
             total_active_offers = total_active_offers,
             total_inactive_offers = total_inactive_offers,
             total_expired_offers = total_expired_offers,
-            total_redeemed_offers = total_redeemed_offers,
+            pending_total_redeemed_offers = pending_total_redeemed_offers,
+            approved_total_redeemed_offers = approved_total_redeemed_offers,
+            rejected_total_redeemed_offers = rejected_total_redeemed_offers,
             total_approved_prescriptions = total_approved_prescriptions,
             total_pending_prescriptions = total_pending_prescriptions,
             total_rejected_prescriptions = total_rejected_prescriptions,

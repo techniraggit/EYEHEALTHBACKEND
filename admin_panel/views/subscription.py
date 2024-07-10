@@ -16,13 +16,34 @@ from django.core.paginator import Paginator
 
 class SubscriptionView(AdminLoginView):
     def get(self, request):
-        plans = SubscriptionPlan.objects.all()
-        paginator = Paginator(plans, 10)
+        search = request.GET.get("search", "").strip()
+        plan_type_filter = request.GET.get("plan_type_filter")
+        is_active_filter = request.GET.get("is_active_filter")
+
+        plan_qs = SubscriptionPlan.objects.all()
+
+        if search:
+            plan_qs = plan_qs.filter(
+                Q(name__icontains=search)
+                | Q(description__icontains=search)
+                | Q(price__icontains=search)
+            )
+
+        if plan_type_filter:
+            plan_qs = plan_qs.filter(plan_type=plan_type_filter)
+
+        if is_active_filter:
+            plan_qs = plan_qs.filter(is_active=str(is_active_filter).lower() == "yes")
+
+        paginator = Paginator(plan_qs, 10)
         page_number = request.GET.get("page")
         paginated_plans = paginator.get_page(page_number)
         context = dict(
             plans=paginated_plans,
             is_subscription=True,
+            search=search,
+            plan_type_filter=plan_type_filter,
+            is_active_filter=is_active_filter,
         )
         return render(request, "subscription/subscription.html", context)
 
@@ -118,24 +139,53 @@ class SubscriptionDeleteView(AdminLoginView):
 
 class UserSubscriptionView(AdminLoginView):
     def get(self, request):
-        search = str(request.GET.get("search", "")).strip()
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        payment_status_filter = request.GET.get("payment_status_filter")
+
+        user_plan_qs = UserSubscription.objects.all().order_by(
+            "-start_date", "-end_date"
+        )
+
         if search:
-            user_plans = UserSubscription.objects.filter(
+            user_plan_qs = user_plan_qs.filter(
                 Q(user__first_name__icontains=search)
                 | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
             )
-        else:
-            user_plans = UserSubscription.objects.all()
 
-        paginator = Paginator(user_plans, 10)
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(start_date__gte=start_date_filter)
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(end_date__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(
+                Q(start_date__gte=start_date_filter) & Q(end_date__lte=end_date_filter)
+            )
+
+        if payment_status_filter:
+            user_plan_qs = user_plan_qs.filter(payment_status=payment_status_filter)
+
+        paginator = Paginator(user_plan_qs, 10)
         page_number = request.GET.get("page")
         paginated_user_plans = paginator.get_page(page_number)
         context = dict(
             user_plans=paginated_user_plans,
             is_user_subscription=True,
-            search=search if search else "",
+            search=search,
+            start_date_filter=start_date_filter,
+            end_date_filter=end_date_filter,
+            payment_status_filter=payment_status_filter,
         )
         return render(request, "subscription/user_subscription.html", context)
+
 
 class UserSubscriptionDetailView(AdminLoginView):
     def get(self, request, id):
@@ -155,7 +205,6 @@ class UserSubscriptionDetailView(AdminLoginView):
 
 class SubscriptionExportView(AdminLoginView):
     def get(self, request, file_type):
-        print("file_type: ", file_type)
         if file_type == "csv":
             return self.csv_export(request)
         elif file_type == "excel":
@@ -177,8 +226,26 @@ class SubscriptionExportView(AdminLoginView):
             "Duration (days)",
         ]
 
-    def get_queryset(self):
-        return SubscriptionPlan.objects.all()
+    def get_queryset(self, request):
+        search = request.GET.get("search", "").strip()
+        plan_type_filter = request.GET.get("plan_type_filter")
+        is_active_filter = request.GET.get("is_active_filter")
+
+        plan_qs = SubscriptionPlan.objects.all()
+
+        if search:
+            plan_qs = plan_qs.filter(
+                Q(name__icontains=search)
+                | Q(description__icontains=search)
+                | Q(price__icontains=search)
+            )
+
+        if plan_type_filter:
+            plan_qs = plan_qs.filter(plan_type=plan_type_filter)
+
+        if is_active_filter:
+            plan_qs = plan_qs.filter(is_active=str(is_active_filter).lower() == "yes")
+        return plan_qs
 
     def get_data_row(self, object):
         return [
@@ -197,7 +264,7 @@ class SubscriptionExportView(AdminLoginView):
         )
         writer = csv.writer(response)
         writer.writerow(self.get_headers())
-        for user in self.get_queryset():
+        for user in self.get_queryset(request):
             row = self.get_data_row(user)
             writer.writerow(row)
         return response
@@ -210,7 +277,7 @@ class SubscriptionExportView(AdminLoginView):
         )
 
         worksheet.append(self.get_headers())
-        for user in self.get_queryset():
+        for user in self.get_queryset(request):
             row = self.get_data_row(user)
             worksheet.append(row)
 
@@ -233,7 +300,6 @@ class SubscriptionExportView(AdminLoginView):
 
 class UserSubscriptionExportView(AdminLoginView):
     def get(self, request, file_type):
-        print("file_type: ", file_type)
         if file_type == "csv":
             return self.csv_export(request)
         elif file_type == "excel":
@@ -257,8 +323,41 @@ class UserSubscriptionExportView(AdminLoginView):
             "Payment Status",
         ]
 
-    def get_queryset(self):
-        return UserSubscription.objects.all()
+    def get_queryset(self, request):
+        search = request.GET.get("search", "").strip()
+        start_date_filter = request.GET.get("start_date_filter")
+        end_date_filter = request.GET.get("end_date_filter")
+        payment_status_filter = request.GET.get("payment_status_filter")
+
+        user_plan_qs = UserSubscription.objects.all().order_by(
+            "-start_date", "-end_date"
+        )
+
+        if search:
+            user_plan_qs = user_plan_qs.filter(
+                Q(user__first_name__icontains=search)
+                | Q(user__last_name__icontains=search)
+                | Q(user__email__icontains=search)
+            )
+
+        if start_date_filter and not end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(start_date__gte=start_date_filter)
+
+        if end_date_filter and not start_date_filter:
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(end_date__lte=end_date_filter)
+
+        if start_date_filter and end_date_filter:
+            start_date_filter = datetime.strptime(start_date_filter, "%Y-%m-%d").date()
+            end_date_filter = datetime.strptime(end_date_filter, "%Y-%m-%d").date()
+            user_plan_qs = user_plan_qs.filter(
+                Q(start_date__gte=start_date_filter) & Q(end_date__lte=end_date_filter)
+            )
+
+        if payment_status_filter:
+            user_plan_qs = user_plan_qs.filter(payment_status=payment_status_filter)
+        return user_plan_qs
 
     def get_data_row(self, object):
         return [
@@ -279,7 +378,7 @@ class UserSubscriptionExportView(AdminLoginView):
         )
         writer = csv.writer(response)
         writer.writerow(self.get_headers())
-        for user in self.get_queryset():
+        for user in self.get_queryset(request):
             row = self.get_data_row(user)
             writer.writerow(row)
         return response
@@ -292,7 +391,7 @@ class UserSubscriptionExportView(AdminLoginView):
         )
 
         worksheet.append(self.get_headers())
-        for user in self.get_queryset():
+        for user in self.get_queryset(request):
             row = self.get_data_row(user)
             worksheet.append(row)
 

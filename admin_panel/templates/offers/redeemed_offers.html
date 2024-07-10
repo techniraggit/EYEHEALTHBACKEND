@@ -5,27 +5,50 @@
 {% block nav_bar %}
 <div class="bottomwrap">
     <div class="search-box row">
-        <div class="col-5">
+        <div class="col-9">
             <div class="input-wrapp">
-                <input type="text" placeholder="Search by names,type and value">
-                <!-- <button>Search</button> -->
-                <i class="fa-solid fa-magnifying-glass"></i>
+                <form action="{% url "redeemed_offers_view" %}" method="get" id="searchForm">
+                    <div>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Report ID, Name, Email and Phone"
+                            value="{{ search }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown select-wrapp">
+                        <select name="status_filter" id="status_filter">
+                            <option value="">Status</option>
+                            <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                            <option value="dispatched" {% if status_filter == 'dispatched' %}selected{% endif %}>Dispatched</option>
+                            <option value="emailed" {% if status_filter == 'emailed' %}selected{% endif %}>Emailed</option>
+                        </select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <div class="col-3"></div>
-        <div class="export col-4">
+
+        <div class="export col-3">
             <ul>
-            <li class="add-btn me-3"><a>Add<i class="fa-solid fa-plus ms-2"></i> </a></button>
-                <div class="drop-downmenu">
-            <li class="ex-li" ><a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
-                <ul class="dropdown-content">
-                    <li class="mb-1"><a href="#">PDF</a></li>
-                    <li class="mb-1"><a href="#">Excel</a></li>
-                    <li><a href="#">CSV</a></li>
-                </ul>
-            </li>
-        </ul>
-            
+                <li class="ex-li">
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <ul class="dropdown-content">
+                        <li class="dropdown-item"><a id="exportExcel" href="{% url "redeemed_offer_export_view" 'excel' %}">Excel</a></li>
+                        <li class="dropdown-item"><a id="exportCSV" href="{% url "redeemed_offer_export_view" 'csv' %}">CSV</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
     </div>
 </div>
@@ -49,12 +72,42 @@
             <td>{{ redeemed_offer.status|title }}</td>
             <td>{{ redeemed_offer.redeemed_on }}</td>
             <td>
-                {% comment %} <a href="#"><i class="fa-solid fa-trash-can me-2"></i></a> {% endcomment %}
                 <a href="{% url "edit_redeemed_offer_view" redeemed_offer.pk %}"><i class="fa-solid fa-pen me-2"></i></a>
-                {% comment %} <a href="#"> <i class="fa-regular fa-eye"></i></a> {% endcomment %}
             </td>
         </tr>
     {% endfor %}
 </table>
 {% include "base/pagination.html" with paginated_data=redeemed_offers %}
+
+<script>
+    $(document).ready(function () {
+
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            $('#exportExcel').attr('href', `{% url 'redeemed_offer_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'redeemed_offer_export_view' 'csv' %}?` + params);
+        }
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
+        }).attr("readonly", "readonly");
+
+        $('#status_filter').select2({
+            placeholder: "Status",
+            minimumResultsForSearch: Infinity
+        });
+
+        $('#clearButton').click(function () {
+            $('#searchInput').val('');
+            $('input[type="text"]').val('');
+            $('select[name="status_filter"]').val('');
+            $('#searchForm').submit();
+        });
+
+    });//document.ready
+
+</script>
 {% endblock table%}

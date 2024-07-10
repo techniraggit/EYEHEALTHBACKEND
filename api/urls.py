@@ -5,7 +5,8 @@ from api.views.subscription import *
 from api.views.eye_test_apis import *
 from api.views import eye_fatigue_apis
 from api.views.strip_apis import *
-from api.views import user_agreements
+from api.views import static_pages
+from api.views import razor_pay_apis
 
 accounts = [
     path("verification_otp", VerificationOTPView.as_view()),
@@ -38,6 +39,7 @@ strip_urls = [
     path("create-checkout-session", CreateCheckoutSession.as_view()),
     path("webhook", WebHook.as_view()),
     path("create-customer", CreateCustomerView.as_view()),
+    path("rzp-webhook", razor_pay_apis.RazorPayWebHook.as_view()),
 ]
 
 eye_health_apis = [
@@ -83,8 +85,9 @@ fatigue_apis = [
     path("take-user-selfie", eye_fatigue_apis.TakeUserSelfie.as_view()),
 ]
 
-agreement_urls = [
-    path("", user_agreements.UserAgreementView.as_view()),
+static_pages = [
+    path("page/<slug:slug>", static_pages.StaticPagesView.as_view()),
+    path("page", static_pages.StaticPagesSlugView.as_view()),
 ]
 
 urlpatterns = (
@@ -95,6 +98,7 @@ urlpatterns = (
         path("eye/", include(eye_health_apis)),
         path("payment/", include(strip_urls)),
         path("fatigue/", include(fatigue_apis)),
-        path("agreement/", include(agreement_urls)),
+        path("static/", include(static_pages)),
+        
     ]
 )

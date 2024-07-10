@@ -215,6 +215,11 @@ CBIS_SMS_USERNAME = os.getenv("CBIS_SMS_USERNAME")
 CBIS_SMS_PASSWORD = os.getenv("CBIS_SMS_PASSWORD")
 CBIS_SMS_SENDER_ID = os.getenv("CBIS_SMS_SENDER_ID")
 
+# RAZOR PAY
+RAZOR_PAY_KEY_ID = os.getenv("RAZOR_PAY_KEY_ID")
+RAZOR_PAY_KEY_SECRET = os.getenv("RAZOR_PAY_KEY_SECRET")
+RAZOR_PAY_WEBHOOK_SECRET = os.getenv("RAZOR_PAY_WEBHOOK_SECRET")
+
 # logger = logging.getLogger("weasyprint")
 # logger.addHandler(logging.FileHandler(os.path.join(LOG_DIR, "weasyprint.log")))
 

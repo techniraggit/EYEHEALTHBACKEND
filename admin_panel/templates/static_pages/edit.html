@@ -1,0 +1,103 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %}Edit{% endblock title %}
+
+{% block page_name %}Edit{% endblock page_name %}
+{% block table %}
+<div class="right-table1">
+    <div class="form-main">
+        <form method="POST" id="planForm">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 f-name mt-4 select-wrapp ">
+                    <label for="title">Title <span id="required_star">*</span></label>
+                    <select name="title" id="title" class="form-control mt-2">
+                        <option value="">Select Title</option>
+                        <option value="Privacy Policy" {% if static_page_obj.title == 'Privacy Policy' %}selected{% endif %}>Privacy Policy</option>
+                        <option value="Term and Condition" {% if static_page_obj.title == 'Term and Condition' %}selected{% endif %}>Term and Condition</option>
+                        <option value="About Us" {% if static_page_obj.title == 'About Us' %}selected{% endif %}>About Us</option>
+                    </select>
+                    <span id="title_message" style="color: red; font-weight: bold"></span>
+                </div>
+
+                <div class="col-12 f-lname mt-4">
+                    <label class="mb-4" for="content">Content<span id="required_star">*</span></label>
+                    <textarea name="content" id="content" cols="30"
+                        rows="6">{{ static_page_obj.content }}</textarea>
+                    <span id="content_message" style="color: red; font-weight: bold"></span>
+                </div>
+
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    CKEDITOR.replace('content', {
+        extraPlugins: 'justify',
+        toolbar: USER_CONSENT_CKEDITOR,
+        height: 500
+    });
+
+    $(document).ready(function () {
+        $('#title').select2({
+            placeholder: "Select Title",
+            minimumResultsForSearch: Infinity
+        });
+
+        $('#planForm').submit(function (event) {
+            event.preventDefault();
+
+            // Update all CKEditor instances
+            for (const instanceName in CKEDITOR.instances) {
+                CKEDITOR.instances[instanceName].updateElement();
+            }
+
+            let isValid = true;
+            var content = $('#content').val().trim();
+            var title = $('#title').val().trim();
+
+            if (!content) {
+                isValid = false;
+                $("#content_message").text("Content is required")
+            }
+
+            if (!title){
+                isValid = false;
+                $("#title_message").text("Title is required")
+            }
+
+            if (isValid) {
+                $.ajax({
+                    url: "{% url 'edit_static_page_view' static_page_obj.pk %}",
+                    method: "POST",
+                    data: {
+                        csrfmiddlewaretoken: $('input[name="csrfmiddlewaretoken"]').val(),
+                        content: content,
+                        title: title,
+                        
+                    },
+                    success: function (response) {
+                        if (response.status) {
+                            showToaster(response.message, "alert-success")
+                            setTimeout(function () {
+                                window.location.href = "{% url 'static_pages_view' %}";
+                            }, 2000);
+                        } else {
+                            showToaster(response.message, "alert-error")
+                        }
+                    },
+                    error: function (response) {
+                        alert('An error occurred while updating the plan');
+                    }
+                });
+            }
+        });
+
+    }); //document.ready
+</script>
+
+{% endblock table %}

@@ -82,8 +82,8 @@ def dlt_value():
 
 import json
 
-def get_form_error_msg(form_errors):
-    errors = form_errors.errors.as_json()
+def get_form_error_msg(form_errors:json):
+    errors = form_errors
     parsed_data = json.loads(errors)
     first_key = next(iter(parsed_data))
     first_object = parsed_data[first_key][0]
@@ -114,3 +114,11 @@ def is_valid_email(email=None):
         if EMAIL_REGEX.match(email):
             return True
     return False
+
+import string
+import random
+
+def generate_password(length=5):
+    characters = string.ascii_letters + string.digits
+    password = "".join(random.choice(characters) for _ in range(length))
+    return password
