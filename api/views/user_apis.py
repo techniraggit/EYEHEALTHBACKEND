@@ -269,7 +269,7 @@ class UserAddressesView(UserMixin):
         return api_response(False, 400, message=serializer.errors)
 
     def delete(self, request):
-        address_id = request.data.get("address_id")
+        address_id = request.GET.get("address_id")
         if not address_id:
             return api_response(False, 400, "address_id required")
 
