@@ -51,7 +51,7 @@ class VerificationOTPView(APIView):
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
             else:
-                message = SMS_TEMPLATE["send_otp"].format(otp=otp)
+                message = SMS_TEMPLATE["sign_up_otp"].format(otp=otp)
                 send_sms(username, message)
 
             return api_response(True, 200, f"OTP sent successfully to {username}.")
@@ -114,7 +114,7 @@ class SendLoginOTP(APIView):
                 body = render_to_string("email/verify_email.html", {"otp": otp})
                 send_email("Verification OTP", body, [username])
             else:
-                message = SMS_TEMPLATE["send_otp"].format(otp=otp)
+                message = SMS_TEMPLATE["login_otp"].format(otp=otp)
                 send_sms(username, message)
 
             return api_response(True, 200, f"OTP sent successfully to {username}.")
