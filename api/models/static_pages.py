@@ -30,7 +30,6 @@ class StaticPages(BaseModel):
     
     def save(self, *args, **kwargs):
         self.slug = self.slug or slugify(self.title)
-        print("saving slug...", slugify(self.title))
         super().save(*args, **kwargs)
     
     class Meta:

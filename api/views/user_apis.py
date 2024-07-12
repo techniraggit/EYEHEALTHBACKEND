@@ -228,6 +228,12 @@ class UserPrescriptionsView(UserMixin):
 
 class UserAddressesView(UserMixin):
     def get(self, request):
+        address_id =  request.GET.get('address_id')
+        if address_id:
+            user_address = UserAddress.objects.filter(user=request.user, address_id=address_id)
+            serializer = UserAddressSerializer(user_address, many=True)
+            return api_response(True, 200, data=serializer.data)
+
         user_address = UserAddress.objects.filter(user=request.user)
         serializer = UserAddressSerializer(user_address, many=True)
         return api_response(True, 200, data=serializer.data)
@@ -261,6 +267,19 @@ class UserAddressesView(UserMixin):
                 True, 200, "Address updated successfully", data=serializer.data
             )
         return api_response(False, 400, message=serializer.errors)
+
+    def delete(self, request):
+        address_id = request.data.get("address_id")
+        if not address_id:
+            return api_response(False, 400, "address_id required")
+
+        try:
+            user_address = UserAddress.objects.get(address_id=address_id)
+        except UserAddress.DoesNotExist:
+            return api_response(False, 404, "UserAddress not found")
+
+        user_address.delete()
+        return api_response(True, 200, message="Address deleted successfully")
 
 
 class MyReferralsView(UserMixin):
