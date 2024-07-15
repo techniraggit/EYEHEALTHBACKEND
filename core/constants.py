@@ -1,7 +1,12 @@
 SMS_TEMPLATE = {
     "send_otp": "Hi! Your EyeMyEye verification code is {otp}. It is valid for 15 mins. s80mPWzCpOC",
-    "sign_up_otp": "Hi, Your one-time password (OTP) to sign up for Second Eye is: {otp}. This code will expire in 15 mins. Do not share this code with anyone.",
-    "login_otp": "Hi, Your one-time password (OTP) to login for Second Eye is: {otp}. This code will expire in 15 mins. Do not share this code with anyone.",
+    "sign_up_otp": """Hi,
+Your one-time password (OTP) to sign up for Second Eye is: {otp}.
+This code will expire in 15 mins. Do not share this code with anyone.""",
+
+    "login_otp": """Hi, 
+Your one-time password (OTP) to login for Second Eye is: {otp}.
+This code will expire in 15 mins. Do not share this code with anyone. -Eyemyeye""",
 }
 
 ERROR_500_MSG = "An unexpected server error occurred. Please contact support."

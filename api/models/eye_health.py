@@ -1,4 +1,3 @@
-from core.constants import FATIGUE_SUGGESTIONS_AND_HEALTH_SCORES
 from django.db.models import JSONField
 from .base import BaseModel, models, uuid4
 from api.models.accounts import UserModel
