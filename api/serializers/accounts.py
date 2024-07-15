@@ -258,6 +258,7 @@ class ProfileSerializer(BaseSerializer):
             "email",
             "image",
             "age",
+            "dob",
         ]
         extra_kwargs = {
             "points": {"read_only": True},
@@ -284,6 +285,16 @@ class ProfileSerializer(BaseSerializer):
                 raise serializers.ValidationError("Email not verified.")
         except:
             raise serializers.ValidationError("Email not verified.")
+        return value
+
+    def validate_dob(self, value):
+        today = datetime.now().date()
+        if value >= today:
+            raise serializers.ValidationError("Date of birth cannot be in the future.")
+        if value < today - timedelta(days=365 * 150):
+            raise serializers.ValidationError(
+                "Date of birth cannot be more than 150 years ago."
+            )
         return value
 
     def get_age(self, object):
