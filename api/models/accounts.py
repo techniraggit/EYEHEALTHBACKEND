@@ -46,10 +46,11 @@ class UserModel(AbstractUser, BaseModel, SoftDeleteMixin):
     referral_code = models.CharField(max_length=50, unique=True, null=True)
     stripe_customer_id = models.CharField(max_length=250, blank=True)
     is_admin = models.BooleanField(default=False)
+    # is_company = models.BooleanField(default=False)
 
     username = None
     objects = CustomUserManager()
-    all_objects  = models.Manager()
+    all_objects = models.Manager()
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name"]
 
@@ -161,8 +162,11 @@ class ReferTrack(BaseModel):
         UserModel, on_delete=models.CASCADE, related_name="referred_by"
     )
 
+
 class UserContacts(BaseModel):
-    user = models.ForeignKey(UserModel, on_delete=models.CASCADE, related_name='contacts')
+    user = models.ForeignKey(
+        UserModel, on_delete=models.CASCADE, related_name="contacts"
+    )
     name = models.CharField(max_length=255)
     email = models.EmailField(blank=True)
     phone_number = models.CharField(max_length=20, blank=True)

@@ -61,7 +61,7 @@
     <tr>
         <th>Sr.No</th>
         <th>Title</th>
-        <th>Description</th>
+        {% comment %} <th>Description</th> {% endcomment %}
         <th>Expiry Date</th>
         <th>Thumbnail</th>
         <th>Status</th>
@@ -73,11 +73,11 @@
     <tr>
         <td>{{ forloop.counter0|add:paginated_offers.start_index|default:forloop.counter }}</td>
         <td>{{ offer.title }}</td>
-        <td>{{ offer.description|truncate_chars }}</td>
+        {% comment %} <td>{{ offer.description|truncate_chars }}</td> {% endcomment %}
         <td>{{ offer.expiry_date }}</td>
         <td><img class="thumbnail-img" src="{{ offer.image.url }}" alt="" height="100" width="80"></td>
         <td class="{{ offer.status }}">{{ offer.status|title }}</td>
-        <td>{{ offer.required_points }}</td>
+        <td id="offer-required-points-id">{{ offer.required_points }}</td>
         <td>{{ offer.created_on|format_datetime }}</td>
         <td>
             <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
