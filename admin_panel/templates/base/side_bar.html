@@ -9,19 +9,14 @@
             <h5><a href="/" style="color: rgb(38, 50, 56);">Admin</a></h5>
             <div class="side-list">
                 <ul>
-                    {% comment %} {% if request.user.is_superuser %}
+                    {% if request.user.is_superuser %}
                         <li><a href="/backend"><i class="fa-solid fa-database me-2"></i> Developer Admin</a></li>
-                    {% endif %} {% endcomment %}
-                    {% comment %} <li class="{% if request.path|split_path == 'dashboard' %}active-li{% endif %}"><a href="{% url "home_view" %}"><i class="fa-solid fa-house me-3"></i><span>Home</span></a></li> {% endcomment %}
-
-
-                    <li><a href="/" class="{% if request.path|split_path == 'home' %}active-link{% endif %}"><i class="fa-solid fa-house me-2"></i>Home</a></li>
-                    {{ request.path|split_path }}
-                    {% comment %} {% if is_home %}
+                    {% endif %}
+                    {% if is_home %}
                         <li><a href="/" class="active-link"><i class="fa-solid fa-house me-2"></i>Home</a></li>
-                    {% else %} {% endcomment %}
-                        {% comment %} <li><a href="/"><i class="fa-solid fa-house me-2"></i>Home</a></li>
-                    {% endif %} {% endcomment %}
+                    {% else %}
+                        <li><a href="/"><i class="fa-solid fa-house me-2"></i>Home</a></li>
+                    {% endif %}
 
                     {% if is_user %}
                         <li><a href="{% url "users_view" %}" class="active-link"><i class="fa-solid fa-user me-2"></i>User</a></li>
