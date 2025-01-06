@@ -1,9 +1,10 @@
 from enum import Enum
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models import PointField
-from django.contrib.postgres.fields import JSONField
 from django.core.validators import RegexValidator
-from . import BaseModel, models
+
+# from . import BaseModel, models
+from api.models.accounts import UserModel, BaseModel, models
 
 
 validator_contact = RegexValidator(
@@ -19,12 +20,17 @@ class Services(BaseModel):
     service = models.CharField(max_length=100)
     is_paid = models.BooleanField(default=True)
 
+    def __str__(self):
+        return f"{self.service}"
+
     class Meta:
         unique_together = (
             "service",
             "is_paid",
         )
         db_table = "store_services"
+        verbose_name_plural = "Services"
+        verbose_name = "Service"
 
 
 class Stores(BaseModel):
@@ -34,17 +40,20 @@ class Stores(BaseModel):
     std.services.add(service)
     """
 
+    company = models.ForeignKey(
+        UserModel, on_delete=models.CASCADE, related_name="stores"
+    )
     name = models.CharField(max_length=100)
     gst_number = models.CharField(max_length=20, null=True, blank=True)
     pan_number = models.CharField(max_length=50, null=True, blank=True)
     services = models.ManyToManyField(Services)
     description = models.TextField()
     phone = models.CharField(max_length=10, validators=[validator_contact])
-    location = PointField(geography=True, default=Point(0.0, 0.0))
-    images = JSONField(default=dict)
-    google_place_id = models.CharField(
-        verbose_name="Google Place Id", max_length=256, null=True, blank=True
-    )
+    # location = PointField(geography=True, default=Point(0.0, 0.0))
+    images_as_json = models.JSONField(default=dict)
+    # google_place_id = models.CharField(
+    #     verbose_name="Google Place Id", max_length=256, null=True, blank=True
+    # )
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     pin_code = models.CharField(max_length=10)
@@ -58,6 +67,8 @@ class Stores(BaseModel):
 
     class Meta:
         db_table = "store_details"
+        verbose_name_plural = "Stores"
+        verbose_name = "Store"
 
     def __str__(self):
         return self.google_place_id
@@ -93,6 +104,8 @@ class Holiday(BaseModel):
 
     class Meta:
         db_table = "holidays"
+        verbose_name_plural = "Holidays"
+        verbose_name = "Holiday"
 
 
 class StoreHoliday(BaseModel):
@@ -105,6 +118,8 @@ class StoreHoliday(BaseModel):
             "store",
             "holiday",
         )
+        verbose_name_plural = "Store Holidays"
+        verbose_name = "Store Holiday"
 
 
 class Days(models.Model):
@@ -112,6 +127,8 @@ class Days(models.Model):
 
     class Meta:
         db_table = "days"
+        verbose_name_plural = "Days"
+        verbose_name = "Day"
 
 
 class Timing(models.Model):
@@ -126,7 +143,7 @@ class Timing(models.Model):
         db_table = "timings"
 
 
-class StoreAvail(models.Model):
+class StoreAvailability(models.Model):
     store = models.ForeignKey(Stores, on_delete=models.CASCADE)
     day = models.ForeignKey(Days, on_delete=models.DO_NOTHING, null=True)
     timing = models.ForeignKey(Timing, on_delete=models.DO_NOTHING, null=True)
@@ -134,6 +151,8 @@ class StoreAvail(models.Model):
     class Meta:
         db_table = "store_availability"
         unique_together = ("store", "day", "timing")
+        verbose_name_plural = "Store Availability"
+        verbose_name = "Store Availability"
 
 
 class StoreAppointment(models.Model):
@@ -156,3 +175,8 @@ class StoreAppointment(models.Model):
 
     def __str__(self):
         return self.name
+
+    class Meta:
+        db_table = "store_appointments"
+        verbose_name_plural = "Store Appointments"
+        verbose_name = "Store Appointment"

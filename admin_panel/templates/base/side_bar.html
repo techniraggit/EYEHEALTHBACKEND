@@ -9,9 +9,9 @@
             <h5><a href="/" style="color: rgb(38, 50, 56);">Admin</a></h5>
             <div class="side-list">
                 <ul>
-                    {% if request.user.is_superuser %}
+                    {% comment %} {% if request.user.is_superuser %}
                         <li><a href="/backend"><i class="fa-solid fa-database me-2"></i> Developer Admin</a></li>
-                    {% endif %}
+                    {% endif %} {% endcomment %}
                     {% if is_home %}
                         <li><a href="/" class="active-link"><i class="fa-solid fa-house me-2"></i>Home</a></li>
                     {% else %}
@@ -91,19 +91,31 @@
                         <li><a href="{% url "settings_view" %}"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
                     {% endif %}
 
+                    {% if is_business %}
+                        <li><a href="{% url "business_view" %}" class="active-link"><i class="fa-solid fa-briefcase me-2"></i>Business</a></li>
+                    {% else %}
+                        <li><a href="{% url "business_view" %}"><i class="fa-solid fa-briefcase me-2"></i>Business</a></li>
+                    {% endif %}
+
+                    {% if is_store %}
+                        <li><a href="{% url "store_view" %}" class="active-link"><i class="fa-solid fa-store me-2"></i>Store</a></li>
+                    {% else %}
+                        <li><a href="{% url "store_view" %}"><i class="fa-solid fa-store me-2"></i>Store</a></li>
+                    {% endif %}
+
                     {% if is_trash %}
                         <li><a href="{% url "trash_view" %}" class="active-link"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
                     {% else %}
                         <li><a href="{% url "trash_view" %}"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
                     {% endif %}
 
-                    {% if request.user.is_superuser %}
+                    {% comment %} {% if request.user.is_superuser %}
                         {% if is_credentials %}
                             <li><a href="{% url "credentials_view" %}" class="active-link"><i class="fa-solid fa-key me-2"></i>Credentials</a></li>
                         {% else %}
                             <li><a href="{% url "credentials_view" %}"><i class="fa-solid fa-key me-2"></i>Credentials</a></li>
                         {% endif %}
-                    {% endif %}
+                    {% endif %} {% endcomment %}
                 </ul>
             </div>
         </div>

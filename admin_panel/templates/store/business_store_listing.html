@@ -1,0 +1,228 @@
+{% extends "base/side_bar.html" %}
+{% block title %}{{business_name}}{% endblock title %}
+{% load custom_filters %}
+
+{% block page_name %}{{business_name}}{% endblock page_name %}
+{% block nav_bar %}
+<div class="bottomwrap">
+    <div class="search-box row">
+        <div class="col-9">
+            <div class="input-wrapp">
+                {% comment %} <form action="{% url 'offers_view' %}" method="get" id="searchForm">
+                    <div>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Title, Description, and Status"
+                            value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class=" filter-dropdown select-wrapp">
+                        <select name="offer_status_filter" id="offer_status_filter" placeholder="Filter">
+                            <option value="" selected>Payment Status</option>
+                            <option value="active" {% if offer_status_filter == 'active' %}selected{% endif %}>active</option>
+                            <option value="inactive" {% if offer_status_filter == 'inactive' %}selected{% endif %}>inactive</option>
+                            <option value="expired" {% if offer_status_filter == 'expired' %}selected{% endif %}>expired</option>
+                        </select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
+                    </div>
+                </form> {% endcomment %}
+            </div>
+        </div>
+        <div class="export col-3">
+            <ul>
+                <li class="add-btn me-3">
+                    <a href="{% url 'add_offer_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                </li>
+                {% comment %} <li class="ex-li">
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <ul class="dropdown-content">
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url 'offer_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url 'offer_export_view' 'csv' %}">CSV</a></li>
+                    </ul>
+                </li> {% endcomment %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock nav_bar %}
+{% block table %}
+<table>
+    <tr>
+        <th>Sr.No</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Last Login</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    {% for offer in paginated_offers %}
+    <tr>
+        <td>{{ forloop.counter0|add:paginated_offers.start_index|default:forloop.counter }}</td>
+        <td>{{ offer.title }}</td>
+        {% comment %} <td>{{ offer.description|truncate_chars }}</td> {% endcomment %}
+        <td>{{ offer.expiry_date }}</td>
+        <td><img class="thumbnail-img" src="{{ offer.image.url }}" alt="" height="100" width="80"></td>
+        <td class="{{ offer.status }}">{{ offer.status|title }}</td>
+        <td id="offer-required-points-id">{{ offer.required_points }}</td>
+        <td>{{ offer.created_on|format_datetime }}</td>
+        <td>
+            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
+            <a href="{% url "edit_offer_view" offer.offer_id %}"><i class="fa-solid fa-pen me-2"></i></a>
+            <a href="#" class="view-offer-details" data-offer-id="{{ offer.offer_id }}"><i class="fa-regular fa-eye"></i></a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% include "base/pagination.html" with paginated_data=paginated_offers %}
+
+<!-- Offer Detail Modal -->
+<div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="offerDetailModalLabel">Offer Details</h5>
+            </div>
+            <div class="modal-body">
+                <p><strong>Title:</strong> <span id="modal-title"></span></p>
+                <p><strong>Description:</strong> <span id="modal-description"></span></p>
+                <p><strong>Expiry Date:</strong> <span id="modal-expiry_date"></span></p>
+                <p><strong>Status:</strong> <span id="modal-status"></span></p>
+                <p><strong>Required Points:</strong> <span id="modal-required_points"></span></p>
+                {% comment %} <img id="modal-img" src="" alt="" width="80" height="100"> {% endcomment %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Offer Detail Modal -->
+
+<!-- offer delete popup -->
+<div id="dlt-btn-overlay" class="dlt-btn-overlay" style="display: none;">
+    <div class="dlt-popup">
+        <h4>Are you sure you want to delete this Offer?</h4>
+        <div class="dlt-buttons">
+            <button class="pop-confirm-btn" id="confirmDelete">Yes, delete it</button>
+            <button class="pop-confirm-btn" id="cancelDelete">No, keep it</button>
+        </div>
+    </div>
+</div>
+<!-- offer delete popup end -->
+
+<script>
+    $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            console.log(params);
+            $('#exportExcel').attr('href', `{% url 'offer_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'offer_export_view' 'csv' %}?` + params);
+        }
+
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
+        }).attr("readonly", "readonly");
+
+        $('#offer_status_filter').select2({
+            placeholder: "Payment Status",
+            minimumResultsForSearch: Infinity
+        });
+
+        // Clear the search input value when the clear button is clicked
+        $('#clearButton').click(function () {
+            $('#searchInput').val('');
+            $('input[type="text"]').val('');
+            $('select[name="offer_status_filter"]').val('');
+            $('#searchForm').submit();
+        });
+
+        // Delete the offer when the delete button is clicked
+        let deleteId = null;
+        $(document).on('click', '#deleteButton', function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'flex');
+            deleteId = $(this).data("offer-id");
+        });
+
+        // Delete the user when the confirm delete button is clicked
+        $('#confirmDelete').click(function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'none');
+            $.ajax({
+                url: "delete-offer-view/" + deleteId,
+                type: 'GET',
+                success: function (data) {
+                    if (data.status) {
+                        showToaster(data.message, "alert-success");
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        showToaster(data.message, "alert-error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error making GET request:', error);
+                    $('#dlt-btn-overlay').css('display', 'none');
+                    showToaster(error, "alert-error");
+                }
+            });
+        });
+
+        // Hide the delete button overlay when the cancel delete button is clicked
+        $('#cancelDelete').click(function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'none');
+        });
+
+        // View offer details when the view offer details button is clicked
+        $('.view-offer-details').click(function (event) {
+            event.preventDefault();
+            var offerId = $(this).data('offer-id');
+            var modal = $('#offerDetailModal');
+
+            $.ajax({
+                url: '/offers/offer-detailed-view/' + offerId,
+                method: 'GET',
+                success: function (data) {
+                    modal.find('#modal-title').text(data.title);
+                    modal.find('#modal-description').html(data.description);
+                    modal.find('#modal-expiry_date').text(data.expiry_date);
+                    modal.find('#modal-status').text(data.status.toUpperCase());
+                    modal.find('#modal-status').addClass(data.status);
+                    modal.find('#modal-required_points').text(data.required_points);
+                    //modal.find('#modal-img').attr("src", data.image);
+                    modal.modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching offer details:", error);
+                    alert("An error occurred while fetching offer details. Please try again.");
+                }
+            });
+        });
+
+        // Hide the modal when the dismiss button is clicked
+        $("#modal_dismis").on("click", function (event) {
+            event.preventDefault();
+            $('#offerDetailModal').modal('hide');
+        });
+
+    });//document.ready
+</script>
+{% endblock table%}

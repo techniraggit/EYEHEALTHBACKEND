@@ -43,6 +43,7 @@ THIRD_APPS = [
 LOCAL_APPS = [
     "api",
     "admin_panel",
+    "store",
 ]
 
 INSTALLED_APPS += THIRD_APPS + LOCAL_APPS
@@ -233,4 +234,4 @@ MESSAGE_TAGS = {
 }
 LOGIN_URL = "login_view"
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024 # (50 MEGABYTES)
+DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # (50 MEGABYTES)

@@ -1,3 +1,9 @@
+import re
+import json
+import pytz
+from datetime import datetime
+import random
+import string
 from django.template.loader import get_template
 from weasyprint import HTML, CSS
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -78,10 +84,6 @@ def generate_pdf(template_name, context_data, page_width="9.5in", page_height="1
     return pdf_file
 
 
-from datetime import datetime
-import pytz
-
-
 def time_localize(datetime_object: datetime):
     timezone = pytz.timezone("Asia/Kolkata")
     return datetime_object.astimezone(timezone)
@@ -93,9 +95,6 @@ def dlt_value():
     return f"/{str(uuid4()).split('-')[0]}"
 
 
-import json
-
-
 def get_form_error_msg(form_errors: json):
     errors = form_errors
     parsed_data = json.loads(errors)
@@ -103,9 +102,6 @@ def get_form_error_msg(form_errors: json):
     first_object = parsed_data[first_key][0]
     message = f"{first_key.title().replace('_', ' ')}: {first_object['message']}"
     return message
-
-
-import re
 
 
 def is_valid_phone(phone_number):
@@ -117,20 +113,13 @@ def is_valid_phone(phone_number):
     return False
 
 
-def is_valid_email(email=None):
+def is_valid_email(email):
     EMAIL_REGEX = re.compile(
         r'^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|'
         r'(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|'
         r"(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$"
     )
-    if email:
-        if EMAIL_REGEX.match(email):
-            return True
-    return False
-
-
-import string
-import random
+    return True if EMAIL_REGEX.match(email) else False
 
 
 def generate_password(length=5):
