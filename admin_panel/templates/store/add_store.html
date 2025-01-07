@@ -5,6 +5,8 @@
 {% block page_name %}Add Store{% endblock page_name %}
 {% block table %}
 
+<link rel="stylesheet" href="{% static 'css/store.css' %}">
+
 <div class="right-table1">
     <div class=" form-main">
         <form id="addStoreForm" method="POST" enctype="multipart/form-data">
@@ -105,12 +107,44 @@
                     </select>
                 </div>
 
-                <div class="col-md-4 f-name mt-4">
+                <div class="col-md-12 f-name mt-4">
                     <label for="description">Description<span id="required_star">*</span></label>
-                    <textarea name="description" id="description" cols="30" rows="10"></textarea>
+                    <textarea name="description" id="description" cols="30" rows="5" class="form-control"
+                        style="width: 100%;"></textarea>
                 </div>
-                <h1>Services</h1>
-                <h1>Store Images</h1>
+
+                <div class="col-md-12 f-name mt-4">
+                    <label for="description">Services<span id="required_star">*</span></label>
+                    <div class="checkbox-group">
+                        <div class="checkbox">
+                            <input type="checkbox" id="service1" name="service1" value="Bike">
+                            <label for="service1"> Counter Service</label><br>
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" id="service2" name="service2" value="Bike">
+                            <label for="service2"> Special Orders</label><br>
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" id="service3" name="service3" value="Bike">
+                            <label for="service3"> Home Delivery </label><br>
+                        </div>
+                        <div class="checkbox">
+                            <input type="checkbox" id="service4" name="service4" value="Bike">
+                            <label for="service4"> CSR Initiatives </label><br>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 f-name mt-4">
+                    <label for="description">Store Images<span id="required_star">*</span></label>
+                    <div class="store-images mt-2">
+                        <label for="image-upload" class="custom-file-upload">
+                            Add Images
+                        </label>
+                        <input type="file" id="image-upload" multiple accept="image/*">
+                        <div id="preview-container" class="image-preview-container"></div>
+                    </div>
+                </div>
 
                 <!-- services -->
                 <!-- Store Images -->
@@ -179,6 +213,45 @@
                     error: function (xhr, textStatus, errorThrown) {
                         const response = xhr.responseJSON
                         showToaster(response.message, "alert-error");
+                    }
+                });
+            });
+
+
+
+            // add store images
+            document.getElementById('image-upload').addEventListener('change', function (event) {
+                const previewContainer = document.getElementById('preview-container');
+                previewContainer.innerHTML = ''; // Clear previous previews
+                const files = Array.from(event.target.files);
+
+                files.forEach((file, index) => {
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = function (e) {
+                            // Create image wrapper
+                            const wrapper = document.createElement('div');
+                            wrapper.classList.add('preview-image-wrapper');
+                            // Create image element
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            // Create delete icon
+                            const deleteIcon = document.createElement('button');
+                            deleteIcon.classList.add('delete-icon');
+                            deleteIcon.innerHTML = '×';
+                            deleteIcon.setAttribute('data-index', index);
+                            // Delete functionality
+                            deleteIcon.addEventListener('click', function () {
+                                wrapper.remove();
+                            });
+                            // Append image and delete icon
+                            wrapper.appendChild(img);
+                            wrapper.appendChild(deleteIcon);
+                            previewContainer.appendChild(wrapper);
+                        };
+                        reader.readAsDataURL(file);
+                    } else {
+                        alert('Only image files are allowed.');
                     }
                 });
             });
