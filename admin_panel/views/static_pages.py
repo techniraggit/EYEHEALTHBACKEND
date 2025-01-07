@@ -76,7 +76,6 @@ class AddStaticPageView(AdminLoginView):
                 }
             )
         except Exception as e:
-            print(e)
             return JsonResponse(
                 {
                     "status": False,
@@ -118,7 +117,6 @@ class EditStaticPageView(AdminLoginView):
                 }
             )
         except Exception as e:
-            print(e)
             return JsonResponse(
                 {
                     "status": False,

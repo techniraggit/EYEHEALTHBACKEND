@@ -71,7 +71,7 @@ class Stores(BaseModel):
         verbose_name = "Store"
 
     def __str__(self):
-        return self.google_place_id
+        return self.name
 
     def __str__(self):
         return f"{self.id} - {self.name}"

@@ -53,5 +53,4 @@ def range_list(value):
 def split_path(value):
     my_list = str(value).split("/")
     cleaned_list = [item for item in my_list if item]
-    print(">>>>>>>>>>>>>>>>>", cleaned_list)
     return cleaned_list[0]
