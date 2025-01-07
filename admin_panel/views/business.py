@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from .base import AdminLoginView
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from store.models import Services
 
 
 logger = logging.getLogger(__name__)
@@ -104,3 +105,15 @@ class StoreView(AdminLoginView):
             paginated_stores=paginated_stores,
         )
         return render(request, "store/store_listing.html", context)
+
+
+class AddStoreView(AdminLoginView):
+    def get(self, request):
+        businesses_qs = UserModel.objects.filter(is_company=True)
+        services_qs = Services.objects.all()
+        context = dict(
+            businesses=businesses_qs,
+            services=services_qs,
+            is_store=True,
+        )
+        return render(request, "store/add_store.html", context=context)

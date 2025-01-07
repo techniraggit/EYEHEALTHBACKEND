@@ -326,6 +326,7 @@ business_urls = [
         business.BusinessStoreView.as_view(),
         name="store_with_business",
     ),
+    path("add-store", business.AddStoreView.as_view(), name="add_store_view"),
 ]
 
 urlpatterns = [

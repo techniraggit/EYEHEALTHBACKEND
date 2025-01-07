@@ -42,7 +42,7 @@
         <div class="export col-3">
             <ul>
                 <li class="add-btn me-3">
-                    <a href="{% url 'add_offer_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                    <a href="{% url 'add_store_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
                 </li>
                 {% comment %} <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
@@ -60,6 +60,7 @@
 <table>
     <tr>
         <th>Sr.No</th>
+        <th>Business Name</th>
         <th>Name</th>
         <th>GST Number</th>
         <th>PAN Number</th>
@@ -69,6 +70,7 @@
     {% for store in paginated_stores %}
     <tr>
         <td>{{ forloop.counter0|add:paginated_stores.start_index|default:forloop.counter }}</td>
+        <td>{{ store.company.company_name }}</td>
         <td>{{ store.name }}</td>
         <td>{{ store.gst_number }}</td>
         <td>{{ store.pan_number }}</td>

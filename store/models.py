@@ -54,6 +54,8 @@ class Stores(BaseModel):
     # google_place_id = models.CharField(
     #     verbose_name="Google Place Id", max_length=256, null=True, blank=True
     # )
+    opening_time = models.TimeField(null=True, blank=True)
+    closing_time = models.TimeField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     pin_code = models.CharField(max_length=10)

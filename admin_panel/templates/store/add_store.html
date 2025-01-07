@@ -1,0 +1,187 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %}Add Store{% endblock title %}
+
+{% block page_name %}Add Store{% endblock page_name %}
+{% block table %}
+
+<div class="right-table1">
+    <div class=" form-main">
+        <form id="addStoreForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 f-name mt-4 select-wrapp">
+                    <label for="business">Business <span id="required_star">*</span></label>
+                    <select name="business" id="business" class="form-control">
+                        <option value="">Select Business</option>
+                        {% for business in businesses %}
+                        <option value="{{business.id}}">{{business.company_name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="store_name">Store Name<span id="required_star">*</span></label>
+                    <input type="text" name="store_name" id="store_name" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="gst_number">GST Number<span id="required_star">*</span></label>
+                    <input type="text" name="gst_number" id="gst_number" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="pan_number">PAN Number<span id="required_star">*</span></label>
+                    <input type="text" name="pan_number" id="pan_number" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="phone_number">Phone Number<span id="required_star">*</span><i></i></label>
+                    <input type="number" name="phone_number" id="phone_number" class="form-control" />
+                </div>
+
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="opening_time">Opening Time<span id="required_star">*</span></label>
+                    <input type="time" name="opening_time" id="opening_time" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="closing_time">Closing Time<span id="required_star">*</span></label>
+                    <input type="time" name="closing_time" id="closing_time" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="pin_code">Pin Code<span id="required_star">*</span></label>
+                    <input type="number" name="pin_code" id="pin_code" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="address">Address<span id="required_star">*</span></label>
+                    <input type="text" name="address" id="address" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="locality">Locality<span id="required_star">*</span></label>
+                    <input type="text" name="locality" id="locality" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="landmark">Landmark<span id="required_star">*</span></label>
+                    <input type="text" name="landmark" id="landmark" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="city">City<span id="required_star">*</span></label>
+                    <input type="text" name="city" id="city" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="state">State<span id="required_star">*</span></label>
+                    <input type="text" name="state" id="state" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="country">Country<span id="required_star">*</span></label>
+                    <input type="text" name="country" id="country" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="latitude">Latitude<span id="required_star">*</span></label>
+                    <input type="text" name="latitude" id="latitude" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="longitude">Longitude<span id="required_star">*</span></label>
+                    <input type="text" name="longitude" id="longitude" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4 select-wrapp">
+                    <label for="status">Status <span id="required_star">*</span></label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="">Select Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="description">Description<span id="required_star">*</span></label>
+                    <textarea name="description" id="description" cols="30" rows="10"></textarea>
+                </div>
+
+                <!-- services -->
+                <!-- Store Images -->
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit" class="btn btn-primary save-btn">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#business').select2({
+                placeholder: "Select Business",
+                //minimumResultsForSearch: Infinity
+            });
+
+            $('#status').select2({
+                placeholder: "Select Status",
+                minimumResultsForSearch: Infinity
+            });
+
+            $("#addStoreForm").submit(function (event) {
+                event.preventDefault();
+
+                // Perform client-side validation
+                let isValid = true;
+                $(".form-control").each(function () {
+                    if ($(this).hasClass("optional")) {
+                        return true;
+                    }
+                    if ($(this).val().trim() === "") {
+                        isValid = false;
+                        $(this).addClass("is-invalid");
+                    } else {
+                        $(this).removeClass("is-invalid");
+                    }
+                });
+
+                if (!isValid) {
+                    showToaster("Please fill out all required fields.", "alert-error");
+                    return;
+                }
+
+                // If valid, proceed with AJAX submission
+                let formData = new FormData(this);
+
+                $.ajax({
+                    url: "{% url 'business_add_view' %}",
+                    type: "POST",
+                    data: formData,
+                    processData: false,  // Important!
+                    contentType: false,  // Important!
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    success: function (response) {
+                        if (response.status) {
+                            showToaster(response.message, "alert-success");
+                            setTimeout(function () {
+                                window.location.href = "business-listing";
+                            }, 2000);
+                        } else {
+                            showToaster(response.message, "alert-error");
+                        }
+                    },
+                    error: function (xhr, textStatus, errorThrown) {
+                        const response = xhr.responseJSON
+                        showToaster(response.message, "alert-error");
+                    }
+                });
+            });
+
+        });
+    </script>
+
+    {% endblock table%}
