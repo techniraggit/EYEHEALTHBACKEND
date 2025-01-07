@@ -1506,3 +1506,8 @@ span.notify-dot {
     border-top: 1px solid #80808030;
     padding: 13px;
 }
+
+form .form-control:focus {
+    border-color: #5200a5;
+    box-shadow: none;
+}
