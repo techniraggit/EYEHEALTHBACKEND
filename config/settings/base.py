@@ -38,6 +38,7 @@ INSTALLED_APPS = [
 THIRD_APPS = [
     "corsheaders",
     "rest_framework",
+    "django.contrib.gis",
 ]
 
 LOCAL_APPS = [

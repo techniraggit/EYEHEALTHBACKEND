@@ -10,6 +10,18 @@ from api.models.accounts import UserModel, BaseModel, models
 validator_contact = RegexValidator(
     regex=r"^[2-9][0-9]{9}$", message="Only Numbers allowed and cannot start with 0-5"
 )
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.measure import D  # For distances
+
+
+class StoresManager(models.Manager):
+    def nearby_stores(self, user_location, radius_km=20):
+        return (
+            self.get_queryset()
+            .filter(location__distance_lte=(user_location, D(km=radius_km)))
+            .annotate(distance=Distance("location", user_location))
+            .order_by("distance")  # Closest stores first
+        )
 
 
 class Services(BaseModel):
@@ -49,7 +61,7 @@ class Stores(BaseModel):
     services = models.ManyToManyField(Services)
     description = models.TextField()
     phone = models.CharField(max_length=10, validators=[validator_contact])
-    # location = PointField(geography=True, default=Point(0.0, 0.0))
+    location = PointField(geography=True, default=Point(0.0, 0.0))
     images_as_json = models.JSONField(default=dict)
     # google_place_id = models.CharField(
     #     verbose_name="Google Place Id", max_length=256, null=True, blank=True
@@ -67,6 +79,8 @@ class Stores(BaseModel):
     country = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
 
+    store_manage = StoresManager()
+
     class Meta:
         db_table = "store_details"
         verbose_name_plural = "Stores"
@@ -75,11 +89,13 @@ class Stores(BaseModel):
     def __str__(self):
         return self.name
 
-    def __str__(self):
-        return f"{self.id} - {self.name}"
-
     def full_address(self):
         return f"{self.address}, {self.locality}, {self.landmark}, {self.city}, {self.state} {self.pin_code}"
+
+    def save(self, *args, **kwargs):
+        if self.latitude and self.longitude:
+            self.location = Point(self.longitude, self.latitude)
+            super().save(*args, **kwargs)
 
 
 class StoreImages(BaseModel):
