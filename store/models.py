@@ -1,10 +1,9 @@
+from uuid import uuid4
 from enum import Enum
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models import PointField
 from django.core.validators import RegexValidator
-
-# from . import BaseModel, models
-from api.models.accounts import UserModel, BaseModel, models
+from api.models.accounts import BaseModel, models
 
 
 validator_contact = RegexValidator(
@@ -29,20 +28,31 @@ class Services(BaseModel):
     Eye Test, Repair, Purchase
     """
 
-    service = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     is_paid = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"{self.service}"
+        return f"{self.name}"
 
     class Meta:
         unique_together = (
-            "service",
+            "name",
             "is_paid",
         )
-        db_table = "store_services"
+        # db_table = "store_services"
         verbose_name_plural = "Services"
         verbose_name = "Service"
+
+
+class BusinessModel(BaseModel):
+    id = models.UUIDField(default=uuid4, primary_key=True, editable=False)
+    name = models.CharField(max_length=255)
+    phone = models.CharField(max_length=10, validators=[validator_contact], unique=True)
+    email = models.EmailField(unique=True)
+    logo = models.FileField(upload_to="business_logo", null=True, blank=True)
+    password = models.CharField(max_length=255, null=True, blank=True)
+    last_login = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
 
 
 class Stores(BaseModel):
@@ -52,15 +62,18 @@ class Stores(BaseModel):
     std.services.add(service)
     """
 
-    company = models.ForeignKey(
-        UserModel, on_delete=models.CASCADE, related_name="stores"
+    id = models.UUIDField(default=uuid4, primary_key=True, editable=False)
+    business = models.ForeignKey(
+        BusinessModel, on_delete=models.CASCADE, related_name="stores"
     )
     name = models.CharField(max_length=100)
     gst_number = models.CharField(max_length=20, null=True, blank=True)
     pan_number = models.CharField(max_length=50, null=True, blank=True)
-    services = models.ManyToManyField(Services)
+    # services = models.ManyToManyField(Services)
+    services = models.ManyToManyField(Services, related_name="stores")
     description = models.TextField()
     phone = models.CharField(max_length=10, validators=[validator_contact])
+    email = models.EmailField()
     location = PointField(geography=True, default=Point(0.0, 0.0))
     images_as_json = models.JSONField(default=dict)
     # google_place_id = models.CharField(
@@ -79,10 +92,11 @@ class Stores(BaseModel):
     country = models.CharField(max_length=50)
     is_active = models.BooleanField(default=True)
 
+    objects = models.Manager()
     store_manage = StoresManager()
 
     class Meta:
-        db_table = "store_details"
+        # db_table = "store_details"
         verbose_name_plural = "Stores"
         verbose_name = "Store"
 
@@ -121,7 +135,7 @@ class Holiday(BaseModel):
     date = models.DateField()
 
     class Meta:
-        db_table = "holidays"
+        # db_table = "holidays"
         verbose_name_plural = "Holidays"
         verbose_name = "Holiday"
 
@@ -131,7 +145,7 @@ class StoreHoliday(BaseModel):
     holiday = models.ForeignKey(Holiday, on_delete=models.CASCADE)
 
     class Meta:
-        db_table = "store_holidays"
+        # db_table = "store_holidays"
         unique_together = (
             "store",
             "holiday",
@@ -144,7 +158,7 @@ class Days(models.Model):
     day = models.CharField(max_length=10, unique=True)
 
     class Meta:
-        db_table = "days"
+        # db_table = "days"
         verbose_name_plural = "Days"
         verbose_name = "Day"
 
@@ -158,7 +172,7 @@ class Timing(models.Model):
             "start_time",
             "end_time",
         )
-        db_table = "timings"
+        # db_table = "timings"
 
 
 class StoreAvailability(models.Model):
@@ -167,7 +181,7 @@ class StoreAvailability(models.Model):
     timing = models.ForeignKey(Timing, on_delete=models.DO_NOTHING, null=True)
 
     class Meta:
-        db_table = "store_availability"
+        # db_table = "store_availability"
         unique_together = ("store", "day", "timing")
         verbose_name_plural = "Store Availability"
         verbose_name = "Store Availability"
@@ -195,6 +209,6 @@ class StoreAppointment(models.Model):
         return self.name
 
     class Meta:
-        db_table = "store_appointments"
+        # db_table = "store_appointments"
         verbose_name_plural = "Store Appointments"
         verbose_name = "Store Appointment"

@@ -1,3 +1,4 @@
+from django.contrib.gis.geos import Point
 from rest_framework.views import APIView
 from store.models import Stores
 from store.serializers import StoreSerializer
@@ -28,9 +29,6 @@ class StoreView(APIView):
         return api_response(True, 200, stores=data)
 
 
-from django.contrib.gis.geos import Point
-
-
 class NearbyStoreView(APIView):
     def get(self, request):
         user_latitude = float(request.GET.get("latitude"))
@@ -50,7 +48,7 @@ class NearbyStoreView(APIView):
                 "name": store.name,
                 "distance_km": round(store.distance.km, 2),  # Convert to km
                 "address": store.full_address(),
-                "services": [service.service for service in store.services.all()],
+                "services": [service.name for service in store.services.all()],
                 "opening_time": store.opening_time.strftime("%I:%M %p"),
                 "closing_time": store.closing_time.strftime("%I:%M %p"),
             }

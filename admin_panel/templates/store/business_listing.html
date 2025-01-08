@@ -67,6 +67,7 @@
         <th>Sr.No</th>
         <th>Name</th>
         <th>Email</th>
+        <th>Phone Number</th>
         <th>Last Login</th>
         <th>Status</th>
         <th>Action</th>
@@ -74,14 +75,15 @@
     {% for company in paginated_companies %}
     <tr>
         <td>{{ forloop.counter0|add:paginated_companies.start_index|default:forloop.counter }}</td>
-        <td>{{ company.company_name }}</td>
+        <td>{{ company.name }}</td>
         <td>{{ company.email }}</td>
+        <td>{{ company.phone }}</td>
         <td>{{ company.last_login|format_datetime }}</td>
         <td>{% if company.is_active %}Active{% else %}Inactive{% endif %}</td>
         <td>
             <a href="{% url "store_with_business" company.id %}"><i class="fa-solid fa-store me-2"></i></a>
             <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
+            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ company.id }}"></i></a>
             <a href="#" class="view-offer-details" data-offer-id="{{ company.id }}"><i
                     class="fa-regular fa-eye"></i></a>
         </td>

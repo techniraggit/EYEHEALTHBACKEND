@@ -17,14 +17,14 @@
                     <select name="business" id="business" class="form-control">
                         <option value="">Select Business</option>
                         {% for business in businesses %}
-                        <option value="{{business.id}}">{{business.company_name}}</option>
+                        <option value="{{business.id}}">{{business.name}}</option>
                         {% endfor %}
                     </select>
                 </div>
 
                 <div class="col-md-4 f-name mt-4">
-                    <label for="store_name">Store Name<span id="required_star">*</span></label>
-                    <input type="text" name="store_name" id="store_name" class="form-control" />
+                    <label for="name">Store Name<span id="required_star">*</span></label>
+                    <input type="text" name="name" id="name" class="form-control" />
                 </div>
 
                 <div class="col-md-4 f-name mt-4">
@@ -38,8 +38,13 @@
                 </div>
 
                 <div class="col-md-4 f-name mt-4">
-                    <label for="phone_number">Phone Number<span id="required_star">*</span><i></i></label>
-                    <input type="number" name="phone_number" id="phone_number" class="form-control" />
+                    <label for="phone">Phone Number<span id="required_star">*</span><i></i></label>
+                    <input type="tel" name="phone" id="phone" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="email">Email<span id="required_star">*</span><i></i></label>
+                    <input type="text" name="email" id="email" class="form-control" />
                 </div>
 
 
@@ -116,22 +121,13 @@
                 <div class="col-md-12 f-name mt-4">
                     <label for="description">Services<span id="required_star">*</span></label>
                     <div class="checkbox-group">
+                        {% for service in services %}
                         <div class="checkbox">
-                            <input type="checkbox" id="service1" name="service1" value="Bike">
-                            <label for="service1"> Counter Service</label><br>
+                            <input type="checkbox" id="service{{ forloop.counter }}" name="service"
+                                value="{{ service.id }}">
+                            <label for="service{{ forloop.counter }}">{{ service.name }}</label><br>
                         </div>
-                        <div class="checkbox">
-                            <input type="checkbox" id="service2" name="service2" value="Bike">
-                            <label for="service2"> Special Orders</label><br>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" id="service3" name="service3" value="Bike">
-                            <label for="service3"> Home Delivery </label><br>
-                        </div>
-                        <div class="checkbox">
-                            <input type="checkbox" id="service4" name="service4" value="Bike">
-                            <label for="service4"> CSR Initiatives </label><br>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
 
@@ -166,57 +162,68 @@
                 minimumResultsForSearch: Infinity
             });
 
-            $("#addStoreForm").submit(function (event) {
-                event.preventDefault();
-
-                // Perform client-side validation
-                let isValid = true;
-                $(".form-control").each(function () {
-                    if ($(this).hasClass("optional")) {
-                        return true;
-                    }
-                    if ($(this).val().trim() === "") {
+            function validateFormData() {
+                var isValid = true;
+                // Required fields validation
+                $('input, select, textarea').each(function () {
+                    if ($(this).val() === '') {
+                        $(this).css('border', '1px solid red');
                         isValid = false;
-                        $(this).addClass("is-invalid");
                     } else {
-                        $(this).removeClass("is-invalid");
+                        $(this).css('border', '');
                     }
                 });
 
-                if (!isValid) {
-                    showToaster("Please fill out all required fields.", "alert-error");
+                // Image validation (at least one image must be uploaded)
+                if ($('#image-upload')[0].files.length === 0) {
+                    $('#image-upload').css('border', '1px solid red');
+                    isValid = false;
+                } else {
+                    $('#image-upload').css('border', '');
+                }
+
+                return isValid;
+            }
+
+            // Submit the form via AJAX
+            $('#addStoreForm').on('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Validate form data
+                if (!validateFormData()) {
+                    alert('Please fill all required fields and upload images.');
                     return;
                 }
 
-                // If valid, proceed with AJAX submission
-                let formData = new FormData(this);
+                var formData = new FormData(this); // Create FormData object
 
+                // Add files to FormData if not added already
+                var files = $('#image-upload')[0].files;
+                $.each(files, function (i, file) {
+                    formData.append('images[]', file); // Add each image file
+                });
+
+                // Submit the form via AJAX
                 $.ajax({
-                    url: "{% url 'business_add_view' %}",
-                    type: "POST",
+                    url: '{% url "add_store_view" %}',  // Replace with your view URL
+                    type: 'POST',
                     data: formData,
-                    processData: false,  // Important!
-                    contentType: false,  // Important!
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}"
-                    },
+                    processData: false, // Important for file uploads
+                    contentType: false, // Important for file uploads
                     success: function (response) {
                         if (response.status) {
-                            showToaster(response.message, "alert-success");
-                            setTimeout(function () {
-                                window.location.href = "business-listing";
-                            }, 2000);
+                            showToaster(response.message, "alert-success")
+                            $('#addStoreForm')[0].reset();
+                            $('#preview-container').html(''); // Clear the image preview
                         } else {
-                            showToaster(response.message, "alert-error");
+                            showToaster(response.message, "alert-error")
                         }
                     },
-                    error: function (xhr, textStatus, errorThrown) {
-                        const response = xhr.responseJSON
-                        showToaster(response.message, "alert-error");
+                    error: function (xhr, status, error) {
+                        alert('Something went wrong. Please try again.');
                     }
                 });
             });
-
 
 
             // add store images

@@ -1,17 +1,25 @@
-import logging
-from django.http import JsonResponse
-from .base import AdminLoginView
-from django.shortcuts import render
+from django.template.loader import render_to_string
+from utilities.services.email import send_email
 from django.core.paginator import Paginator
-from store.models import Services
-
+from django.shortcuts import render
+from .base import AdminLoginView
+from django.http import JsonResponse
+import logging
+from admin_panel.forms.stores import BusinessModelForm, StoreForm
+from utilities.utils import generate_password
+from django.contrib.auth.hashers import make_password
+from django.contrib import messages
+from django.shortcuts import redirect
+from store.models import Stores, BusinessModel, Services, StoreImages
+from django.core.exceptions import ValidationError
+from utilities.utils import get_form_error_msg
 
 logger = logging.getLogger(__name__)
 
 
 class BusinessView(AdminLoginView):
     def get(self, request):
-        companies = UserModel.objects.filter(is_company=True)
+        companies = BusinessModel.objects.all()
         paginator = Paginator(companies, 10)
         page_number = request.GET.get("page")
         paginated_companies = paginator.get_page(page_number)
@@ -22,10 +30,6 @@ class BusinessView(AdminLoginView):
         return render(request, "store/business_listing.html", context)
 
 
-from api.models.accounts import UserModel
-from utilities.utils import is_valid_phone, is_valid_email, generate_password
-
-
 class BusinessAddView(AdminLoginView):
     def get(self, request):
         return render(
@@ -34,32 +38,24 @@ class BusinessAddView(AdminLoginView):
         )
 
     def post(self, request):
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        phone_number = request.POST.get("phone_number")
         status = request.POST.get("status", "") == "active"
-        if not all([name, email, phone_number]):
-            return JsonResponse(
-                {"status": False, "message": "Required fields are missing"}
+        form = BusinessModelForm(request.POST)
+        if form.is_valid():
+            instance = form.save(commit=False)
+            password = generate_password()
+            instance.password = make_password(password)
+            instance.is_active = status
+            instance.save()
+            # send welcome email to new business
+            email_body = render_to_string(
+                "email/send_password.html",
+                {"name": instance.name, "password": password},
             )
-
-        if is_valid_phone(phone_number):
-            return JsonResponse({"status": False, "message": "Invalid phone number"})
-
-        if not is_valid_email(email):
-            return JsonResponse({"status": False, "message": "Invalid email"})
-
-        try:
-            raw_password = generate_password()
-            user_obj = UserModel.objects.create(
-                company_name=name,
-                is_company=True,
-                email=email,
-                phone_number=phone_number,
-                is_active=status,
+            send_email(
+                subject="Welcome to EyeCare",
+                message=email_body,
+                recipients=[instance.email],
             )
-            user_obj.set_password(raw_password)
-            user_obj.save()
 
             return JsonResponse(
                 {
@@ -67,25 +63,16 @@ class BusinessAddView(AdminLoginView):
                     "message": "Business added successfully",
                 }
             )
-        except Exception as e:
+        else:
             return JsonResponse(
-                {
-                    "status": False,
-                    "message": "Business not added",
-                    "error": str(e),
-                }
+                {"status": False, "message": get_form_error_msg(form.errors.as_json())}
             )
-
-
-from django.contrib import messages
-from django.shortcuts import redirect
-from store.models import Stores
 
 
 class BusinessStoreView(AdminLoginView):
     def get(self, request, business_id):
         try:
-            business_obj = UserModel.objects.get(id=business_id, is_company=True)
+            business_obj = BusinessModel.objects.get(id=business_id)
         except:
             messages.error(request, "Business does not exist")
             return redirect("business_view")
@@ -109,7 +96,7 @@ class StoreView(AdminLoginView):
 
 class AddStoreView(AdminLoginView):
     def get(self, request):
-        businesses_qs = UserModel.objects.filter(is_company=True)
+        businesses_qs = BusinessModel.objects.all()
         services_qs = Services.objects.all()
         context = dict(
             businesses=businesses_qs,
@@ -117,3 +104,150 @@ class AddStoreView(AdminLoginView):
             is_store=True,
         )
         return render(request, "store/add_store.html", context=context)
+
+    def post(self, request):
+        services_lst = request.POST.getlist("service")
+        images = request.FILES.getlist("images[]")
+        form = StoreForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            instance = form.save()
+            services_qs = Services.objects.filter(id__in=services_lst)
+            if services_qs.exists():
+                instance.services.add(
+                    *services_qs
+                )  # Add services to the store instance
+            else:
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "Some of the selected services are invalid.",
+                    }
+                )
+
+            try:
+                store_images = [StoreImages(store=instance, image=i) for i in images]
+                if store_images:
+                    StoreImages.objects.bulk_create(store_images)
+                return JsonResponse(
+                    {
+                        "status": True,
+                        "message": "Store added successfully",
+                    }
+                )
+
+            except ValidationError as e:
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": f"Error occurred while saving the store: {str(e)}",
+                    }
+                )
+        return JsonResponse(
+            {
+                "status": False,
+                "message": get_form_error_msg(form.errors.as_json()),
+            }
+        )
+
+
+class EditStoreView(AdminLoginView):
+    def get(self, request, store_id):
+        try:
+            # Retrieve the store instance by ID
+            store_instance = Stores.objects.get(id=store_id)
+        except Stores.DoesNotExist:
+            return JsonResponse({"status": False, "message": "Store not found."})
+
+        # Fetch related businesses and services for the dropdowns
+        businesses_qs = BusinessModel.objects.all()
+        services_qs = Services.objects.all()
+
+        # Prepare context for rendering the edit form
+        store_images = [
+            f"{request.build_absolute_uri(i.image.url)}"
+            for i in store_instance.images.all()
+        ]
+        context = dict(
+            store=store_instance,
+            businesses=businesses_qs,
+            services=services_qs,
+            service_ids=store_instance.services.all().values_list("id", flat=True),
+            store_images=store_images,
+            is_store=True,
+        )
+        return render(request, "store/store_edit.html", context=context)
+
+    def post(self, request, store_id):
+        try:
+            # Retrieve the store instance to update
+            store_instance = Stores.objects.get(id=store_id)
+        except Stores.DoesNotExist:
+            return JsonResponse({"status": False, "message": "Store not found."})
+
+        # Get updated data from the form
+        services_lst = request.POST.getlist("service")
+        images = request.FILES.getlist("images[]")
+        form = StoreForm(request.POST, request.FILES, instance=store_instance)
+
+        if form.is_valid():
+            # Update the store instance
+            instance = form.save()
+
+            # Update the services related to the store
+            services_qs = Services.objects.filter(id__in=services_lst)
+            if services_qs.exists():
+                instance.services.set(services_qs)  # Update related services
+            else:
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "Some of the selected services are invalid.",
+                    }
+                )
+
+            try:
+                # Update images by clearing old ones and adding new ones
+                if images:
+                    StoreImages.objects.filter(store=instance).delete()
+                    store_images = [
+                        StoreImages(store=instance, image=i) for i in images
+                    ]
+                    StoreImages.objects.bulk_create(store_images)
+
+                return JsonResponse(
+                    {
+                        "status": True,
+                        "message": "Store updated successfully",
+                    }
+                )
+
+            except ValidationError as e:
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": f"Error occurred while updating the store: {str(e)}",
+                    }
+                )
+
+        # If the form is invalid, return the error messages
+        return JsonResponse(
+            {
+                "status": False,
+                "message": get_form_error_msg(form.errors.as_json()),
+            }
+        )
+
+
+class DeleteStoreView(AdminLoginView):
+    def get(self, request, store_id):
+        try:
+            # Retrieve the store instance to delete
+            store_instance = Stores.objects.get(id=store_id)
+        except Stores.DoesNotExist:
+            return JsonResponse({"status": False, "message": "Store not found."})
+
+        # Delete the store instance
+        store_instance.delete()
+
+        return JsonResponse({"status": True, "message": "Store deleted successfully."})

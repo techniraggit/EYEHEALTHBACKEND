@@ -1,0 +1,363 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %}Edit Store{% endblock title %}
+
+{% block page_name %}Edit Store{% endblock page_name %}
+{% block table %}
+
+<link rel="stylesheet" href="{% static 'css/store.css' %}">
+
+<div class="right-table1">
+    <div class=" form-main">
+        <form id="addStoreForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-4 f-name mt-4 select-wrapp">
+                    <label for="business">Business <span id="required_star">*</span></label>
+                    <select name="business" id="business" class="form-control">
+                        <option value="">Select Business</option>
+                        {% for business in businesses %}
+                        <option {% if business == store.business %}selected{% endif %} value="{{business.id}}">
+                            {{business.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="name">Store Name<span id="required_star">*</span></label>
+                    <input type="text" name="name" id="name" value="{{store.name}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="gst_number">GST Number<span id="required_star">*</span></label>
+                    <input type="text" name="gst_number" id="gst_number" value="{{store.gst_number}}"
+                        class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="pan_number">PAN Number<span id="required_star">*</span></label>
+                    <input type="text" name="pan_number" id="pan_number" value="{{store.pan_number}}"
+                        class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="phone">Phone Number<span id="required_star">*</span><i></i></label>
+                    <input type="tel" name="phone" id="phone" value="{{store.phone}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="email">Email<span id="required_star">*</span><i></i></label>
+                    <input type="text" name="email" id="email" value="{{store.email}}" class="form-control" />
+                </div>
+
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="opening_time">Opening Time<span id="required_star">*</span></label>
+                    <input type="time" name="opening_time" id="opening_time" value="{{store.opening_time|time:"H:i"}}"
+                        class="form-control" />
+                </div>
+                <div class="col-md-4 f-name mt-4">
+                    <label for="closing_time">Closing Time<span id="required_star">*</span></label>
+                    <input type="time" name="closing_time" id="closing_time" value="{{store.closing_time|time:"H:i"}}"
+                        class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="pin_code">Pin Code<span id="required_star">*</span></label>
+                    <input type="number" name="pin_code" id="pin_code" value="{{store.pin_code}}"
+                        class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="address">Address<span id="required_star">*</span></label>
+                    <input type="text" name="address" id="address" value="{{store.address}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="locality">Locality<span id="required_star">*</span></label>
+                    <input type="text" name="locality" id="locality" value="{{store.locality}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="landmark">Landmark<span id="required_star">*</span></label>
+                    <input type="text" name="landmark" id="landmark" value="{{store.landmark}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="city">City<span id="required_star">*</span></label>
+                    <input type="text" name="city" id="city" value="{{store.city}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="state">State<span id="required_star">*</span></label>
+                    <input type="text" name="state" id="state" value="{{store.state}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="country">Country<span id="required_star">*</span></label>
+                    <input type="text" name="country" id="country" value="{{store.country}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="latitude">Latitude<span id="required_star">*</span></label>
+                    <input type="text" name="latitude" id="latitude" value="{{store.latitude}}" class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4">
+                    <label for="longitude">Longitude<span id="required_star">*</span></label>
+                    <input type="text" name="longitude" id="longitude" value="{{store.longitude}}"
+                        class="form-control" />
+                </div>
+
+                <div class="col-md-4 f-name mt-4 select-wrapp">
+                    <label for="status">Status<span id="required_star">*</span></label>
+                    <select name="status" id="status" class="form-control">
+                        <option value="">Select Status</option>
+                        <option {% if store.is_active %}selected{% endif %} value="active">Active</option>
+                        <option {% if not store.is_active %}selected{% endif %} value="inactive">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="col-md-12 f-name mt-4">
+                    <label for="description">Description<span id="required_star">*</span></label>
+                    <textarea name="description" id="description" cols="30" rows="5" class="form-control"
+                        style="width: 100%;">{{store.description}}</textarea>
+                </div>
+
+                <div class="col-md-12 f-name mt-4">
+                    <label for="description">Services<span id="required_star">*</span></label>
+                    <div class="checkbox-group">
+                        {% for service in services %}
+                        <div class="checkbox">
+                            <input type="checkbox" id="service{{ forloop.counter }}" name="service"
+                                value="{{ service.id }}" {% if service.id in service_ids %}checked{% endif %}>
+                            <label for="service{{ forloop.counter }}">{{ service.name }}</label><br>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="col-md-12 f-name mt-4">
+                    <label for="description">Store Images<span id="required_star">*</span></label>
+                    <div class="store-images mt-2">
+                        <label for="image-upload" class="custom-file-upload">
+                            Add Images
+                        </label>
+                        <input type="file" id="image-upload" multiple accept="image/*">
+                        <div id="preview-container" class="image-preview-container"></div>
+                    </div>
+                </div>
+
+                <!-- services -->
+                <!-- Store Images -->
+                <div class="col-md-3 cancel-btn mb-4 mt-5">
+                    <button type="submit" class="btn btn-primary save-btn">Update</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#business').select2({
+                placeholder: "Select Business",
+                //minimumResultsForSearch: Infinity
+            });
+
+            $('#status').select2({
+                placeholder: "Select Status",
+                minimumResultsForSearch: Infinity
+            });
+
+            function validateFormData() {
+                var isValid = true;
+                // Required fields validation
+                $('input, select, textarea').each(function () {
+                    if (this.type === 'file') {
+                        return;
+                    }
+
+                    if ($(this).val() === '') {
+                        $(this).css('border', '1px solid red');
+                        isValid = false;
+                    } else {
+                        $(this).css('border', '');
+                    }
+                });
+
+                // Image validation (at least one image must be uploaded)
+                //if ($('#image-upload')[0].files.length === 0) {
+                //    $('#image-upload').css('border', '1px solid red');
+                //    isValid = false;
+                //} else {
+                //    $('#image-upload').css('border', '');
+                //}
+
+                return isValid;
+            }
+
+            // Submit the form via AJAX
+            $('#addStoreForm').on('submit', function (e) {
+                e.preventDefault(); // Prevent the default form submission
+
+                // Validate form data
+                if (!validateFormData()) {
+                    alert('Please fill all required fields and upload images.');
+                    return;
+                }
+
+                var formData = new FormData(this); // Create FormData object
+
+                // Add files to FormData if not added already
+                var files = $('#image-upload')[0].files;
+                $.each(files, function (i, file) {
+                    formData.append('images[]', file); // Add each image file
+                });
+
+                // Submit the form via AJAX
+                console.log(formData)
+                $.ajax({
+                    url: '{% url "edit_store_view" store.id %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function (response) {
+                        if (response.status) {
+                            showToaster(response.message, "alert-success")
+                            window.location.reload();
+                            //$('#addStoreForm')[0].reset();
+                            //$('#preview-container').html('');
+                        } else {
+                            showToaster(response.message, "alert-error")
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Something went wrong. Please try again.');
+                    }
+                });
+            });
+
+
+            // add store images
+            // document.getElementById('image-upload').addEventListener('change', function (event) {
+            //     const previewContainer = document.getElementById('preview-container');
+            //     previewContainer.innerHTML = ''; // Clear previous previews
+            //     const files = Array.from(event.target.files);
+
+            //     files.forEach((file, index) => {
+            //         if (file.type.startsWith('image/')) {
+            //             const reader = new FileReader();
+            //             reader.onload = function (e) {
+            //                 // Create image wrapper
+            //                 const wrapper = document.createElement('div');
+            //                 wrapper.classList.add('preview-image-wrapper');
+            //                 // Create image element
+            //                 const img = document.createElement('img');
+            //                 img.src = e.target.result;
+            //                 // Create delete icon
+            //                 const deleteIcon = document.createElement('button');
+            //                 deleteIcon.classList.add('delete-icon');
+            //                 deleteIcon.innerHTML = '×';
+            //                 deleteIcon.setAttribute('data-index', index);
+            //                 // Delete functionality
+            //                 deleteIcon.addEventListener('click', function () {
+            //                     wrapper.remove();
+            //                 });
+            //                 // Append image and delete icon
+            //                 wrapper.appendChild(img);
+            //                 wrapper.appendChild(deleteIcon);
+            //                 previewContainer.appendChild(wrapper);
+            //             };
+            //             reader.readAsDataURL(file);
+            //         } else {
+            //             alert('Only image files are allowed.');
+            //         }
+            //     });
+            // });
+
+            let selectedFiles = [];
+            const alreadyUploadedImages = {{ store_images| safe }};
+
+        // Function to render already uploaded images
+        function renderUploadedImages() {
+            const previewContainer = $('#preview-container');
+
+            // Clear previous previews (if any)
+            previewContainer.empty();
+
+            alreadyUploadedImages.forEach((imageUrl, index) => {
+                const wrapper = $('<div>').addClass('preview-image-wrapper');
+                const img = $('<img>').attr('src', imageUrl);
+                const deleteIcon = $('<button>')
+                    .addClass('delete-icon')
+                    .text('×')
+                    .data('index', index)
+                    .on('click', function () {
+                        // Remove image from alreadyUploadedImages array
+                        alreadyUploadedImages.splice(index, 1);
+                        renderUploadedImages(); // Re-render the uploaded images
+                    });
+
+                wrapper.append(img).append(deleteIcon);
+                previewContainer.append(wrapper);
+            });
+        }
+
+        // Call this function to show already uploaded images on page load
+        renderUploadedImages();
+
+        // Handle new file uploads
+        $('#image-upload').on('change', function (event) {
+            const newFiles = Array.from(event.target.files);
+
+            // Add new files to the selectedFiles array
+            newFiles.forEach((file) => {
+                if (file.type.startsWith('image/')) {
+                    selectedFiles.push(file);
+                } else {
+                    alert('Only image files are allowed.');
+                }
+            });
+
+            // Clear the input field to allow re-selecting the same file
+            $(this).val('');
+
+            // Render all previews (including newly uploaded files)
+            renderPreviews();
+        });
+
+        // Function to render previews for newly selected files
+        function renderPreviews() {
+            const previewContainer = $('#preview-container');
+
+            // Clear previous previews
+            previewContainer.empty();
+
+            // Render already uploaded images
+            renderUploadedImages();
+
+            // Render new uploaded images
+            selectedFiles.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const wrapper = $('<div>').addClass('preview-image-wrapper');
+                    const img = $('<img>').attr('src', e.target.result);
+                    const deleteIcon = $('<button>')
+                        .addClass('delete-icon')
+                        .text('×')
+                        .data('index', index)
+                        .on('click', function () {
+                            selectedFiles = selectedFiles.filter((_, i) => i !== index);
+                            renderPreviews();
+                        });
+
+                    wrapper.append(img).append(deleteIcon);
+                    previewContainer.append(wrapper);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        });
+    </script>
+
+    {% endblock table%}

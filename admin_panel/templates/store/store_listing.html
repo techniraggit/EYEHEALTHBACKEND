@@ -64,21 +64,23 @@
         <th>Name</th>
         <th>GST Number</th>
         <th>PAN Number</th>
+        <th>Status</th>
         <th>Services</th>
         <th>Action</th>
     </tr>
     {% for store in paginated_stores %}
     <tr>
         <td>{{ forloop.counter0|add:paginated_stores.start_index|default:forloop.counter }}</td>
-        <td>{{ store.company.company_name }}</td>
+        <td>{{ store.business.name }}</td>
         <td>{{ store.name }}</td>
         <td>{{ store.gst_number }}</td>
         <td>{{ store.pan_number }}</td>
+        <td>{% if store.is_active %}Active{% else %}Inactive{% endif %}</td>
         <td>{{ store.services.all|join:", " }}</td>
         <td>
-            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ offer.offer_id }}"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#" class="view-offer-details" data-offer-id="{{ offer.offer_id }}"><i class="fa-regular fa-eye"></i></a>
+            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-store-id="{{ store.id }}"></i></a>
+            <a href="{% url "edit_store_view" store.id %}"><i class="fa-solid fa-pen me-2"></i></a>
+            <a href="#" class="view-offer-details" data-store-id="{{ offer.offer_id }}"><i class="fa-regular fa-eye"></i></a>
         </td>
     </tr>
     {% endfor %}
@@ -112,7 +114,7 @@
 <!-- offer delete popup -->
 <div id="dlt-btn-overlay" class="dlt-btn-overlay" style="display: none;">
     <div class="dlt-popup">
-        <h4>Are you sure you want to delete this Offer?</h4>
+        <h4>Are you sure you want to delete this Store?</h4>
         <div class="dlt-buttons">
             <button class="pop-confirm-btn" id="confirmDelete">Yes, delete it</button>
             <button class="pop-confirm-btn" id="cancelDelete">No, keep it</button>
@@ -156,7 +158,7 @@
         $(document).on('click', '#deleteButton', function (event) {
             event.preventDefault();
             $('#dlt-btn-overlay').css('display', 'flex');
-            deleteId = $(this).data("offer-id");
+            deleteId = $(this).data("store-id");
         });
 
         // Delete the user when the confirm delete button is clicked
@@ -164,7 +166,7 @@
             event.preventDefault();
             $('#dlt-btn-overlay').css('display', 'none');
             $.ajax({
-                url: "delete-offer-view/" + deleteId,
+                url: "/business/delete-store/" + deleteId,
                 type: 'GET',
                 success: function (data) {
                     if (data.status) {
@@ -193,7 +195,7 @@
         // View offer details when the view offer details button is clicked
         $('.view-offer-details').click(function (event) {
             event.preventDefault();
-            var offerId = $(this).data('offer-id');
+            var offerId = $(this).data('store-id');
             var modal = $('#offerDetailModal');
 
             $.ajax({

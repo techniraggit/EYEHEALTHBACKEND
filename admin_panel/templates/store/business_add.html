@@ -21,8 +21,8 @@
                 </div>
 
                 <div class="col-md-4 f-name mt-4">
-                    <label for="phone_number">Phone Number<span id="required_star">*</span><i>(with country code)</i></label>
-                    <input type="number" name="phone_number" id="phone_number" class="form-control" />
+                    <label for="phone">Phone Number<span id="required_star">*</span></label>
+                    <input type="tel" name="phone" id="phone" class="form-control" />
                 </div>
 
                 <div class="col-md-4 f-name mt-4 select-wrapp">
@@ -48,6 +48,7 @@
 
             $("#addBusinessForm").submit(function (event) {
                 event.preventDefault(); // Prevent the form from submitting via the browser
+                $(".overlay, .loader").show();
 
                 // Perform client-side validation
                 let isValid = true;
@@ -89,12 +90,15 @@
                         } else {
                             showToaster(response.message, "alert-error");
                         }
+                        $(".overlay, .loader").hide();
                     },
                     error: function (xhr, textStatus, errorThrown) {
                         const response = xhr.responseJSON
                         showToaster(response.message, "alert-error");
+                        $(".overlay, .loader").hide();
                     }
                 });
+                $(".overlay, .loader").hide();
             });
 
         }); //document.ready
