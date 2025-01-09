@@ -12,3 +12,4 @@ weasyprint==60.2
 pytz==2024.1
 openpyxl==3.0.10
 razorpay==1.4.2
+geopy==2.4.1
