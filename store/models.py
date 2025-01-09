@@ -1,3 +1,7 @@
+from django.db.models import Avg
+from django.conf import settings
+from django.contrib.gis.measure import D  # For distances
+from django.contrib.gis.db.models.functions import Distance
 from uuid import uuid4
 from enum import Enum
 from django.contrib.gis.geos import Point
@@ -9,8 +13,6 @@ from api.models.accounts import BaseModel, models
 validator_contact = RegexValidator(
     regex=r"^[2-9][0-9]{9}$", message="Only Numbers allowed and cannot start with 0-5"
 )
-from django.contrib.gis.db.models.functions import Distance
-from django.contrib.gis.measure import D  # For distances
 
 
 class StoresManager(models.Manager):
@@ -69,16 +71,12 @@ class Stores(BaseModel):
     name = models.CharField(max_length=100)
     gst_number = models.CharField(max_length=20, null=True, blank=True)
     pan_number = models.CharField(max_length=50, null=True, blank=True)
-    # services = models.ManyToManyField(Services)
     services = models.ManyToManyField(Services, related_name="stores")
     description = models.TextField()
     phone = models.CharField(max_length=10, validators=[validator_contact])
     email = models.EmailField()
     location = PointField(geography=True, default=Point(0.0, 0.0))
     images_as_json = models.JSONField(default=dict)
-    # google_place_id = models.CharField(
-    #     verbose_name="Google Place Id", max_length=256, null=True, blank=True
-    # )
     opening_time = models.TimeField(null=True, blank=True)
     closing_time = models.TimeField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
@@ -106,6 +104,13 @@ class Stores(BaseModel):
     def full_address(self):
         return f"{self.address}, {self.locality}, {self.landmark}, {self.city}, {self.state} {self.pin_code}"
 
+    def get_average_rating(self):
+        """
+        Calculate and return the average rating of the store.
+        """
+        average_rating = self.ratings.aggregate(average=Avg("rating"))["average"]
+        return round(average_rating, 2) if average_rating else 0.0
+
     def save(self, *args, **kwargs):
         if self.latitude and self.longitude:
             self.location = Point(self.longitude, self.latitude)
@@ -127,6 +132,22 @@ class HolidayType(Enum):
     @classmethod
     def choices(cls):
         return tuple((i.name, i.value) for i in cls)
+
+
+class StoreRating(BaseModel):
+    store = models.ForeignKey(Stores, on_delete=models.CASCADE, related_name="ratings")
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="store_ratings"
+    )
+    rating = models.PositiveIntegerField()
+    review = models.TextField(null=True, blank=True)
+
+    class Meta:
+        unique_together = ("store", "user")
+        ordering = ["-created_on"]
+
+    def __str__(self):
+        return f"{self.store.name} - {self.rating} by {self.user.email}"
 
 
 class Holiday(BaseModel):

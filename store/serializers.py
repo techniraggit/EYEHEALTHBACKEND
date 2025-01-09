@@ -1,4 +1,4 @@
-from .models import Stores, Services
+from .models import Stores, Services, StoreRating
 from api.models.accounts import UserModel
 from rest_framework import serializers
 

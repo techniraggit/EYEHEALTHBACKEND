@@ -10,6 +10,7 @@ from .models import (
     StoreAvailability,
     StoreAppointment,
     BusinessModel,
+    StoreRating,
 )
 from api.models.accounts import UserModel
 
@@ -43,7 +44,7 @@ class StoresAdmin(admin.ModelAdmin):
 
 
 # admin.site.register(Services)
-# admin.site.register(Stores)
+admin.site.register(StoreRating)
 admin.site.register(StoreImages)
 admin.site.register(Holiday)
 admin.site.register(StoreHoliday)
