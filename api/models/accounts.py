@@ -46,8 +46,6 @@ class UserModel(AbstractUser, BaseModel, SoftDeleteMixin):
     referral_code = models.CharField(max_length=50, unique=True, null=True)
     stripe_customer_id = models.CharField(max_length=250, blank=True)
     is_admin = models.BooleanField(default=False)
-    company_name = models.CharField(max_length=50, blank=True, null=True)
-    is_company = models.BooleanField(default=False)
 
     username = None
     objects = CustomUserManager()
