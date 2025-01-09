@@ -82,7 +82,37 @@ class BusinessStoreView(AdminLoginView):
 
 
 class StoreView(AdminLoginView):
-    def get(self, request):
+    def get(self, request, store_id=None):
+        if store_id:
+            try:
+                store = Stores.objects.get(id=store_id)
+                store_images = [
+                    f"{request.build_absolute_uri(i.image.url)}"
+                    for i in store.images.all()
+                ]
+                return JsonResponse(
+                    {
+                        "status": True,
+                        "data": store.to_json(),
+                        "images": store_images,
+                    }
+                )
+            except Stores.DoesNotExist:
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "Store does not exist",
+                    }
+                )
+            except Exception as e:
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "An error occurred",
+                        "error": str(e),
+                    }
+                )
+
         stores = Stores.objects.all()
         paginator = Paginator(stores, 10)
         page_number = request.GET.get("page")

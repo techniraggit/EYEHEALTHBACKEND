@@ -76,11 +76,12 @@
         <td>{{ store.gst_number }}</td>
         <td>{{ store.pan_number }}</td>
         <td>{% if store.is_active %}Active{% else %}Inactive{% endif %}</td>
-        <td>{{ store.services.all|join:", " }}</td>
+        <td>{{ store.get_average_rating }}</td>
+        <td title="{{ store.services.all|join:', ' }}">{{ store.services.all|join:", " }}</td>
         <td>
             <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-store-id="{{ store.id }}"></i></a>
             <a href="{% url "edit_store_view" store.id %}"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="#" class="view-offer-details" data-store-id="{{ offer.offer_id }}"><i class="fa-regular fa-eye"></i></a>
+            <a href="{{ store.id }}" class="view-store-details" data-store-id="{{ store.id }}"><i class="fa-regular fa-eye"></i></a>
         </td>
     </tr>
     {% endfor %}
@@ -88,19 +89,29 @@
 {% include "base/pagination.html" with paginated_data=paginated_stores %}
 
 <!-- Offer Detail Modal -->
-<div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel"
+<div class="modal fade" id="storeDetailModel" tabindex="-1" role="dialog" aria-labelledby="storeDetailModelLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="offerDetailModalLabel">Offer Details</h5>
+                <h5 class="modal-title" id="storeDetailModelLabel">Store Details</h5>
             </div>
             <div class="modal-body">
-                <p><strong>Title:</strong> <span id="modal-title"></span></p>
+                <p><strong>ID:</strong> <span id="modal-id"></span></p>
+                <p><strong>Name:</strong> <span id="modal-name"></span></p>
+                <p><strong>GST Number:</strong> <span id="modal-gst_number"></span></p>
+                <p><strong>PAN Number:</strong> <span id="modal-pan_number"></span></p>
+                <p><strong>Services:</strong> <span id="modal-services"></span></p>
                 <p><strong>Description:</strong> <span id="modal-description"></span></p>
-                <p><strong>Expiry Date:</strong> <span id="modal-expiry_date"></span></p>
-                <p><strong>Status:</strong> <span id="modal-status"></span></p>
-                <p><strong>Required Points:</strong> <span id="modal-required_points"></span></p>
+                <p><strong>Phone:</strong> <span id="modal-phone"></span></p>
+                <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                <p><strong>Opening Time:</strong> <span id="modal-opening_time"></span></p>
+                <p><strong>Closing Time:</strong> <span id="modal-closing_time"></span></p>
+                <p><strong>Latitude:</strong> <span id="modal-latitude"></span></p>
+                <p><strong>Longitude:</strong> <span id="modal-longitude"></span></p>
+                <p><strong>Pin Code:</strong> <span id="modal-pin_code"></span></p>
+                <p><strong>Address:</strong> <span id="modal-address"></span></p>
+                <p><strong>Status:</strong> <span id="modal-is_active"></span></p>
                 {% comment %} <img id="modal-img" src="" alt="" width="80" height="100"> {% endcomment %}
             </div>
             <div class="modal-footer">
@@ -193,23 +204,35 @@
         });
 
         // View offer details when the view offer details button is clicked
-        $('.view-offer-details').click(function (event) {
+        $('.view-store-details').click(function (event) {
             event.preventDefault();
-            var offerId = $(this).data('store-id');
-            var modal = $('#offerDetailModal');
+            var storeId = $(this).data('store-id');
+            var modal = $('#storeDetailModel');
 
             $.ajax({
-                url: '/offers/offer-detailed-view/' + offerId,
+                url: '/business/store-with-id/' + storeId,
                 method: 'GET',
-                success: function (data) {
-                    modal.find('#modal-title').text(data.title);
-                    modal.find('#modal-description').html(data.description);
-                    modal.find('#modal-expiry_date').text(data.expiry_date);
-                    modal.find('#modal-status').text(data.status.toUpperCase());
-                    modal.find('#modal-status').addClass(data.status);
-                    modal.find('#modal-required_points').text(data.required_points);
-                    //modal.find('#modal-img').attr("src", data.image);
-                    modal.modal('show');
+                success: function (response) {
+                    if (response.status){
+                        modal.find("#modal-id").text(response.data.id)
+                        modal.find("#modal-name").text(response.data.name)
+                        modal.find("#modal-gst_number").text(response.data.gst_number)
+                        modal.find("#modal-pan_number").text(response.data.pan_number)
+                        modal.find("#modal-services").text(response.data.services)
+                        modal.find("#modal-description").text(response.data.description)
+                        modal.find("#modal-phone").text(response.data.phone)
+                        modal.find("#modal-email").text(response.data.email)
+                        modal.find("#modal-opening_time").text(response.data.opening_time)
+                        modal.find("#modal-closing_time").text(response.data.closing_time)
+                        modal.find("#modal-latitude").text(response.data.latitude)
+                        modal.find("#modal-longitude").text(response.data.longitude)
+                        modal.find("#modal-pin_code").text(response.data.pin_code)
+                        modal.find("#modal-address").text(response.data.address)
+                        modal.find("#modal-is_active").text(response.data.is_active)
+                        modal.modal('show');
+                    }else{
+                        showToaster(response.message, "alert-error")
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error("Error fetching offer details:", error);
@@ -221,7 +244,7 @@
         // Hide the modal when the dismiss button is clicked
         $("#modal_dismis").on("click", function (event) {
             event.preventDefault();
-            $('#offerDetailModal').modal('hide');
+            $('#storeDetailModel').modal('hide');
         });
 
     });//document.ready

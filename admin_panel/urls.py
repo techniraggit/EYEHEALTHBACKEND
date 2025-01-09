@@ -322,6 +322,9 @@ business_urls = [
     path("add-business", business.BusinessAddView.as_view(), name="business_add_view"),
     path("store/", business.StoreView.as_view(), name="store_view"),
     path(
+        "store-with-id/<uuid:store_id>", business.StoreView.as_view(), name="store_view"
+    ),
+    path(
         "store/<uuid:business_id>",
         business.BusinessStoreView.as_view(),
         name="store_with_business",

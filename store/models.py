@@ -116,6 +116,25 @@ class Stores(BaseModel):
             self.location = Point(self.longitude, self.latitude)
             super().save(*args, **kwargs)
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "gst_number": self.gst_number,
+            "pan_number": self.pan_number,
+            "services": list(self.services.all().values_list("name", flat=True)),
+            "description": self.description,
+            "phone": self.phone,
+            "email": self.email,
+            "opening_time": self.opening_time.strftime("%I:%M %p"),
+            "closing_time": self.closing_time.strftime("%I:%M %p"),
+            "latitude": self.latitude,
+            "longitude": self.longitude,
+            "pin_code": self.pin_code,
+            "address": self.full_address(),
+            "is_active": self.is_active,
+        }
+
 
 class StoreImages(BaseModel):
     store = models.ForeignKey(Stores, on_delete=models.CASCADE, related_name="images")
