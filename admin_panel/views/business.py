@@ -141,9 +141,9 @@ class AddStoreView(AdminLoginView):
         form = StoreForm(request.POST, request.FILES)
 
         if form.is_valid():
-            instance = form.save()
             services_qs = Services.objects.filter(id__in=services_lst)
             if services_qs.exists():
+                instance = form.save()
                 instance.services.add(
                     *services_qs
                 )  # Add services to the store instance
