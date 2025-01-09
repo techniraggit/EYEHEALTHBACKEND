@@ -1,4 +1,4 @@
-from .models import Stores, Services, StoreRating
+from .models import Stores, Services, StoreRating, BusinessModel
 from api.models.accounts import UserModel
 from rest_framework import serializers
 
@@ -25,14 +25,14 @@ class ServicesSerializer(BaseSerializer):
         fields = "__all__"
 
 
-class CompanySerializer(BaseSerializer):
+class BusinessModelSerializer(BaseSerializer):
     class Meta:
-        model = UserModel
+        model = BusinessModel
         fields = "__all__"
 
 
 class StoreSerializer(BaseSerializer):
-    company = CompanySerializer(fields=["id", "email", "company_name"])
+    business = BusinessModelSerializer(fields=["id", "name", "phone", "email"])
     services = ServicesSerializer(many=True, fields=["id", "service", "is_paid"])
     store_address = serializers.SerializerMethodField()
 

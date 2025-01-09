@@ -14,19 +14,28 @@ class UserMixin(APIView):
 
 class StoreView(UserMixin):
     def get(self, request):
-        stores = Stores.objects.all()
-        fields = [
-            "company",
-            "services",
-            "store_address",
-            "name",
-            "opening_time",
-            "closing_time",
-            "latitude",
-            "longitude",
+        stores = Stores.objects.filter(is_active=True)
+
+        stores_data = [
+            {
+                "id": store.id,
+                "name": store.name,
+                "distance_km": None,
+                "address": store.full_address(),
+                "services": [service.name for service in store.services.all()],
+                "opening_time": store.opening_time.strftime("%I:%M %p"),
+                "closing_time": store.closing_time.strftime("%I:%M %p"),
+                "rating": store.get_average_rating(),
+                "images": [
+                    f"{request.build_absolute_uri(i.image.url)}"
+                    for i in store.images.all()
+                ],
+            }
+            for store in stores
         ]
-        data = StoreSerializer(stores, many=True, fields=fields).data
-        return api_response(True, 200, stores=data)
+
+        # Serialize and return the response
+        return api_response(True, 200, stores=stores_data)
 
 
 class NearbyStoreView(UserMixin):

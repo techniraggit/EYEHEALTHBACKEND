@@ -16,10 +16,17 @@ validator_contact = RegexValidator(
 
 
 class StoresManager(models.Manager):
-    def nearby_stores(self, user_location, radius_km=20):
+    def nearby_stores(self, user_location, radius_km=15):
         return (
             self.get_queryset()
             .filter(location__distance_lte=(user_location, D(km=radius_km)))
+            .annotate(distance=Distance("location", user_location))
+            .order_by("distance")  # Closest stores first
+        )
+
+    def all_stores(self, user_location):
+        return (
+            self.get_queryset()
             .annotate(distance=Distance("location", user_location))
             .order_by("distance")  # Closest stores first
         )
