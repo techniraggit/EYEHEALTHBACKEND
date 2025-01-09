@@ -77,7 +77,7 @@ class BusinessStoreView(AdminLoginView):
             messages.error(request, "Business does not exist")
             return redirect("business_view")
         stores = Stores.objects.filter(business=business_obj)
-        context = dict(business_name=business_obj.company_name, stores=stores)
+        context = dict(business_name=business_obj.name, stores=stores)
         return render(request, "store/business_store_listing.html", context)
 
 
