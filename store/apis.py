@@ -45,6 +45,7 @@ class NearbyStoreView(UserMixin):
         # Serialize and return the response
         stores_data = [
             {
+                "id": store.id,
                 "name": store.name,
                 "distance_km": round(store.distance.km, 2),  # Convert to km
                 "address": store.full_address(),
