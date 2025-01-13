@@ -1,3 +1,4 @@
+import datetime
 from django.template.loader import render_to_string
 from utilities.services.email import send_email
 from django.core.paginator import Paginator
@@ -10,11 +11,32 @@ from utilities.utils import generate_password
 from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.shortcuts import redirect
-from store.models import Stores, BusinessModel, Services, StoreImages
+from store.models.models import Stores, BusinessModel, Services, StoreImages
+from store.models.appointments import StoreAvailability, Days
 from django.core.exceptions import ValidationError
 from utilities.utils import get_form_error_msg
 
 logger = logging.getLogger(__name__)
+
+
+def validate_opening_and_closing_time(opening_time, closing_time):
+    try:
+        # Check if both times are provided
+        if not opening_time or not closing_time:
+            return "Both opening time and closing time must be provided."
+
+        # Parse the times to ensure they are valid
+        opening_time_obj = datetime.datetime.strptime(opening_time, "%H:%M").time()
+        closing_time_obj = datetime.datetime.strptime(closing_time, "%H:%M").time()
+
+        # Validate that opening time is earlier than closing time
+        if opening_time_obj >= closing_time_obj:
+            return "Opening time must be earlier than closing time."
+
+        # If all validations pass
+        return None
+    except ValueError:
+        return "Invalid time format. Please use HH:MM format."
 
 
 class BusinessView(AdminLoginView):
@@ -136,9 +158,23 @@ class AddStoreView(AdminLoginView):
         return render(request, "store/add_store.html", context=context)
 
     def post(self, request):
+        from django.db import transaction
+
         services_lst = request.POST.getlist("service")
+        opening_time = request.POST.get("opening_time")
+        closing_time = request.POST.get("closing_time")
         images = request.FILES.getlist("images[]")
         form = StoreForm(request.POST, request.FILES)
+
+        error = validate_opening_and_closing_time(opening_time, closing_time)
+        if error:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": error,
+                },
+                status=400,
+            )
 
         if form.is_valid():
             services_qs = Services.objects.filter(id__in=services_lst)
@@ -156,15 +192,26 @@ class AddStoreView(AdminLoginView):
                 )
 
             try:
-                store_images = [StoreImages(store=instance, image=i) for i in images]
-                if store_images:
-                    StoreImages.objects.bulk_create(store_images)
-                return JsonResponse(
-                    {
-                        "status": True,
-                        "message": "Store added successfully",
-                    }
-                )
+                with transaction.atomic():
+                    store_images = [
+                        StoreImages(store=instance, image=i) for i in images
+                    ]
+                    if store_images:
+                        StoreImages.objects.bulk_create(store_images)
+
+                    days_qs = Days.objects.all()
+                    store_availability_obj = StoreAvailability.objects.create(
+                        store=instance,
+                        start_working_hr=opening_time,
+                        end_working_hr=closing_time,
+                    )
+                    store_availability_obj.days.add(days_qs)
+                    return JsonResponse(
+                        {
+                            "status": True,
+                            "message": "Store added successfully",
+                        }
+                    )
 
             except ValidationError as e:
                 return JsonResponse(
@@ -200,12 +247,16 @@ class EditStoreView(AdminLoginView):
         ]
         context = dict(
             store=store_instance,
+            store_availability=StoreAvailability.objects.filter(
+                store=store_instance
+            ).first(),
             businesses=businesses_qs,
             services=services_qs,
             service_ids=store_instance.services.all().values_list("id", flat=True),
             store_images=store_images,
             is_store=True,
         )
+        print(context)
         return render(request, "store/store_edit.html", context=context)
 
     def post(self, request, store_id):
@@ -217,8 +268,20 @@ class EditStoreView(AdminLoginView):
 
         # Get updated data from the form
         services_lst = request.POST.getlist("service")
+        opening_time = request.POST.get("opening_time")
+        closing_time = request.POST.get("closing_time")
         images = request.FILES.getlist("images[]")
         form = StoreForm(request.POST, request.FILES, instance=store_instance)
+
+        error = validate_opening_and_closing_time(opening_time, closing_time)
+        if error:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": error,
+                },
+                status=400,
+            )
 
         if form.is_valid():
             # Update the store instance
@@ -244,6 +307,15 @@ class EditStoreView(AdminLoginView):
                         StoreImages(store=instance, image=i) for i in images
                     ]
                     StoreImages.objects.bulk_create(store_images)
+
+                # days_qs = Days.objects.all()
+                store_availability_obj = StoreAvailability.objects.filter(
+                    store=instance
+                ).first()
+                store_availability_obj.start_working_hr = (opening_time,)
+                store_availability_obj.end_working_hr = (closing_time,)
+                store_availability_obj.save()
+                # store_availability_obj.days.add(days_qs)
 
                 return JsonResponse(
                     {

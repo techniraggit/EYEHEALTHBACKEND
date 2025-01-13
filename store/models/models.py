@@ -48,7 +48,6 @@ class Services(BaseModel):
             "name",
             "is_paid",
         )
-        # db_table = "store_services"
         verbose_name_plural = "Services"
         verbose_name = "Service"
 
@@ -83,9 +82,7 @@ class Stores(BaseModel):
     phone = models.CharField(max_length=10, validators=[validator_contact])
     email = models.EmailField()
     location = PointField(geography=True, default=Point(0.0, 0.0))
-    images_as_json = models.JSONField(default=dict)
-    opening_time = models.TimeField(null=True, blank=True)
-    closing_time = models.TimeField(null=True, blank=True)
+    images_as_json = models.JSONField(default=dict, null=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     pin_code = models.CharField(max_length=10)
@@ -148,18 +145,6 @@ class StoreImages(BaseModel):
     image = models.ImageField(upload_to="store_images")
 
 
-class HolidayType(Enum):
-    PUBLIC = "Public"
-    NATIONAL = "National"
-    BANK = "Bank"
-    RESTRICTED = "Restricted"
-    GAZETTED = "Gazetted"
-
-    @classmethod
-    def choices(cls):
-        return tuple((i.name, i.value) for i in cls)
-
-
 class StoreRating(BaseModel):
     store = models.ForeignKey(Stores, on_delete=models.CASCADE, related_name="ratings")
     user = models.ForeignKey(
@@ -174,88 +159,3 @@ class StoreRating(BaseModel):
 
     def __str__(self):
         return f"{self.store.name} - {self.rating} by {self.user.email}"
-
-
-class Holiday(BaseModel):
-    name = models.CharField(max_length=50)
-    type = models.CharField(choices=HolidayType.choices(), max_length=50, null=True)
-    date = models.DateField()
-
-    class Meta:
-        # db_table = "holidays"
-        verbose_name_plural = "Holidays"
-        verbose_name = "Holiday"
-
-
-class StoreHoliday(BaseModel):
-    store = models.ForeignKey(Stores, on_delete=models.CASCADE)
-    holiday = models.ForeignKey(Holiday, on_delete=models.CASCADE)
-
-    class Meta:
-        # db_table = "store_holidays"
-        unique_together = (
-            "store",
-            "holiday",
-        )
-        verbose_name_plural = "Store Holidays"
-        verbose_name = "Store Holiday"
-
-
-class Days(models.Model):
-    day = models.CharField(max_length=10, unique=True)
-
-    class Meta:
-        # db_table = "days"
-        verbose_name_plural = "Days"
-        verbose_name = "Day"
-
-
-class Timing(models.Model):
-    start_time = models.TimeField()
-    end_time = models.TimeField()
-
-    class Meta:
-        unique_together = (
-            "start_time",
-            "end_time",
-        )
-        # db_table = "timings"
-
-
-class StoreAvailability(models.Model):
-    store = models.ForeignKey(Stores, on_delete=models.CASCADE)
-    day = models.ForeignKey(Days, on_delete=models.DO_NOTHING, null=True)
-    timing = models.ForeignKey(Timing, on_delete=models.DO_NOTHING, null=True)
-
-    class Meta:
-        # db_table = "store_availability"
-        unique_together = ("store", "day", "timing")
-        verbose_name_plural = "Store Availability"
-        verbose_name = "Store Availability"
-
-
-class StoreAppointment(models.Model):
-    GENDER_CHOICES = [
-        ("M", "Male"),
-        ("F", "Female"),
-        ("O", "Other"),
-    ]
-
-    name = models.CharField(max_length=255)
-    store = models.ForeignKey(Stores, on_delete=models.CASCADE, db_index=True)
-    email = models.EmailField()
-    phone_number = models.CharField(max_length=15)
-    gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    date_of_slot = models.DateField(db_index=True)
-    start_slot_time = models.TimeField()
-    end_slot_time = models.TimeField()
-    status = models.BooleanField(default=True)
-    service = models.CharField(max_length=15, default="")
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        # db_table = "store_appointments"
-        verbose_name_plural = "Store Appointments"
-        verbose_name = "Store Appointment"

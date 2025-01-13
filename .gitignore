@@ -8,6 +8,7 @@ db.sqlite3-journal
 media
 untracted_files
 staticfiles/
+.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

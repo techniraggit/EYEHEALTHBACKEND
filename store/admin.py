@@ -1,16 +1,19 @@
 from django.contrib import admin
-from .models import (
+from .models.models import (
     Services,
     Stores,
     StoreImages,
+    BusinessModel,
+    StoreRating,
+)
+from .models.appointments import (
     Holiday,
     StoreHoliday,
     Days,
-    Timing,
     StoreAvailability,
     StoreAppointment,
-    BusinessModel,
-    StoreRating,
+    TimeSlot,
+    AppointmentSlot,
 )
 from api.models.accounts import UserModel
 
@@ -43,12 +46,21 @@ class StoresAdmin(admin.ModelAdmin):
     #     return super().formfield_for_foreignkey(db_field, request, **kwargs)
 
 
+@admin.register(StoreAvailability)
+class StoreAvailabilityAdmin(admin.ModelAdmin):
+    list_display = ["id", "store", "start_working_hr", "end_working_hr"]
+    search_fields = ["store__name"]
+    list_filter = ["days"]
+    filter_horizontal = ["days"]
+
+
 # admin.site.register(Services)
 admin.site.register(StoreRating)
 admin.site.register(StoreImages)
 admin.site.register(Holiday)
 admin.site.register(StoreHoliday)
 admin.site.register(Days)
-admin.site.register(Timing)
-admin.site.register(StoreAvailability)
+admin.site.register(TimeSlot)
+admin.site.register(AppointmentSlot)
+# admin.site.register(StoreAvailability)
 admin.site.register(StoreAppointment)

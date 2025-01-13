@@ -1,5 +1,5 @@
 from django import forms
-from store.models import BusinessModel, Stores
+from store.models.models import BusinessModel, Stores
 import re
 
 phone_regex = r"^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$"
@@ -23,8 +23,8 @@ class StoreForm(forms.ModelForm):
             "description",
             "phone",
             "email",
-            "opening_time",
-            "closing_time",
+            # "opening_time",
+            # "closing_time",
             "latitude",
             "longitude",
             "pin_code",

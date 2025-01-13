@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import Point
 from rest_framework.views import APIView
-from store.models import Stores, StoreRating
+from store.models.models import Stores, StoreRating
 from store.serializers import StoreSerializer
 from core.utils import api_response
 from rest_framework.permissions import IsAuthenticated
@@ -23,8 +23,12 @@ class StoreView(UserMixin):
                 "distance_km": None,
                 "address": store.full_address(),
                 "services": [service.name for service in store.services.all()],
-                "opening_time": store.opening_time.strftime("%I:%M %p"),
-                "closing_time": store.closing_time.strftime("%I:%M %p"),
+                "opening_time": store.store_availability.first().start_working_hr.strftime(
+                    "%I:%M %p"
+                ),
+                "closing_time": store.store_availability.first().end_working_hr.strftime(
+                    "%I:%M %p"
+                ),
                 "rating": store.get_average_rating(),
                 "images": [
                     f"{request.build_absolute_uri(i.image.url)}"
@@ -59,8 +63,12 @@ class NearbyStoreView(UserMixin):
                 "distance_km": round(store.distance.km, 2),  # Convert to km
                 "address": store.full_address(),
                 "services": [service.name for service in store.services.all()],
-                "opening_time": store.opening_time.strftime("%I:%M %p"),
-                "closing_time": store.closing_time.strftime("%I:%M %p"),
+                "opening_time": store.store_availability.first().start_working_hr.strftime(
+                    "%I:%M %p"
+                ),
+                "closing_time": store.store_availability.first().end_working_hr.strftime(
+                    "%I:%M %p"
+                ),
                 "rating": store.get_average_rating(),
                 "images": [
                     f"{request.build_absolute_uri(i.image.url)}"

@@ -53,12 +53,13 @@
 
                 <div class="col-md-4 f-name mt-4">
                     <label for="opening_time">Opening Time<span id="required_star">*</span></label>
-                    <input type="time" name="opening_time" id="opening_time" value="{{store.opening_time|time:"H:i"}}"
+                    <input type="time" name="opening_time" id="opening_time" value="{{store_availability.start_working_hr|time:"H:i"}}"
                         class="form-control" />
                 </div>
+
                 <div class="col-md-4 f-name mt-4">
                     <label for="closing_time">Closing Time<span id="required_star">*</span></label>
-                    <input type="time" name="closing_time" id="closing_time" value="{{store.closing_time|time:"H:i"}}"
+                    <input type="time" name="closing_time" id="closing_time" value="{{store_availability.end_working_hr|time:"H:i"}}"
                         class="form-control" />
                 </div>
 
