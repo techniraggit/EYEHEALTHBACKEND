@@ -256,7 +256,6 @@ class EditStoreView(AdminLoginView):
             store_images=store_images,
             is_store=True,
         )
-        print(context)
         return render(request, "store/store_edit.html", context=context)
 
     def post(self, request, store_id):

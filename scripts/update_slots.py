@@ -1,3 +1,4 @@
+from core.logs import Logger
 import sys
 
 if __name__ == "__main__":
@@ -14,6 +15,8 @@ from datetime import datetime
 from django.utils import timezone
 
 DATE_FORMATE = "%Y/%m/%d"
+
+logger = Logger("update_slots.log")
 
 
 def UpdateSlot(day=7):
@@ -33,24 +36,30 @@ def UpdateSlot(day=7):
     )
 
     for store in stores:
-        print(store.store.name, store.start_working_hr, store.end_working_hr)
         slots = TimeSlot.objects.filter(
             start_time__range=(store.start_working_hr, store.end_working_hr)
         )
-        print(slots)
         for slot in slots:
             try:
                 AppointmentSlot.objects.create(
                     store=store.store, date=date_obj.date(), time_slot=slot
                 )
             except Exception as e:
-                print(f"\033[31m{e}")
-        print("\n\n")
+                logger.error(
+                    f"Error creating appointment slot for store {store.store.name} and slot {slot.id}: {str(e)}"
+                )
+        logger.info(f"Created appointment slot for store {store.store.name}")
     return date_obj.strftime(DATE_FORMATE)
 
 
 def DeleteSlot():
-    AppointmentSlot.objects.filter(date__lt=timezone.now().date()).delete()
+    try:
+        appointments = AppointmentSlot.objects.filter(date__lt=timezone.now().date())
+        count = appointments.count()
+        appointments.delete()
+        logger.info(f"{count} appointment slots deleted")
+    except Exception as e:
+        logger.error(f"Error deleting appointments: {e}")
 
 
 if __name__ == "__main__":
