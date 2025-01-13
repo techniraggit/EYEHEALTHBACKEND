@@ -19,7 +19,9 @@ class StoresManager(models.Manager):
     def nearby_stores(self, user_location, radius_km=15):
         return (
             self.get_queryset()
-            .filter(location__distance_lte=(user_location, D(km=radius_km)))
+            .filter(
+                is_active=True, location__distance_lte=(user_location, D(km=radius_km))
+            )
             .annotate(distance=Distance("location", user_location))
             .order_by("distance")  # Closest stores first
         )
