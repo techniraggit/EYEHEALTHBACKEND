@@ -312,8 +312,8 @@ class EditStoreView(AdminLoginView):
                 store_availability_obj = StoreAvailability.objects.filter(
                     store=instance
                 ).first()
-                store_availability_obj.start_working_hr = (opening_time,)
-                store_availability_obj.end_working_hr = (closing_time,)
+                store_availability_obj.start_working_hr = opening_time
+                store_availability_obj.end_working_hr = closing_time
                 store_availability_obj.save()
                 # store_availability_obj.days.add(days_qs)
 
