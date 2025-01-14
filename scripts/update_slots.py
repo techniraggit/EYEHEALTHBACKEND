@@ -97,5 +97,5 @@ if __name__ == "__main__":
 
     operational_date = update_slots(days_ahead)
     if operational_date:
-        print(f"\033[37;42mSlots created for the date: {operational_date}\033[0m")
+        print(f"\033[32mSlots created for the date: {operational_date}\033[0m")
     delete_old_slots()
