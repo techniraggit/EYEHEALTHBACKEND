@@ -54,6 +54,14 @@ class StoreAvailabilityAdmin(admin.ModelAdmin):
     filter_horizontal = ["days"]
 
 
+@admin.register(StoreAppointment)
+class StoreAppointmentAdmin(admin.ModelAdmin):
+    list_display = ["id", "user", "store", "date", "time"]
+    search_fields = ["user__email", "store__name"]
+    date_hierarchy = "date"
+    list_filter = ["store"]
+
+
 # admin.site.register(Services)
 admin.site.register(StoreRating)
 admin.site.register(StoreImages)
@@ -63,4 +71,4 @@ admin.site.register(Days)
 admin.site.register(TimeSlot)
 admin.site.register(AppointmentSlot)
 # admin.site.register(StoreAvailability)
-admin.site.register(StoreAppointment)
+# admin.site.register(StoreAppointment)

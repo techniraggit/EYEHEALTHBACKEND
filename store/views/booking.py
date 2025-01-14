@@ -78,9 +78,12 @@ class BookAppointmentView(UserMixin):
 
         try:
             with transaction.atomic():
-                StoreAppointment.objects.create(
+                store_app_obj = StoreAppointment.objects.create(
                     user=request.user,
-                    appointment=slot,
+                    # appointment=slot,
+                    store=slot.store,
+                    date=slot.date,
+                    time=slot.time_slot.start_time,
                     is_confirmed=True,
                     service="",
                     notes="",
@@ -91,8 +94,8 @@ class BookAppointmentView(UserMixin):
                     UserName=request.user.first_name,
                     StoreName=slot.store.name,
                     Address=slot.store.full_address(),
-                    Time=slot.time_slot.start_time.strftime("%I:%M %p"),
-                    Date=slot.date.strftime("%Y-%m-%d"),
+                    Time=store_app_obj.time.strftime("%I:%M %p"),
+                    Date=store_app_obj.date.strftime("%d-%m-%Y"),
                 )
                 return api_response(
                     True,
@@ -102,3 +105,22 @@ class BookAppointmentView(UserMixin):
                 )
         except Exception as e:
             return api_response(False, 500, message=str(e))
+
+
+class BookedAppointmentsView(UserMixin):
+    def get(self, request):
+        appointments_qs = StoreAppointment.objects.filter(user=request.user).order_by(
+            "date"
+        )
+        data = []
+        for appointment in appointments_qs:
+            data.append(
+                {
+                    "id": str(appointment.id),
+                    "StoreName": appointment.store.name,
+                    "address": appointment.store.full_address(),
+                    "date": appointment.date.strftime("%d-%m-%Y"),
+                    "time": appointment.time.strftime("%I:%M %p"),
+                }
+            )
+        return api_response(True, 200, data=data)

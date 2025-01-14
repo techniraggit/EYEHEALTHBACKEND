@@ -91,7 +91,7 @@ class AppointmentSlot(BaseModel):
     store = models.ForeignKey(
         Stores,
         on_delete=models.CASCADE,
-        related_name="store_appointments",
+        related_name="store_appointment_slots",
         db_index=True,
     )
     date = models.DateField(db_index=True)
@@ -122,17 +122,25 @@ class StoreAppointment(BaseModel):
         related_name="user_appointments",
         db_index=True,
     )
-    appointment = models.ForeignKey(
-        AppointmentSlot, on_delete=models.CASCADE, related_name="booked_appointment"
-    )
+    # appointment = models.ForeignKey(
+    #     AppointmentSlot, on_delete=models.SET_NULL, null=True, related_name="booked_appointment"
+    # )
     is_confirmed = models.BooleanField(default=False)
     service = models.CharField(max_length=50, blank=True, default="")
     notes = models.TextField(blank=True, null=True)
+    store = models.ForeignKey(
+        Stores,
+        on_delete=models.CASCADE,
+        related_name="store_booked_appointments",
+        db_index=True,
+    )
+    date = models.DateField(db_index=True)
+    time = models.TimeField()
 
     def __str__(self):
-        return f"{self.user} - {self.appointment}"
+        return f"{self.user} - {self.store.name}"
 
     class Meta:
         verbose_name_plural = "Store Appointments"
         verbose_name = "Store Appointment"
-        unique_together = ("user", "appointment")
+        # unique_together = ("user", "appointment")
