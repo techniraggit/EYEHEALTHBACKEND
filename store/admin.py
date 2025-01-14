@@ -69,6 +69,13 @@ class FrameAdmin(admin.ModelAdmin):
     search_fields = ["name"]
 
 
+@admin.register(AppointmentSlot)
+class AppointmentSlotAdmin(admin.ModelAdmin):
+    list_display = ["store", "date", "time_slot", "is_booked"]
+    list_filter = ["store", "is_booked"]
+    date_hierarchy = "date"
+
+
 # admin.site.register(Services)
 admin.site.register(StoreRating)
 admin.site.register(StoreImages)
@@ -76,6 +83,6 @@ admin.site.register(Holiday)
 admin.site.register(StoreHoliday)
 admin.site.register(Days)
 admin.site.register(TimeSlot)
-admin.site.register(AppointmentSlot)
+# admin.site.register(AppointmentSlot)
 # admin.site.register(StoreAvailability)
 # admin.site.register(StoreAppointment)
