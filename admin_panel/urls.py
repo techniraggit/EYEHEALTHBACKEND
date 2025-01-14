@@ -340,6 +340,11 @@ business_urls = [
         business.DeleteStoreView.as_view(),
         name="delete_store_view",
     ),
+    path(
+        "appointment-listing",
+        business.AppointmentView.as_view(),
+        name="appointment_listing_view",
+    ),
 ]
 
 urlpatterns = [

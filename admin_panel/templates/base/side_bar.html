@@ -103,6 +103,12 @@
                         <li><a href="{% url "store_view" %}"><i class="fa-solid fa-store me-2"></i>Store</a></li>
                     {% endif %}
 
+                    {% if is_appointment %}
+                        <li><a href="{% url "appointment_listing_view" %}" class="active-link"><i class="fa-regular fa-calendar-check me-2"></i>Appointments</a></li>
+                    {% else %}
+                        <li><a href="{% url "appointment_listing_view" %}"><i class="fa-regular fa-calendar-check me-2"></i>Appointments</a></li>
+                    {% endif %}
+
                     {% if is_trash %}
                         <li><a href="{% url "trash_view" %}" class="active-link"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
                     {% else %}

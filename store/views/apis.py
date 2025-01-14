@@ -1,15 +1,9 @@
+from store.models.products import Wishlist, Frame
 from django.contrib.gis.geos import Point
-from rest_framework.views import APIView
 from store.models.models import Stores, StoreRating
 from store.serializers import StoreSerializer
 from core.utils import api_response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
-
-
-class UserMixin(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+from store.views.base import UserMixin
 
 
 class StoreView(UserMixin):
@@ -112,3 +106,78 @@ class StoreRatingView(UserMixin):
                 store=store, user=request.user, rating=rating, review=review
             )
             return api_response(True, 200, message="Rating submitted successfully")
+
+
+class WishListView(UserMixin):
+    def get(self, request):
+        data = Wishlist.get_wishlist(request.user)
+        return api_response(True, 200, data=data)
+
+
+class FrameWishListView(UserMixin):
+    def post(self, request, frame_id):
+        """To add frame to wishlist"""
+        try:
+            frame = Frame.objects.get(id=frame_id)
+        except:
+            return api_response(False, 404, message="Frame not found")
+
+        wishlist = Wishlist.objects.filter(user=request.user).first()
+        if not wishlist:
+            wishlist = Wishlist.objects.create(user=request.user)
+
+        wishlist.frames.add(frame)
+        return api_response(True, 200, message="Frame added to wishlist successfully")
+
+    def delete(self, request, frame_id):
+        """To remove frame from wishlist"""
+        try:
+            frame = Frame.objects.get(id=frame_id)
+        except Frame.DoesNotExist:
+            return api_response(False, 404, message="Frame not found")
+
+        wishlist = Wishlist.objects.filter(user=request.user).first()
+        if not wishlist:
+            return api_response(False, 404, message="Wishlist not found")
+
+        if frame not in wishlist.frames.all():
+            return api_response(False, 400, message="Frame not in wishlist")
+
+        wishlist.frames.remove(frame)
+        return api_response(
+            True, 200, message="Frame removed from wishlist successfully"
+        )
+
+
+class StoreWishListView(UserMixin):
+    def post(self, request, store_id):
+        """To store in wishlist"""
+        try:
+            store = Stores.objects.get(pk=store_id)
+        except:
+            return api_response(False, 404, message="Store not found")
+
+        wishlist = Wishlist.objects.filter(user=request.user).first()
+        if not wishlist:
+            wishlist = Wishlist.objects.create(user=request.user)
+
+        wishlist.stores.add(store)
+
+    def delete(self, request, store_id):
+        """To remove a store from the wishlist"""
+        try:
+            store = Stores.objects.get(pk=store_id)
+        except Stores.DoesNotExist:
+            return api_response(False, 404, message="Store not found")
+
+        wishlist = Wishlist.objects.filter(user=request.user).first()
+        if not wishlist:
+            return api_response(False, 404, message="Wishlist not found")
+
+        if store not in wishlist.stores.all():
+            return api_response(False, 400, message="Store not in wishlist")
+
+        wishlist.stores.remove(store)
+        return api_response(
+            True, 200, message="Store removed from wishlist successfully"
+        )

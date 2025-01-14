@@ -1,16 +1,13 @@
 from django.db.models import F
-from store.models.appointments import AppointmentSlot, StoreAppointment
+from store.models.appointments import (
+    AppointmentSlot,
+    StoreAppointment,
+    AppointmentStatus,
+)
 from datetime import datetime
-from rest_framework.views import APIView
 from core.utils import api_response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.db import transaction
-
-
-class UserMixin(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+from store.views.base import UserMixin
 
 
 def is_valid_date(date, date_formate):
@@ -84,7 +81,7 @@ class BookAppointmentView(UserMixin):
                     store=slot.store,
                     date=slot.date,
                     time=slot.time_slot.start_time,
-                    is_confirmed=True,
+                    status=AppointmentStatus.CONFIRMED,
                     service="",
                     notes="",
                 )

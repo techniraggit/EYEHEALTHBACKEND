@@ -115,6 +115,18 @@ class AppointmentSlot(BaseModel):
         return f"{self.store.name} - {self.date} - {self.time_slot}"
 
 
+class AppointmentStatus:
+    PENDING = "pending"
+    CONFIRMED = "confirmed"
+    CANCELLED = "cancelled"
+
+    choices = (
+        ("PENDING", PENDING),
+        ("CONFIRMED", CONFIRMED),
+        ("CANCELLED", CANCELLED),
+    )
+
+
 class StoreAppointment(BaseModel):
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -125,7 +137,11 @@ class StoreAppointment(BaseModel):
     # appointment = models.ForeignKey(
     #     AppointmentSlot, on_delete=models.SET_NULL, null=True, related_name="booked_appointment"
     # )
-    is_confirmed = models.BooleanField(default=False)
+    status = models.CharField(
+        max_length=50,
+        choices=AppointmentStatus.choices,
+        default=AppointmentStatus.PENDING,
+    )
     service = models.CharField(max_length=50, blank=True, default="")
     notes = models.TextField(blank=True, null=True)
     store = models.ForeignKey(

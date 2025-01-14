@@ -15,6 +15,7 @@ from .models.appointments import (
     TimeSlot,
     AppointmentSlot,
 )
+from .models.products import Frame
 from api.models.accounts import UserModel
 
 
@@ -56,10 +57,16 @@ class StoreAvailabilityAdmin(admin.ModelAdmin):
 
 @admin.register(StoreAppointment)
 class StoreAppointmentAdmin(admin.ModelAdmin):
-    list_display = ["id", "user", "store", "date", "time"]
+    list_display = ["id", "user", "store", "date", "time", "status"]
     search_fields = ["user__email", "store__name"]
     date_hierarchy = "date"
     list_filter = ["store"]
+
+
+@admin.register(Frame)
+class FrameAdmin(admin.ModelAdmin):
+    list_display = ["name", "frame_type", "gender", "brand", "is_recommended"]
+    search_fields = ["name"]
 
 
 # admin.site.register(Services)

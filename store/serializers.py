@@ -1,3 +1,4 @@
+from store.models.products import Frame
 from .models.models import Stores, Services, StoreRating, BusinessModel
 from api.models.accounts import UserModel
 from rest_framework import serializers
@@ -42,3 +43,9 @@ class StoreSerializer(BaseSerializer):
 
     def get_store_address(self, obj):
         return obj.full_address()
+
+
+class FrameSerializer(BaseSerializer):
+    class Meta:
+        model = Frame
+        fields = "__all__"

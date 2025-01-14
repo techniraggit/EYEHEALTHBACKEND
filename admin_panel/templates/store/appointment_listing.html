@@ -1,0 +1,249 @@
+{% extends "base/side_bar.html" %}
+{% block title %}Appointments{% endblock title %}
+{% load custom_filters %}
+
+{% block page_name %}Appointments{% endblock page_name %}
+{% block nav_bar %}
+<div class="bottomwrap">
+    <div class="search-box row">
+        <div class="col-9">
+            <div class="input-wrapp">
+                {% comment %} <form action="{% url 'offers_view' %}" method="get" id="searchForm">
+                    <div>
+                        <input type="text" name="search" id="searchInput"
+                            placeholder="Search by Title, Description, and Status"
+                            value="{% if search %}{{ search }}{% endif %}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="start_date_filter" id="start_date_filter" placeholder="Start Date"
+                            value="{{ start_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class="filter-dropdown">
+                        <input type="text" name="end_date_filter" id="end_date_filter" placeholder="End Date"
+                            value="{{ end_date_filter|date:'Y-m-d' }}">
+                    </div>
+                    <div class=" filter-dropdown select-wrapp">
+                        <select name="offer_status_filter" id="offer_status_filter" placeholder="Filter">
+                            <option value="" selected>Payment Status</option>
+                            <option value="active" {% if offer_status_filter == 'active' %}selected{% endif %}>active</option>
+                            <option value="inactive" {% if offer_status_filter == 'inactive' %}selected{% endif %}>inactive</option>
+                            <option value="expired" {% if offer_status_filter == 'expired' %}selected{% endif %}>expired</option>
+                        </select>
+                    </div>
+                    <div class="d-flex mb-2">
+                        <div>
+                            <button type="submit">Apply</button>
+                            <button type="button" id="clearButton">Clear</button>
+                        </div>
+                    </div>
+                </form> {% endcomment %}
+            </div>
+        </div>
+        <div class="export col-3">
+            <ul>
+                {% comment %} <li class="add-btn me-3">
+                    <a href="{% url 'add_store_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                </li> {% endcomment %}
+                {% comment %} <li class="ex-li">
+                    <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
+                    <ul class="dropdown-content">
+                        <li><a class="dropdown-item" id="exportExcel" href="{% url 'offer_export_view' 'excel' %}">Excel</a></li>
+                        <li><a class="dropdown-item" id="exportCSV" href="{% url 'offer_export_view' 'csv' %}">CSV</a></li>
+                    </ul>
+                </li> {% endcomment %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock nav_bar %}
+{% block table %}
+<table>
+    <tr>
+        <th>Sr.No</th>
+        <th>Store Name</th>
+        <th>User Name</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Action</th>
+    </tr>
+    {% for appointment in paginated_appointments %}
+    <tr>
+        <td>{{ forloop.counter0|add:paginated_appointments.start_index|default:forloop.counter }}</td>
+        <td>{{ appointment.store.name }}</td>
+        <td>{{ appointment.user.first_name }}</td>
+        <td>{{ appointment.status }}</td>
+        <td>{{ appointment.date }}</td>
+        <td>{{ appointment.time }}</td>
+        <td>
+            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-store-id="{{ store.id }}"></i></a>
+            <a href=""><i class="fa-solid fa-pen me-2"></i></a>
+            <a href="" class="view-store-details" data-store-id="{{ appointment.id }}"><i class="fa-regular fa-eye"></i></a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% include "base/pagination.html" with paginated_data=paginated_appointments %}
+
+<!-- Offer Detail Modal -->
+<div class="modal fade" id="storeDetailModel" tabindex="-1" role="dialog" aria-labelledby="storeDetailModelLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="storeDetailModelLabel">Store Details</h5>
+            </div>
+            <div class="modal-body">
+                <p><strong>ID:</strong> <span id="modal-id"></span></p>
+                <p><strong>Name:</strong> <span id="modal-name"></span></p>
+                <p><strong>GST Number:</strong> <span id="modal-gst_number"></span></p>
+                <p><strong>PAN Number:</strong> <span id="modal-pan_number"></span></p>
+                <p><strong>Services:</strong> <span id="modal-services"></span></p>
+                <p><strong>Description:</strong> <span id="modal-description"></span></p>
+                <p><strong>Phone:</strong> <span id="modal-phone"></span></p>
+                <p><strong>Email:</strong> <span id="modal-email"></span></p>
+                <p><strong>Opening Time:</strong> <span id="modal-opening_time"></span></p>
+                <p><strong>Closing Time:</strong> <span id="modal-closing_time"></span></p>
+                <p><strong>Latitude:</strong> <span id="modal-latitude"></span></p>
+                <p><strong>Longitude:</strong> <span id="modal-longitude"></span></p>
+                <p><strong>Pin Code:</strong> <span id="modal-pin_code"></span></p>
+                <p><strong>Address:</strong> <span id="modal-address"></span></p>
+                <p><strong>Status:</strong> <span id="modal-is_active"></span></p>
+                {% comment %} <img id="modal-img" src="" alt="" width="80" height="100"> {% endcomment %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Offer Detail Modal -->
+
+<!-- offer delete popup -->
+<div id="dlt-btn-overlay" class="dlt-btn-overlay" style="display: none;">
+    <div class="dlt-popup">
+        <h4>Are you sure you want to delete this Store?</h4>
+        <div class="dlt-buttons">
+            <button class="pop-confirm-btn" id="confirmDelete">Yes, delete it</button>
+            <button class="pop-confirm-btn" id="cancelDelete">No, keep it</button>
+        </div>
+    </div>
+</div>
+<!-- offer delete popup end -->
+
+<script>
+    $(document).ready(function () {
+        function updateExportLinks() {
+            var params = $('#searchForm').serialize();
+            console.log(params);
+            $('#exportExcel').attr('href', `{% url 'offer_export_view' 'excel' %}?` + params);
+            $('#exportCSV').attr('href', `{% url 'offer_export_view' 'csv' %}?` + params);
+        }
+
+        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
+        updateExportLinks();
+
+        $("#start_date_filter, #end_date_filter").datepicker({
+            dateFormat: "yy-mm-dd",
+            onSelect: updateExportLinks
+        }).attr("readonly", "readonly");
+
+        $('#offer_status_filter').select2({
+            placeholder: "Payment Status",
+            minimumResultsForSearch: Infinity
+        });
+
+        // Clear the search input value when the clear button is clicked
+        $('#clearButton').click(function () {
+            $('#searchInput').val('');
+            $('input[type="text"]').val('');
+            $('select[name="offer_status_filter"]').val('');
+            $('#searchForm').submit();
+        });
+
+        // Delete the offer when the delete button is clicked
+        let deleteId = null;
+        $(document).on('click', '#deleteButton', function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'flex');
+            deleteId = $(this).data("store-id");
+        });
+
+        // Delete the user when the confirm delete button is clicked
+        $('#confirmDelete').click(function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'none');
+            $.ajax({
+                url: "/business/delete-store/" + deleteId,
+                type: 'GET',
+                success: function (data) {
+                    if (data.status) {
+                        showToaster(data.message, "alert-success");
+                        setTimeout(function () {
+                            location.reload();
+                        }, 2000);
+                    } else {
+                        showToaster(data.message, "alert-error");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error making GET request:', error);
+                    $('#dlt-btn-overlay').css('display', 'none');
+                    showToaster(error, "alert-error");
+                }
+            });
+        });
+
+        // Hide the delete button overlay when the cancel delete button is clicked
+        $('#cancelDelete').click(function (event) {
+            event.preventDefault();
+            $('#dlt-btn-overlay').css('display', 'none');
+        });
+
+        // View offer details when the view offer details button is clicked
+        $('.view-store-details').click(function (event) {
+            event.preventDefault();
+            var storeId = $(this).data('store-id');
+            var modal = $('#storeDetailModel');
+
+            $.ajax({
+                url: '/business/store-with-id/' + storeId,
+                method: 'GET',
+                success: function (response) {
+                    if (response.status){
+                        modal.find("#modal-id").text(response.data.id)
+                        modal.find("#modal-name").text(response.data.name)
+                        modal.find("#modal-gst_number").text(response.data.gst_number)
+                        modal.find("#modal-pan_number").text(response.data.pan_number)
+                        modal.find("#modal-services").text(response.data.services)
+                        modal.find("#modal-description").text(response.data.description)
+                        modal.find("#modal-phone").text(response.data.phone)
+                        modal.find("#modal-email").text(response.data.email)
+                        modal.find("#modal-opening_time").text(response.data.opening_time)
+                        modal.find("#modal-closing_time").text(response.data.closing_time)
+                        modal.find("#modal-latitude").text(response.data.latitude)
+                        modal.find("#modal-longitude").text(response.data.longitude)
+                        modal.find("#modal-pin_code").text(response.data.pin_code)
+                        modal.find("#modal-address").text(response.data.address)
+                        modal.find("#modal-is_active").text(response.data.is_active)
+                        modal.modal('show');
+                    }else{
+                        showToaster(response.message, "alert-error")
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error fetching offer details:", error);
+                    alert("An error occurred while fetching offer details. Please try again.");
+                }
+            });
+        });
+
+        // Hide the modal when the dismiss button is clicked
+        $("#modal_dismis").on("click", function (event) {
+            event.preventDefault();
+            $('#storeDetailModel').modal('hide');
+        });
+
+    });//document.ready
+</script>
+{% endblock table%}

@@ -12,7 +12,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.shortcuts import redirect
 from store.models.models import Stores, BusinessModel, Services, StoreImages
-from store.models.appointments import StoreAvailability, Days
+from store.models.appointments import StoreAvailability, Days, StoreAppointment
 from django.core.exceptions import ValidationError
 from utilities.utils import get_form_error_msg
 
@@ -352,3 +352,16 @@ class DeleteStoreView(AdminLoginView):
         store_instance.delete()
 
         return JsonResponse({"status": True, "message": "Store deleted successfully."})
+
+
+class AppointmentView(AdminLoginView):
+    def get(self, request):
+        appointments = StoreAppointment.objects.all().order_by("date")
+        paginator = Paginator(appointments, 10)
+        page_number = request.GET.get("page")
+        paginated_appointments = paginator.get_page(page_number)
+        context = dict(
+            paginated_appointments=paginated_appointments,
+            is_appointment=True,
+        )
+        return render(request, "store/appointment_listing.html", context)
