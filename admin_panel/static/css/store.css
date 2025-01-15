@@ -94,3 +94,38 @@
     color: red;
     font-weight: bold;
 }
+
+/* General status styling */
+.status {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+    /* Text color for contrast */
+    text-align: center;
+}
+
+/* Pending - Yellow background */
+.status.pending {
+    background-color: #f4c542;
+    /* Yellow */
+    color: black;
+    /* Dark text for contrast with yellow */
+}
+
+/* Confirmed - Green background */
+.status.confirmed {
+    background-color: #4caf50;
+    /* Green */
+    color: white;
+    /* White text for contrast */
+}
+
+/* Cancelled - Red background */
+.status.cancelled {
+    background-color: #f44336;
+    /* Red */
+    color: white;
+    /* White text for contrast */
+}

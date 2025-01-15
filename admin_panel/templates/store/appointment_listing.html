@@ -73,7 +73,7 @@
         <td>{{ forloop.counter0|add:paginated_appointments.start_index|default:forloop.counter }}</td>
         <td>{{ appointment.store.name }}</td>
         <td>{{ appointment.user.first_name }}</td>
-        <td class="appointment-{{ appointment.status|lower }}">{{ appointment.status|title }}</td>
+        <td class="status {{ appointment.status|lower }}">{{ appointment.status|title }}</td>
         <td>{{ appointment.date }}</td>
         <td>{{ appointment.time }}</td>
         <td>
