@@ -1,7 +1,7 @@
 {% extends "base/side_bar.html" %}
 {% block title %}Appointments{% endblock title %}
 {% load custom_filters %}
-
+{% load static %}
 {% block page_name %}Appointments{% endblock page_name %}
 {% block nav_bar %}
 <div class="bottomwrap">
@@ -57,6 +57,7 @@
 </div>
 {% endblock nav_bar %}
 {% block table %}
+<link rel="stylesheet" href="{% static 'css/store.css' %}">
 <table>
     <tr>
         <th>Sr.No</th>
@@ -72,7 +73,7 @@
         <td>{{ forloop.counter0|add:paginated_appointments.start_index|default:forloop.counter }}</td>
         <td>{{ appointment.store.name }}</td>
         <td>{{ appointment.user.first_name }}</td>
-        <td>{{ appointment.status }}</td>
+        <td class="appointment-{{ appointment.status|lower }}">{{ appointment.status|title }}</td>
         <td>{{ appointment.date }}</td>
         <td>{{ appointment.time }}</td>
         <td>

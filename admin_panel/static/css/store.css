@@ -79,3 +79,18 @@
 .preview-image-wrapper:hover .delete-icon {
     opacity: 1;
 }
+
+.appointment-confirmed {
+    color: green;
+    font-weight: bold;
+}
+
+.appointment-pending {
+    color: yellow;
+    font-weight: bold;
+}
+
+.appointment-cancelled {
+    color: red;
+    font-weight: bold;
+}
