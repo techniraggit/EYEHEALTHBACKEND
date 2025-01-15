@@ -166,42 +166,40 @@
         });
 
         // Delete the offer when the delete button is clicked
-        let deleteId = null;
         $(document).on('click', '#deleteButton', function (event) {
             event.preventDefault();
             $('#dlt-btn-overlay').css('display', 'flex');
-            deleteId = $(this).data("store-id");
-        });
+            let deleteId = $(this).data("store-id");
+            let $row = $(this).closest('tr');
 
-        // Delete the user when the confirm delete button is clicked
-        $('#confirmDelete').click(function (event) {
-            event.preventDefault();
-            $('#dlt-btn-overlay').css('display', 'none');
-            $.ajax({
-                url: "/business/delete-store/" + deleteId,
-                type: 'GET',
-                success: function (data) {
-                    if (data.status) {
-                        showToaster(data.message, "alert-success");
-                        setTimeout(function () {
-                            location.reload();
-                        }, 2000);
-                    } else {
-                        showToaster(data.message, "alert-error");
+            // Delete the user when the confirm delete button is clicked
+            $('#confirmDelete').click(function (event) {
+                event.preventDefault();
+                $('#dlt-btn-overlay').css('display', 'none');
+                $.ajax({
+                    url: "/business/delete-store/" + deleteId,
+                    type: 'GET',
+                    success: function (data) {
+                        if (data.status) {
+                            $row.remove();
+                            showToaster(data.message, "alert-success");
+                        } else {
+                            showToaster(data.message, "alert-error");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error making GET request:', error);
+                        $('#dlt-btn-overlay').css('display', 'none');
+                        showToaster(error, "alert-error");
                     }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error making GET request:', error);
-                    $('#dlt-btn-overlay').css('display', 'none');
-                    showToaster(error, "alert-error");
-                }
+                });
             });
-        });
 
-        // Hide the delete button overlay when the cancel delete button is clicked
-        $('#cancelDelete').click(function (event) {
-            event.preventDefault();
-            $('#dlt-btn-overlay').css('display', 'none');
+            // Hide the delete button overlay when the cancel delete button is clicked
+            $('#cancelDelete').click(function (event) {
+                event.preventDefault();
+                $('#dlt-btn-overlay').css('display', 'none');
+            });
         });
 
         // View offer details when the view offer details button is clicked

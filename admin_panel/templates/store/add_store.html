@@ -213,8 +213,11 @@
                     success: function (response) {
                         if (response.status) {
                             showToaster(response.message, "alert-success")
-                            $('#addStoreForm')[0].reset();
-                            $('#preview-container').html(''); // Clear the image preview
+                            setTimeout(function () {
+                                window.location.href = "{% url 'store_view' %}"
+                            }, 3000)
+                            //$('#addStoreForm')[0].reset();
+                            //$('#preview-container').html(''); // Clear the image preview
                         } else {
                             showToaster(response.message, "alert-error")
                         }

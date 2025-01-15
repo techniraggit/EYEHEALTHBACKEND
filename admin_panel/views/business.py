@@ -135,7 +135,7 @@ class StoreView(AdminLoginView):
                     }
                 )
 
-        stores = Stores.objects.all()
+        stores = Stores.objects.all().order_by("-created_on")
         paginator = Paginator(stores, 10)
         page_number = request.GET.get("page")
         paginated_stores = paginator.get_page(page_number)
@@ -173,7 +173,6 @@ class AddStoreView(AdminLoginView):
                     "status": False,
                     "message": error,
                 },
-                status=400,
             )
 
         if form.is_valid():
@@ -205,7 +204,7 @@ class AddStoreView(AdminLoginView):
                         start_working_hr=opening_time,
                         end_working_hr=closing_time,
                     )
-                    store_availability_obj.days.add(days_qs)
+                    store_availability_obj.days.set(days_qs)
                     return JsonResponse(
                         {
                             "status": True,
@@ -214,10 +213,20 @@ class AddStoreView(AdminLoginView):
                     )
 
             except ValidationError as e:
+                instance.delete()
                 return JsonResponse(
                     {
                         "status": False,
                         "message": f"Error occurred while saving the store: {str(e)}",
+                    }
+                )
+            except Exception as e:
+                instance.delete()
+                return JsonResponse(
+                    {
+                        "status": False,
+                        "message": "An error occurred while saving the store",
+                        "error": str(e),
                     }
                 )
         return JsonResponse(
