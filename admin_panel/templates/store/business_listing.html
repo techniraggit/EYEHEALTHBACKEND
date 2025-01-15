@@ -62,6 +62,28 @@
 </div>
 {% endblock nav_bar %}
 {% block table %}
+<style>
+    .status-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        border: 2px solid;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+    
+    .status-button.active {
+        border-color: green;
+        color: green;
+    }
+    
+    .status-button.inactive {
+        border-color: red;
+        color: red;
+    }
+    
+</style>
 <table>
     <tr>
         <th>Sr.No</th>
@@ -79,13 +101,17 @@
         <td>{{ company.email }}</td>
         <td>{{ company.phone }}</td>
         <td>{{ company.last_login|format_datetime }}</td>
-        <td>{% if company.is_active %}Active{% else %}Inactive{% endif %}</td>
         <td>
-            <a href="{% url "store_with_business" company.id %}"><i class="fa-solid fa-store me-2"></i></a>
-            <a href="#"><i class="fa-solid fa-pen me-2"></i></a>
-            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-offer-id="{{ company.id }}"></i></a>
-            <a href="#" class="view-offer-details" data-offer-id="{{ company.id }}"><i
-                    class="fa-regular fa-eye"></i></a>
+            <button
+                class="status-button {% if company.is_active %}active{% else %}inactive{% endif %}"
+                data-id="{{ company.id }}"
+            >
+                {% if company.is_active %}Active{% else %}Inactive{% endif %}
+            </button>
+        </td>
+        <td>
+            <a href="{% url "business_edit_view" company.id %}"><i class="fa-solid fa-pen me-2"></i></a>
+            <a href="#" class="view-business-details" data-business-id="{{ company.id }}"><i class="fa-regular fa-eye"></i></a>
         </td>
     </tr>
     {% endfor %}
@@ -93,19 +119,19 @@
 {% include "base/pagination.html" with paginated_data=paginated_companies %}
 
 <!-- Offer Detail Modal -->
-<div class="modal fade" id="offerDetailModal" tabindex="-1" role="dialog" aria-labelledby="offerDetailModalLabel"
+<div class="modal fade" id="businessDetailModal" tabindex="-1" role="dialog" aria-labelledby="businessDetailModalLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="offerDetailModalLabel">Offer Details</h5>
+                <h5 class="modal-title" id="businessDetailModalLabel">Business Details</h5>
             </div>
             <div class="modal-body">
-                <p><strong>Title:</strong> <span id="modal-title"></span></p>
-                <p><strong>Description:</strong> <span id="modal-description"></span></p>
-                <p><strong>Expiry Date:</strong> <span id="modal-expiry_date"></span></p>
-                <p><strong>Status:</strong> <span id="modal-status"></span></p>
-                <p><strong>Required Points:</strong> <span id="modal-required_points"></span></p>
+                <p><strong>NAME:</strong> <span id="modal-name"></span></p>
+                <p><strong>EMAIL:</strong> <span id="modal-email"></span></p>
+                <p><strong>PHONE NUMBER:</strong> <span id="modal-phone"></span></p>
+                <p><strong>LAST LOGIN:</strong> <span id="modal-last_login"></span></p>
+                <p><strong>STATUS:</strong> <span id="modal-status"></span></p>
                 {% comment %} <img id="modal-img" src="" alt="" width="80" height="100"> {% endcomment %}
             </div>
             <div class="modal-footer">
@@ -130,6 +156,42 @@
 
 <script>
     $(document).ready(function () {
+
+        $(document).on('click', '.status-button', function () {
+            const button = $(this);
+            const companyId = button.data('id');
+            
+            // Disable the button while processing
+            button.prop('disabled', true);
+        
+            // AJAX request to toggle `is_active`
+            $.ajax({
+                url: '{% url "update_business_status_view" %}', // Replace with your API endpoint
+                method: 'POST',
+                data: {
+                    id: companyId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}' // Add CSRF token for security
+                },
+                success: function (response) {
+                    if (response.is_active !== undefined) {
+                        if (response.is_active) {
+                            button.removeClass('inactive').addClass('active').text('Active');
+                        } else {
+                            button.removeClass('active').addClass('inactive').text('Inactive');
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    alert('Error updating status. Please try again.');
+                },
+                complete: function () {
+                    // Re-enable the button after the request
+                    button.prop('disabled', false);
+                }
+            });
+        });
+
+
         function updateExportLinks() {
             var params = $('#searchForm').serialize();
             console.log(params);
@@ -194,23 +256,26 @@
         });
 
         // View offer details when the view offer details button is clicked
-        $('.view-offer-details').click(function (event) {
+        $('.view-business-details').click(function (event) {
             event.preventDefault();
-            var offerId = $(this).data('offer-id');
-            var modal = $('#offerDetailModal');
+            var businessId = $(this).data('business-id');
+            var modal = $('#businessDetailModal');
 
             $.ajax({
-                url: '/offers/offer-detailed-view/' + offerId,
+                url: '{% url "business_detail_view" %}' + "?id="+businessId,
                 method: 'GET',
-                success: function (data) {
-                    modal.find('#modal-title').text(data.title);
-                    modal.find('#modal-description').html(data.description);
-                    modal.find('#modal-expiry_date').text(data.expiry_date);
-                    modal.find('#modal-status').text(data.status.toUpperCase());
-                    modal.find('#modal-status').addClass(data.status);
-                    modal.find('#modal-required_points').text(data.required_points);
-                    //modal.find('#modal-img').attr("src", data.image);
-                    modal.modal('show');
+                success: function (response) {
+                    if (response.status) {
+                        console.log(response.data)
+                        modal.find('#modal-name').text(response.data.name);
+                        modal.find('#modal-email').html(response.data.email);
+                        modal.find('#modal-phone').text(response.data.phone);
+                        modal.find('#modal-last_login').text(response.data.last_login);
+                        modal.find('#modal-status').text(response.data.status);
+                        modal.modal('show');
+                    }else{
+                        showToaster(response.message, "alert-error");
+                    }
                 },
                 error: function (xhr, status, error) {
                     console.error("Error fetching offer details:", error);
@@ -222,7 +287,7 @@
         // Hide the modal when the dismiss button is clicked
         $("#modal_dismis").on("click", function (event) {
             event.preventDefault();
-            $('#offerDetailModal').modal('hide');
+            $('#businessDetailModal').modal('hide');
         });
 
     });//document.ready

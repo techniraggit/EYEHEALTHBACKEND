@@ -11,7 +11,8 @@ from api.models.accounts import BaseModel, models
 
 
 validator_contact = RegexValidator(
-    regex=r"^[2-9][0-9]{9}$", message="Only Numbers allowed and cannot start with 0-5"
+    regex=r"^\+[1-9][0-9]{1,3}[0-9]{7,10}$",
+    message="The contact number must start with a '+' followed by a country code (1-3 digits) and a phone number (7-10 digits)."
 )
 
 
@@ -57,12 +58,22 @@ class Services(BaseModel):
 class BusinessModel(BaseModel):
     id = models.UUIDField(default=uuid4, primary_key=True, editable=False)
     name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=10, validators=[validator_contact], unique=True)
+    phone = models.CharField(max_length=20, validators=[validator_contact], unique=True)
     email = models.EmailField(unique=True)
     logo = models.FileField(upload_to="business_logo", null=True, blank=True)
     password = models.CharField(max_length=255, null=True, blank=True)
     last_login = models.DateTimeField(null=True, blank=True)
     is_active = models.BooleanField(default=True)
+
+    def to_json(self):
+        return dict(
+            id=self.id,
+            name=self.name,
+            phone=self.phone,
+            email=self.email,
+            last_login=self.last_login.strftime("%Y-%m-%d %H:%M %p") if self.last_login else None,
+            status="Active" if self.is_active else "Inactive",
+        )
 
 
 class Stores(BaseModel):
@@ -123,6 +134,7 @@ class Stores(BaseModel):
             super().save(*args, **kwargs)
 
     def to_json(self):
+        store_timing  = self.store_availability.all().first()
         return {
             "id": self.id,
             "name": self.name,
@@ -132,13 +144,13 @@ class Stores(BaseModel):
             "description": self.description,
             "phone": self.phone,
             "email": self.email,
-            "opening_time": self.opening_time.strftime("%I:%M %p"),
-            "closing_time": self.closing_time.strftime("%I:%M %p"),
+            "opening_time": store_timing.start_working_hr.strftime("%I:%M %p"),
+            "closing_time": store_timing.end_working_hr.strftime("%I:%M %p"),
             "latitude": self.latitude,
             "longitude": self.longitude,
             "pin_code": self.pin_code,
             "address": self.full_address(),
-            "is_active": self.is_active,
+            "is_active": "Active" if self.is_active else "Inactive",
         }
 
 

@@ -1511,3 +1511,8 @@ form .form-control:focus {
     border-color: #5200a5;
     box-shadow: none;
 }
+
+.error-message {
+    color: red;
+    font-weight: bold;
+}

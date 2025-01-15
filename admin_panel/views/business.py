@@ -51,6 +51,22 @@ class BusinessView(AdminLoginView):
         )
         return render(request, "store/business_listing.html", context)
 
+class BusinessDetailView(AdminLoginView):
+    def get(self, request):
+        business_id = request.GET.get("id")
+        try:
+            business = BusinessModel.objects.get(id=business_id)
+        except:
+            return JsonResponse({
+                "status": False,
+                "message": "Business does not exist",
+            })
+        
+        return JsonResponse({
+            "status": True,
+            "data": business.to_json(),
+        })
+
 
 class BusinessAddView(AdminLoginView):
     def get(self, request):
@@ -374,3 +390,57 @@ class AppointmentView(AdminLoginView):
             is_appointment=True,
         )
         return render(request, "store/appointment_listing.html", context)
+
+
+class BusinessEditView(AdminLoginView):
+    def get(self, request, business_id):
+        try:
+            # Retrieve the business instance by ID
+            business_instance = BusinessModel.objects.get(id=business_id)
+        except BusinessModel.DoesNotExist:
+            return JsonResponse({"status": False, "message": "Business not found."})
+
+        # Prepare context for rendering the edit form
+        context = dict(
+            business=business_instance,
+            is_business=True,
+        )
+        return render(request, "store/business_edit.html", context)
+    
+    def post(self, request, business_id):
+        try:
+            # Retrieve the business instance to update
+            business_instance = BusinessModel.objects.get(id=business_id)
+        except BusinessModel.DoesNotExist:
+            return JsonResponse({"status": False, "message": "Business not found."})
+
+        # Get updated data from the form
+        form = BusinessModelForm(request.POST, instance=business_instance)
+
+        if form.is_valid():
+            # Update the business instance
+            instance = form.save()
+
+            return JsonResponse(
+                {
+                    "status": True,
+                    "message": "Business updated successfully",
+                }
+            )
+
+        # If the form is invalid, return the error messages
+        return JsonResponse(
+            {
+                "status": False,
+                "message": get_form_error_msg(form.errors.as_json()),
+            }
+        )
+    
+from django.shortcuts import get_object_or_404
+class UpdateBusinessStatus(AdminLoginView):
+    def post(self, request):
+        company_id = request.POST.get('id')
+        company = get_object_or_404(BusinessModel, id=company_id)
+        company.is_active = not company.is_active  # Toggle status
+        company.save()
+        return JsonResponse({'success': True, 'is_active': company.is_active})

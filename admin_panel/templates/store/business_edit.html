@@ -1,35 +1,34 @@
 {% extends "base/side_bar.html" %}
 {% load static %}
-{% block title %}Add Business{% endblock title %}
+{% block title %}Edit Business{% endblock title %}
 
-{% block page_name %}Add Business{% endblock page_name %}
+{% block page_name %}Edit Business{% endblock page_name %}
 {% block table %}
-
 <div class="right-table1">
     <div class=" form-main">
-        <form id="addBusinessForm" method="POST" enctype="multipart/form-data">
+        <form id="editBusinessForm" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             <div class="row">
                 <div class="col-md-4 f-name mt-4">
                     <label for="name">Name<span id="required_star">*</span></label>
-                    <input type="text" name="name" id="name" class="form-control" />
+                    <input type="text" name="name" id="name" class="form-control" value="{{business.name}}"/>
                 </div>
 
                 <div class="col-md-4 f-name mt-4">
                     <label for="email">Email<span id="required_star">*</span></label>
-                    <input type="text" name="email" id="email" class="form-control" />
+                    <input type="text" name="email" id="email" class="form-control" value="{{business.email}}" />
                 </div>
 
                 <div class="col-md-4 f-name mt-4">
                     <label for="phone">Phone Number<span id="required_star">*</span></label>
-                    <input type="tel" name="phone" id="phone" class="form-control" />
+                    <input type="tel" name="phone" id="phone" class="form-control" value="{{business.phone}}"/>
                 </div>
 
                 <div class="col-md-4 f-name mt-4 select-wrapp">
                     <label for="status">Status <span id="required_star">*</span></label>
                     <select name="status" id="status" class="form-control">
-                        <option value="active">Active</option>
-                        <option value="inactive">Inactive</option>
+                        <option {% if business.is_active %}selected{% endif %} value="active">Active</option>
+                        <option {% if not business.is_active %}selected{% endif %} value="inactive">Inactive</option>
                     </select>
                 </div>
 
@@ -46,8 +45,8 @@
                 minimumResultsForSearch: Infinity
             });
 
-            $("#addBusinessForm").submit(function (event) {
-                event.preventDefault(); // Prevent the form from submitting via the browser
+            $("#editBusinessForm").submit(function (event) {
+                event.preventDefault();
                 let name = $("#name").val();
                 let email = $("#email").val();
                 let phone = $("#phone").val();
@@ -85,11 +84,13 @@
                     $("#status").after('<span class="error-message text-danger">Status is required.</span>');
                     return;
                 }
+                $(".overlay, .loader").show();
+
                 // If valid, proceed with AJAX submission
                 let formData = new FormData(this);
 
                 $.ajax({
-                    url: "{% url 'business_add_view' %}",
+                    url: "{% url 'business_edit_view' business.id %}",
                     type: "POST",
                     data: formData,
                     processData: false,  // Important!
@@ -101,7 +102,7 @@
                         if (response.status) {
                             showToaster(response.message, "alert-success");
                             setTimeout(function () {
-                                window.location.href = "business-listing";
+                                window.location.href = "{% url 'business_view' %}";
                             }, 2000);
                         } else {
                             showToaster(response.message, "alert-error");

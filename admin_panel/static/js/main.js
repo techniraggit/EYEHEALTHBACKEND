@@ -25,3 +25,20 @@ function credDecode(encoded_data) {
     }
     return decodedData;
 }
+
+function validatePhoneNumber(phoneNumber) {
+    const phoneRegex = /^\+[1-9][0-9]{1,3}[0-9]{7,10}$/;
+    return phoneRegex.test(phoneNumber);
+}
+
+function showError(selector, message) {
+    $(selector).siblings('.error-message').remove();
+    if (message) {
+        $(selector).after(`<span class="error-message text-danger">${message}</span>`);
+    }
+}
+
+function validateEmail(email) {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+}
