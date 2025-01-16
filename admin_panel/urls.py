@@ -319,7 +319,11 @@ static_pages_url = [
 
 business_urls = [
     path("business-listing", business.BusinessView.as_view(), name="business_view"),
-    path("business-detail-view", business.BusinessDetailView.as_view(), name="business_detail_view"),
+    path(
+        "business-detail-view",
+        business.BusinessDetailView.as_view(),
+        name="business_detail_view",
+    ),
     path("add-business", business.BusinessAddView.as_view(), name="business_add_view"),
     path("store/", business.StoreView.as_view(), name="store_view"),
     path(
@@ -345,6 +349,11 @@ business_urls = [
         "appointment-listing",
         business.AppointmentView.as_view(),
         name="appointment_listing_view",
+    ),
+    path(
+        "update-appointment-status",
+        business.UpdateAppointmentStatusView.as_view(),
+        name="update_appointment_status_view",
     ),
     path(
         "business-edit/<uuid:business_id>",

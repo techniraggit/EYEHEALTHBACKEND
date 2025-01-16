@@ -51,21 +51,26 @@ class BusinessView(AdminLoginView):
         )
         return render(request, "store/business_listing.html", context)
 
+
 class BusinessDetailView(AdminLoginView):
     def get(self, request):
         business_id = request.GET.get("id")
         try:
             business = BusinessModel.objects.get(id=business_id)
         except:
-            return JsonResponse({
-                "status": False,
-                "message": "Business does not exist",
-            })
-        
-        return JsonResponse({
-            "status": True,
-            "data": business.to_json(),
-        })
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Business does not exist",
+                }
+            )
+
+        return JsonResponse(
+            {
+                "status": True,
+                "data": business.to_json(),
+            }
+        )
 
 
 class BusinessAddView(AdminLoginView):
@@ -392,6 +397,39 @@ class AppointmentView(AdminLoginView):
         return render(request, "store/appointment_listing.html", context)
 
 
+class UpdateAppointmentStatusView(AdminLoginView):
+    def post(self, request):
+        appointment_id = request.POST.get("appointment_id")
+        new_status = request.POST.get("status")
+
+        if not appointment_id or not new_status:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Invalid data",
+                }
+            )
+
+        try:
+            appointment = StoreAppointment.objects.get(id=appointment_id)
+            appointment.status = new_status
+            appointment.save()
+
+            return JsonResponse(
+                {
+                    "status": True,
+                    "message": "Status updated successfully",
+                    "updated_status": appointment.status,
+                }
+            )
+        except StoreAppointment.DoesNotExist:
+            return JsonResponse({"status": False, "message": "Appointment not found"})
+        except Exception as e:
+            return JsonResponse(
+                {"status": False, "message": f"An error occurred: {str(e)}"}
+            )
+
+
 class BusinessEditView(AdminLoginView):
     def get(self, request, business_id):
         try:
@@ -406,7 +444,7 @@ class BusinessEditView(AdminLoginView):
             is_business=True,
         )
         return render(request, "store/business_edit.html", context)
-    
+
     def post(self, request, business_id):
         try:
             # Retrieve the business instance to update
@@ -435,12 +473,15 @@ class BusinessEditView(AdminLoginView):
                 "message": get_form_error_msg(form.errors.as_json()),
             }
         )
-    
+
+
 from django.shortcuts import get_object_or_404
+
+
 class UpdateBusinessStatus(AdminLoginView):
     def post(self, request):
-        company_id = request.POST.get('id')
+        company_id = request.POST.get("id")
         company = get_object_or_404(BusinessModel, id=company_id)
         company.is_active = not company.is_active  # Toggle status
         company.save()
-        return JsonResponse({'success': True, 'is_active': company.is_active})
+        return JsonResponse({"success": True, "is_active": company.is_active})

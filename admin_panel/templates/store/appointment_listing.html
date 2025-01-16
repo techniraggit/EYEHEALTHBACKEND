@@ -73,7 +73,13 @@
         <td>{{ forloop.counter0|add:paginated_appointments.start_index|default:forloop.counter }}</td>
         <td>{{ appointment.store.name }}</td>
         <td>{{ appointment.user.first_name }}</td>
-        <td class="status {{ appointment.status|lower }}">{{ appointment.status|title }}</td>
+        <td>
+            <select class="status-dropdown" data-appointment-id="{{ appointment.id }}">
+                <option value="confirmed" {% if appointment.status == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                <option value="pending" {% if appointment.status == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="cancelled" {% if appointment.status == 'cancelled' %}selected{% endif %}>Cancelled</option>
+            </select>
+        </td>
         <td>{{ appointment.date }}</td>
         <td>{{ appointment.time }}</td>
         <td>
@@ -134,6 +140,31 @@
 
 <script>
     $(document).ready(function () {
+        $(document).on('change', '.status-dropdown', function () {
+            const appointmentId = $(this).data('appointment-id');
+            const newStatus = $(this).val();
+
+            $.ajax({
+                url: '{% url "update_appointment_status_view" %}',
+                type: 'POST',
+                data: {
+                appointment_id: appointmentId,
+                status: newStatus,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if(response.status){
+                        showToaster(response.message, "alert-success")
+                    }else{
+                        showToaster(response.message, "alert-error")
+                    }
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred while updating the status.');
+                }
+            });
+        });
+
         function updateExportLinks() {
             var params = $('#searchForm').serialize();
             console.log(params);
