@@ -356,6 +356,11 @@ business_urls = [
         name="update_appointment_status_view",
     ),
     path(
+        "appointment-detail/<int:appointment_id>",
+        business.AppointmentDetailView.as_view(),
+        name="appointment_detail_view",
+    ),
+    path(
         "business-edit/<uuid:business_id>",
         business.BusinessEditView.as_view(),
         name="business_edit_view",

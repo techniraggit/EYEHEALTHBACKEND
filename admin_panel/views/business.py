@@ -430,6 +430,21 @@ class UpdateAppointmentStatusView(AdminLoginView):
             )
 
 
+class AppointmentDetailView(AdminLoginView):
+    def get(self, request, appointment_id):
+        try:
+            appointment_instance = StoreAppointment.objects.get(id=appointment_id)
+        except StoreAppointment.DoesNotExist:
+            return JsonResponse({"status": False, "message": "Appointment not found."})
+
+        return JsonResponse(
+            {
+                "status": True,
+                "data": appointment_instance.to_json(),
+            }
+        )
+
+
 class BusinessEditView(AdminLoginView):
     def get(self, request, business_id):
         try:

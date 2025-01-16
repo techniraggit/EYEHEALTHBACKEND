@@ -83,9 +83,7 @@
         <td>{{ appointment.date }}</td>
         <td>{{ appointment.time }}</td>
         <td>
-            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-store-id="{{ store.id }}"></i></a>
-            <a href=""><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="" class="view-store-details" data-store-id="{{ appointment.id }}"><i class="fa-regular fa-eye"></i></a>
+            <a href="" class="view-appointment-details" data-appointment-id="{{ appointment.id }}"><i class="fa-regular fa-eye"></i></a>
         </td>
     </tr>
     {% endfor %}
@@ -93,30 +91,24 @@
 {% include "base/pagination.html" with paginated_data=paginated_appointments %}
 
 <!-- Offer Detail Modal -->
-<div class="modal fade" id="storeDetailModel" tabindex="-1" role="dialog" aria-labelledby="storeDetailModelLabel"
+<div class="modal fade" id="appointmentDetailModel" tabindex="-1" role="dialog" aria-labelledby="appointmentDetailModelLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="storeDetailModelLabel">Store Details</h5>
+                <h5 class="modal-title" id="appointmentDetailModelLabel">Appointment Details</h5>
             </div>
             <div class="modal-body">
-                <p><strong>ID:</strong> <span id="modal-id"></span></p>
-                <p><strong>Name:</strong> <span id="modal-name"></span></p>
-                <p><strong>GST Number:</strong> <span id="modal-gst_number"></span></p>
-                <p><strong>PAN Number:</strong> <span id="modal-pan_number"></span></p>
-                <p><strong>Services:</strong> <span id="modal-services"></span></p>
-                <p><strong>Description:</strong> <span id="modal-description"></span></p>
-                <p><strong>Phone:</strong> <span id="modal-phone"></span></p>
-                <p><strong>Email:</strong> <span id="modal-email"></span></p>
-                <p><strong>Opening Time:</strong> <span id="modal-opening_time"></span></p>
-                <p><strong>Closing Time:</strong> <span id="modal-closing_time"></span></p>
-                <p><strong>Latitude:</strong> <span id="modal-latitude"></span></p>
-                <p><strong>Longitude:</strong> <span id="modal-longitude"></span></p>
-                <p><strong>Pin Code:</strong> <span id="modal-pin_code"></span></p>
-                <p><strong>Address:</strong> <span id="modal-address"></span></p>
-                <p><strong>Status:</strong> <span id="modal-is_active"></span></p>
-                {% comment %} <img id="modal-img" src="" alt="" width="80" height="100"> {% endcomment %}
+                <p><strong>User Name:</strong> <span id="modal-user_name"></span></p>
+                <p><strong>Appointment Status:</strong> <span id="modal-appointment_status"></span></p>
+                <p><strong>Store Name:</strong> <span id="modal-store_name"></span></p>
+                <p><strong>Store Address:</strong> <span id="modal-store_address"></span></p>
+                <p><strong>Store Rating:</strong> <span id="modal-store_rating"></span></p>
+                <p><strong>Store Opening Time:</strong> <span id="modal-store_opening_time"></span></p>
+                <p><strong>Store Closing Time:</strong> <span id="modal-store_closing_time"></span></p>
+                <p><strong>Store Phone Number:</strong> <span id="modal-store_phone"></span></p>
+                <p><strong>Appointment Date:</strong> <span id="modal-appointment_date"></span></p>
+                <p><strong>Appointment Time:</strong> <span id="modal-appointment_time"></span></p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
@@ -125,18 +117,6 @@
     </div>
 </div>
 <!-- Offer Detail Modal -->
-
-<!-- offer delete popup -->
-<div id="dlt-btn-overlay" class="dlt-btn-overlay" style="display: none;">
-    <div class="dlt-popup">
-        <h4>Are you sure you want to delete this Store?</h4>
-        <div class="dlt-buttons">
-            <button class="pop-confirm-btn" id="confirmDelete">Yes, delete it</button>
-            <button class="pop-confirm-btn" id="cancelDelete">No, keep it</button>
-        </div>
-    </div>
-</div>
-<!-- offer delete popup end -->
 
 <script>
     $(document).ready(function () {
@@ -233,31 +213,26 @@
         });
 
         // View offer details when the view offer details button is clicked
-        $('.view-store-details').click(function (event) {
+        $('.view-appointment-details').click(function (event) {
             event.preventDefault();
-            var storeId = $(this).data('store-id');
-            var modal = $('#storeDetailModel');
+            var appointmentId = $(this).data('appointment-id');
+            var modal = $('#appointmentDetailModel');
 
             $.ajax({
-                url: '/business/store-with-id/' + storeId,
+                url: '/business/appointment-detail/' + appointmentId,
                 method: 'GET',
                 success: function (response) {
                     if (response.status){
-                        modal.find("#modal-id").text(response.data.id)
-                        modal.find("#modal-name").text(response.data.name)
-                        modal.find("#modal-gst_number").text(response.data.gst_number)
-                        modal.find("#modal-pan_number").text(response.data.pan_number)
-                        modal.find("#modal-services").text(response.data.services)
-                        modal.find("#modal-description").text(response.data.description)
-                        modal.find("#modal-phone").text(response.data.phone)
-                        modal.find("#modal-email").text(response.data.email)
-                        modal.find("#modal-opening_time").text(response.data.opening_time)
-                        modal.find("#modal-closing_time").text(response.data.closing_time)
-                        modal.find("#modal-latitude").text(response.data.latitude)
-                        modal.find("#modal-longitude").text(response.data.longitude)
-                        modal.find("#modal-pin_code").text(response.data.pin_code)
-                        modal.find("#modal-address").text(response.data.address)
-                        modal.find("#modal-is_active").text(response.data.is_active)
+                        modal.find("#modal-user_name").text(response.data.user_name)
+                        modal.find("#modal-appointment_status").text(response.data.appointment_status)
+                        modal.find("#modal-store_name").text(response.data.store_name)
+                        modal.find("#modal-store_address").text(response.data.store_address)
+                        modal.find("#modal-store_rating").text(response.data.store_rating)
+                        modal.find("#modal-store_opening_time").text(response.data.store_opening_time)
+                        modal.find("#modal-store_closing_time").text(response.data.store_closing_time)
+                        modal.find("#modal-store_phone").text(response.data.store_phone)
+                        modal.find("#modal-appointment_date").text(response.data.appointment_date)
+                        modal.find("#modal-appointment_time").text(response.data.appointment_time)
                         modal.modal('show');
                     }else{
                         showToaster(response.message, "alert-error")
@@ -273,7 +248,7 @@
         // Hide the modal when the dismiss button is clicked
         $("#modal_dismis").on("click", function (event) {
             event.preventDefault();
-            $('#storeDetailModel').modal('hide');
+            $('#appointmentDetailModel').modal('hide');
         });
 
     });//document.ready

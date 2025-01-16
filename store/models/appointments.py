@@ -156,6 +156,27 @@ class StoreAppointment(BaseModel):
     def __str__(self):
         return f"{self.user} - {self.store.name}"
 
+    def to_json(self):
+        return dict(
+            id=self.id,
+            user_name=self.user.get_full_name(),
+            appointment_status=self.status.capitalize(),
+            service=self.service,
+            notes=self.notes,
+            store_name=self.store.name,
+            store_address=self.store.full_address(),
+            store_rating=self.store.get_average_rating(),
+            store_opening_time=self.store.store_availability.first().start_working_hr.strftime(
+                "%I:%M %p"
+            ),
+            store_closing_time=self.store.store_availability.first().end_working_hr.strftime(
+                "%I:%M %p"
+            ),
+            store_phone=self.store.phone,
+            appointment_date=self.date.strftime("%Y-%m-%d"),
+            appointment_time=self.time.strftime("%H:%M"),
+        )
+
     class Meta:
         verbose_name_plural = "Store Appointments"
         verbose_name = "Store Appointment"
