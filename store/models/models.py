@@ -12,7 +12,7 @@ from api.models.accounts import BaseModel, models
 
 validator_contact = RegexValidator(
     regex=r"^\+[1-9][0-9]{1,3}[0-9]{7,10}$",
-    message="The contact number must start with a '+' followed by a country code (1-3 digits) and a phone number (7-10 digits)."
+    message="The contact number must start with a '+' followed by a country code (1-3 digits) and a phone number (7-10 digits).",
 )
 
 
@@ -71,7 +71,11 @@ class BusinessModel(BaseModel):
             name=self.name,
             phone=self.phone,
             email=self.email,
-            last_login=self.last_login.strftime("%Y-%m-%d %H:%M %p") if self.last_login else None,
+            last_login=(
+                self.last_login.strftime("%Y-%m-%d %H:%M %p")
+                if self.last_login
+                else None
+            ),
             status="Active" if self.is_active else "Inactive",
         )
 
@@ -92,7 +96,7 @@ class Stores(BaseModel):
     pan_number = models.CharField(max_length=50, null=True, blank=True)
     services = models.ManyToManyField(Services, related_name="stores")
     description = models.TextField()
-    phone = models.CharField(max_length=10, validators=[validator_contact])
+    phone = models.CharField(max_length=20, validators=[validator_contact])
     email = models.EmailField()
     location = PointField(geography=True, default=Point(0.0, 0.0))
     images_as_json = models.JSONField(default=dict, null=True)
@@ -134,7 +138,7 @@ class Stores(BaseModel):
             super().save(*args, **kwargs)
 
     def to_json(self):
-        store_timing  = self.store_availability.all().first()
+        store_timing = self.store_availability.all().first()
         return {
             "id": self.id,
             "name": self.name,
