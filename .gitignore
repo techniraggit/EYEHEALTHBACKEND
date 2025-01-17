@@ -9,6 +9,7 @@ media
 untracted_files
 staticfiles/
 .lock
+uv.lock
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
