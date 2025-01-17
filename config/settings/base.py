@@ -39,12 +39,14 @@ THIRD_APPS = [
     "corsheaders",
     "rest_framework",
     "django.contrib.gis",
+    "django_q",
 ]
 
 LOCAL_APPS = [
     "api",
     "admin_panel",
     "store",
+    "ai_doctor",
 ]
 
 INSTALLED_APPS += THIRD_APPS + LOCAL_APPS
@@ -236,3 +238,14 @@ MESSAGE_TAGS = {
 LOGIN_URL = "login_view"
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 50 * 1024 * 1024  # (50 MEGABYTES)
+
+
+Q_CLUSTER = {
+    "name": "DjangoQ",
+    "workers": 4,
+    "recycle": 500,
+    "timeout": 60,
+    "queue_limit": 50,
+    "bulk": 10,
+    "orm": "default",
+}

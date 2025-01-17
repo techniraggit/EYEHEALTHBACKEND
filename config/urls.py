@@ -13,6 +13,7 @@ urlpatterns = [
     path("backend/", admin.site.urls),
     path("api/", include("api.urls")),
     path("api/stores/", include("store.urls")),
+    path("ai/", include("ai_doctor.urls")),
     path("", include("admin_panel.urls")),
 ]
 
