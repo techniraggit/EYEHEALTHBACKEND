@@ -13,7 +13,7 @@ from .views import static_pages
 from .views import credentials
 from .views import my_profile
 from .views import carousels
-from .views import business
+from .views import business, products
 
 auth_urls = [
     path("", LoginView.as_view(), name="login_view"),
@@ -372,6 +372,19 @@ business_urls = [
     ),
 ]
 
+product_urls = [
+    path(
+        "frame-listing",
+        products.FramesView.as_view(),
+        name="frame_listing_view",
+    ),
+    path(
+        "update-frame-recommendation",
+        products.UpdateFramesRecommendation.as_view(),
+        name="update_frame_recommendation_view",
+    ),
+]
+
 urlpatterns = [
     path("", include(auth_urls)),
     path("home/", include(home_urls)),
@@ -388,4 +401,5 @@ urlpatterns = [
     path("my-profile/", include(profile_urls)),
     path("carousels/", include(carousels_urls)),
     path("business/", include(business_urls)),
+    path("products/", include(product_urls)),
 ]

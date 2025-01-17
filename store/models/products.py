@@ -74,6 +74,13 @@ class Frame(BaseModel):
             "is_recommended": self.is_recommended,
         }
 
+    def __str__(self):
+        return self.name
+
+    @classmethod
+    def get_recommended_frames(cls):
+        return cls.objects.filter(is_recommended=True)
+
 
 class Wishlist(BaseModel):
     user = models.ForeignKey(

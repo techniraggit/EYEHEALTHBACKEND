@@ -109,6 +109,12 @@
                         <li><a href="{% url "appointment_listing_view" %}"><i class="fa-regular fa-calendar-check me-2"></i>Appointments</a></li>
                     {% endif %}
 
+                    {% if is_frames %}
+                        <li><a href="{% url "frame_listing_view" %}" class="active-link"><i class="fa-solid fa-glasses me-2"></i>Frames</a></li>
+                    {% else %}
+                        <li><a href="{% url "frame_listing_view" %}"><i class="fa-solid fa-glasses me-2"></i>Frames</a></li>
+                    {% endif %}
+
                     {% if is_trash %}
                         <li><a href="{% url "trash_view" %}" class="active-link"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
                     {% else %}
