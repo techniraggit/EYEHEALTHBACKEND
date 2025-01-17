@@ -9,125 +9,25 @@
             <h5><a href="/" style="color: rgb(38, 50, 56);">Admin</a></h5>
             <div class="side-list">
                 <ul>
-                    {% comment %} {% if request.user.is_superuser %}
-                        <li><a href="/backend"><i class="fa-solid fa-database me-2"></i> Developer Admin</a></li>
-                    {% endif %} {% endcomment %}
-                    {% if is_home %}
-                        <li><a href="/" class="active-link"><i class="fa-solid fa-house me-2"></i>Home</a></li>
-                    {% else %}
-                        <li><a href="/"><i class="fa-solid fa-house me-2"></i>Home</a></li>
-                    {% endif %}
-
-                    {% if is_user %}
-                        <li><a href="{% url "users_view" %}" class="active-link"><i class="fa-solid fa-user me-2"></i>User</a></li>
-                    {% else %}
-                        <li><a href="{% url "users_view" %}"><i class="fa-solid fa-user me-2"></i>User</a></li>
-                    {% endif %}
-
-                    {% if is_offer %}
-                        <li><a href="{% url "offers_view" %}" class="active-link"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
-                    {% else %}
-                        <li><a href="{% url "offers_view" %}"><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
-                    {% endif %}
-
-                    {% if is_prescription %}
-                        <li><a href="{% url "prescription_view" %}" class="active-link"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
-                    {% else %}
-                        <li><a href="{% url "prescription_view" %}"><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
-                    {% endif %}
-
-                    {% if is_notification %}
-                        <li><a href="{% url "notification_view" %}" class="active-link"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
-                    {% else %}
-                        <li><a href="{% url "notification_view" %}"><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
-                    {% endif %}
-
-                    {% if is_redeemed_offers %}
-                        <li><a href="{% url "redeemed_offers_view" %}" class="active-link"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
-                    {% else %}
-                        <li><a href="{% url "redeemed_offers_view" %}"><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
-                    {% endif %}
-
-                    {% if is_carousel %}
-                        <li><a href="{% url "carousels_view" %}" class="active-link"><i class="fa-solid fa-mountain-sun me-2"></i>Carousels</a></li>
-                    {% else %}
-                        <li><a href="{% url "carousels_view" %}"><i class="fa-solid fa-mountain-sun me-2"></i>Carousels</a></li>
-                    {% endif %}
-
-                    {% if is_subscription %}
-                        <li><a href="{% url "subscription_view" %}" class="active-link"><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
-                    {% else %}
-                        <li><a href="{% url "subscription_view" %}"><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
-                    {% endif %}
-
-                    {% if is_user_subscription %}
-                        <li><a href="{% url "user_subscription_plans_view" %}" class="active-link"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
-                    {% else %}
-                        <li><a href="{% url "user_subscription_plans_view" %}"><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
-                    {% endif %}
-
-                    {% if is_eye_exam %}
-                        <li><a href="{% url "eye_test_view" %}" class="active-link"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
-                    {% else %}
-                        <li><a href="{% url "eye_test_view" %}"><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
-                    {% endif %}
-                    
-                    {% if is_eye_fatigue %}
-                        <li><a href="{% url "eye_fatigue_view" %}" class="active-link"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
-                    {% else %}
-                        <li><a href="{% url "eye_fatigue_view" %}"><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
-                    {% endif %}
-
-                    {% if is_static_page %}
-                        <li><a href="{% url "static_pages_view" %}" class="active-link"><i class="fa-solid fa-newspaper me-2"></i>Flat Pages</a></li>
-                    {% else %}
-                        <li><a href="{% url "static_pages_view" %}"><i class="fa-solid fa-newspaper me-2"></i>Flat Pages</a></li>
-                    {% endif %}
-                    
-
-                    {% if is_settings %}
-                        <li><a href="{% url "settings_view" %}" class="active-link"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
-                    {% else %}
-                        <li><a href="{% url "settings_view" %}"><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
-                    {% endif %}
-
-                    {% if is_business %}
-                        <li><a href="{% url "business_view" %}" class="active-link"><i class="fa-solid fa-briefcase me-2"></i>Business</a></li>
-                    {% else %}
-                        <li><a href="{% url "business_view" %}"><i class="fa-solid fa-briefcase me-2"></i>Business</a></li>
-                    {% endif %}
-
-                    {% if is_store %}
-                        <li><a href="{% url "store_view" %}" class="active-link"><i class="fa-solid fa-store me-2"></i>Store</a></li>
-                    {% else %}
-                        <li><a href="{% url "store_view" %}"><i class="fa-solid fa-store me-2"></i>Store</a></li>
-                    {% endif %}
-
-                    {% if is_appointment %}
-                        <li><a href="{% url "appointment_listing_view" %}" class="active-link"><i class="fa-regular fa-calendar-check me-2"></i>Appointments</a></li>
-                    {% else %}
-                        <li><a href="{% url "appointment_listing_view" %}"><i class="fa-regular fa-calendar-check me-2"></i>Appointments</a></li>
-                    {% endif %}
-
-                    {% if is_frames %}
-                        <li><a href="{% url "frame_listing_view" %}" class="active-link"><i class="fa-solid fa-glasses me-2"></i>Frames</a></li>
-                    {% else %}
-                        <li><a href="{% url "frame_listing_view" %}"><i class="fa-solid fa-glasses me-2"></i>Frames</a></li>
-                    {% endif %}
-
-                    {% if is_trash %}
-                        <li><a href="{% url "trash_view" %}" class="active-link"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
-                    {% else %}
-                        <li><a href="{% url "trash_view" %}"><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
-                    {% endif %}
-
-                    {% comment %} {% if request.user.is_superuser %}
-                        {% if is_credentials %}
-                            <li><a href="{% url "credentials_view" %}" class="active-link"><i class="fa-solid fa-key me-2"></i>Credentials</a></li>
-                        {% else %}
-                            <li><a href="{% url "credentials_view" %}"><i class="fa-solid fa-key me-2"></i>Credentials</a></li>
-                        {% endif %}
-                    {% endif %} {% endcomment %}
+                    <li><a href="/" {% if request.path|split_path == "home" %}class="active-link"{% endif %}><i class="fa-solid fa-house me-2"></i>Home</a></li>
+                    <li><a href="{% url "users_view" %}" {% if request.path|split_path == "users" %}class="active-link"{% endif %}><i class="fa-solid fa-user me-2"></i>User</a></li>
+                    <li><a href="{% url "offers_view" %}" {% if request.path|split_path == "offers" %}class="active-link"{% endif %}><i class="fa-solid fa-receipt me-2"></i>Offers</a></li>
+                    <li><a href="{% url "prescription_view" %}" {% if request.path|split_path == "prescription" %}class="active-link"{% endif %}><i class="fa-solid fa-prescription me-2"></i>Uploaded Prescription</a></li>
+                    <li><a href="{% url "notification_view" %}" {% if request.path|split_path == "notification" %}class="active-link"{% endif %}><i class="fa-solid fa-bell me-2"></i>Notification</a></li>
+                    <li><a href="{% url "redeemed_offers_view" %}" {% if request.path|split_path == "redeemed-offers" %}class="active-link"{% endif %}><i class="fa-solid fa-hand-holding-dollar me-2"></i>Redeemed Offers</a></li>
+                    <li><a href="{% url "carousels_view" %}" {% if request.path|split_path == "carousels" %}class="active-link"{% endif %}><i class="fa-solid fa-mountain-sun me-2"></i>Carousels</a></li>
+                    <li><a href="{% url "subscription_view" %}" {% if request.path|split_path == "subscription" %}class="active-link"{% endif %}><i class="fa-solid fa-money-check-dollar me-2"></i>Subscription Plans</a></li>
+                    <li><a href="{% url "user_subscription_plans_view" %}" {% if request.path|split_path == "user-subscription" %}class="active-link"{% endif %}><i class="fa-solid fa-calendar-check me-2"></i>User Subscription</a></li>
+                    <li><a href="{% url "eye_test_view" %}" {% if request.path|split_path == "eye-test" %}class="active-link"{% endif %}><i class="fa-solid fa-arrows-to-eye me-2"></i>Eye Test</a></li>
+                    <li><a href="{% url "eye_fatigue_view" %}" {% if request.path|split_path == "eye-fatigue" %}class="active-link"{% endif %}><i class="fa-solid fa-eye me-2"></i>Eye Fatigue</a></li>
+                    <li><a href="{% url "static_pages_view" %}" {% if request.path|split_path == "static-pages" %}class="active-link"{% endif %}><i class="fa-solid fa-newspaper me-2"></i>Flat Pages</a></li>
+                    <li><a href="{% url "settings_view" %}" {% if request.path|split_path == "settings" %}class="active-link"{% endif %}><i class="fa-solid fa-sliders me-2"></i>Settings</a></li>
+                    <li><a href="{% url "business_view" %}" {% if request.path|split_path == "business" %}class="active-link"{% endif %}><i class="fa-solid fa-briefcase me-2"></i>Business</a></li>
+                    <li><a href="{% url "store_view" %}" {% if request.path|split_path == "store" %}class="active-link"{% endif %}><i class="fa-solid fa-store me-2"></i>Store</a></li>
+                    <li><a href="{% url "appointment_listing_view" %}" {% if request.path|split_path == "appointment" %}class="active-link"{% endif %}><i class="fa-regular fa-calendar-check me-2"></i>Appointments</a></li>
+                    <li><a href="{% url "frame_listing_view" %}" {% if request.path|split_path == "products" %}class="active-link"{% endif %}><i class="fa-solid fa-glasses me-2"></i>Frames</a></li>
+                    <li><a href="{% url "trash_view" %}" {% if request.path|split_path == "trash" %}class="active-link"{% endif %}><i class="fa-solid fa-trash me-2"></i>Trash</a></li>
+                    {% comment %} <li><a href="{% url "credentials_view" %}" {% if request.path|split_path == "credentials" %}class="active-link"{% endif %}><i class="fa-solid fa-key me-2"></i>Credentials</a></li> {% endcomment %}
                 </ul>
             </div>
         </div>
