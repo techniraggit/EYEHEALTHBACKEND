@@ -110,7 +110,7 @@
         <td>
             <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-store-id="{{ store.id }}"></i></a>
             <a href="{% url "edit_frame_view" frame.id %}"><i class="fa-solid fa-pen me-2"></i></a>
-            <a href="{{ store.id }}" class="view-store-details" data-store-id="{{ store.id }}"><i class="fa-regular fa-eye"></i></a>
+            <a href="{{ frame.id }}" class="viewFrameDetails" data-frame-id="{{ frame.id }}"><i class="fa-regular fa-eye"></i></a>
         </td>
     </tr>
     {% endfor %}
@@ -123,25 +123,15 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="storeDetailModelLabel">Store Details</h5>
+                <h5 class="modal-title" id="storeDetailModelLabel">Frame Details</h5>
             </div>
             <div class="modal-body">
-                <p><strong>ID:</strong> <span id="modal-id"></span></p>
                 <p><strong>Name:</strong> <span id="modal-name"></span></p>
-                <p><strong>GST Number:</strong> <span id="modal-gst_number"></span></p>
-                <p><strong>PAN Number:</strong> <span id="modal-pan_number"></span></p>
-                <p><strong>Services:</strong> <span id="modal-services"></span></p>
-                <p><strong>Description:</strong> <span id="modal-description"></span></p>
-                <p><strong>Phone:</strong> <span id="modal-phone"></span></p>
-                <p><strong>Email:</strong> <span id="modal-email"></span></p>
-                <p><strong>Opening Time:</strong> <span id="modal-opening_time"></span></p>
-                <p><strong>Closing Time:</strong> <span id="modal-closing_time"></span></p>
-                <p><strong>Latitude:</strong> <span id="modal-latitude"></span></p>
-                <p><strong>Longitude:</strong> <span id="modal-longitude"></span></p>
-                <p><strong>Pin Code:</strong> <span id="modal-pin_code"></span></p>
-                <p><strong>Address:</strong> <span id="modal-address"></span></p>
-                <p><strong>Status:</strong> <span id="modal-is_active"></span></p>
-                {% comment %} <img id="modal-img" src="" alt="" width="80" height="100"> {% endcomment %}
+                <p><strong>Type:</strong> <span id="modal-frame_type"></span></p>
+                <p><strong>Gender:</strong> <span id="modal-gender"></span></p>
+                <p><strong>Brand:</strong> <span id="modal-brand"></span></p>
+                <p><strong>Is Recommended:</strong> <span id="modal-is_recommended"></span></p>
+                <img id="modal-image" src="" alt="" width="100" height="100">
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" id="modal_dismis" data-dismiss="modal">Close</button>
@@ -235,31 +225,22 @@
         });
 
         // View offer details when the view offer details button is clicked
-        $('.view-store-details').click(function (event) {
+        $('.viewFrameDetails').click(function (event) {
             event.preventDefault();
-            var storeId = $(this).data('store-id');
+            var frameId = $(this).data('frame-id');
             var modal = $('#storeDetailModel');
 
             $.ajax({
-                url: '/business/store-with-id/' + storeId,
+                url: '/products/frame-details/' + frameId,
                 method: 'GET',
                 success: function (response) {
                     if (response.status){
-                        modal.find("#modal-id").text(response.data.id)
                         modal.find("#modal-name").text(response.data.name)
-                        modal.find("#modal-gst_number").text(response.data.gst_number)
-                        modal.find("#modal-pan_number").text(response.data.pan_number)
-                        modal.find("#modal-services").text(response.data.services)
-                        modal.find("#modal-description").text(response.data.description)
-                        modal.find("#modal-phone").text(response.data.phone)
-                        modal.find("#modal-email").text(response.data.email)
-                        modal.find("#modal-opening_time").text(response.data.opening_time)
-                        modal.find("#modal-closing_time").text(response.data.closing_time)
-                        modal.find("#modal-latitude").text(response.data.latitude)
-                        modal.find("#modal-longitude").text(response.data.longitude)
-                        modal.find("#modal-pin_code").text(response.data.pin_code)
-                        modal.find("#modal-address").text(response.data.address)
-                        modal.find("#modal-is_active").text(response.data.is_active)
+                        modal.find("#modal-frame_type").text(response.data.frame_type)
+                        modal.find("#modal-gender").text(response.data.gender)
+                        modal.find("#modal-brand").text(response.data.brand)
+                        modal.find('#modal-image').attr("src", response.data.image);
+                        modal.find("#modal-is_recommended").text(response.data.is_recommended)
                         modal.modal('show');
                     }else{
                         showToaster(response.message, "alert-error")

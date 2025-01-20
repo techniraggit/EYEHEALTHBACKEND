@@ -168,6 +168,7 @@ appointment_urls = [
 
 product_urls = [
     path("", products.FramesView.as_view(), name="frame_listing_view"),
+    path("frame-details/<int:id>", products.FrameDetailView.as_view(), name="frame_detail_view"),
     path("edit-frame/<int:id>", products.EditFrameView.as_view(), name="edit_frame_view"),
     path("update-frame-recommendation", products.UpdateFramesRecommendation.as_view(), name="update_frame_recommendation_view"),
     path("add-frame", products.AddFrameView.as_view(), name="add_frame_view"),

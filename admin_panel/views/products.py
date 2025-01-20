@@ -21,6 +21,25 @@ class FramesView(AdminLoginView):
         return render(request, "products/frame_listing.html", context)
 
 
+class FrameDetailView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            frame_obj = Frame.objects.get(id=id)
+        except:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Frame does not exist",
+                }
+            )
+        return JsonResponse(
+            {
+                "status": True,
+                "data": frame_obj.to_json(request),
+            }
+        )
+
+
 class AddFrameView(AdminLoginView):
     def get(self, request):
         form = FrameForm()

@@ -74,14 +74,19 @@ class Frame(BaseModel):
         verbose_name_plural = "Frames"
         verbose_name = "Frame"
 
-    def to_json(self):
+    def to_json(self, request=None):
+        img_path = self.image.url if self.image else "/"
+        if request:
+            img_path = request.build_absolute_uri(img_path)
+
         return {
+            "id": self.id,
             "name": self.name,
-            "frame_type": self.frame_type,
+            "frame_type": self.frame_type.name,
             "gender": self.gender,
-            "brand": self.brand,
-            "image": self.image.url if self.image else None,
-            "is_recommended": self.is_recommended,
+            "brand": self.brand.name,
+            "image": img_path,
+            "is_recommended": "Yes" if self.is_recommended else "No",
         }
 
     def __str__(self):
