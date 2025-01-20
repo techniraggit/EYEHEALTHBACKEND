@@ -1,0 +1,87 @@
+{% extends "base/side_bar.html" %}
+{% load static %}
+{% block title %}Edit Frame{% endblock title %}
+
+{% block page_name %}Edit Frame{% endblock page_name %}
+{% block table %}
+
+<div class="right-table1">
+    <div class="form-main">
+        <form id="editProductForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col-md-6">
+                    {{ form.name.label_tag }}
+                    {{ form.name }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.frame_type.label_tag }}
+                    {{ form.frame_type }}
+                </div>
+                <div class="col-md-6 mt-3">
+                    {{ form.gender.label_tag }}
+                    {{ form.gender }}
+                </div>
+                <div class="col-md-6 mt-3">
+                    {{ form.brand.label_tag }}
+                    {{ form.brand }}
+                </div>
+                
+                <div class="col-md-6 mt-3">
+                    {{ form.image.label_tag }}
+                    {% if frame.image %}
+                        <div>
+                            <img src="{{ frame.image.url }}" alt="Current Image" style="max-width: 100px; max-height: 100px;">
+                        </div>
+                    {% endif %}
+                    {{ form.image }}
+                </div>
+
+
+                <div class="col-md-6 mt-3">
+                    <label>{{ form.is_recommended.label }}</label>
+                    {{ form.is_recommended }}
+                </div>
+            </div>
+
+            <div class="col-md-3 cancel-btn mb-4 mt-5">
+                <button type="submit" class="btn btn-primary save-btn">Update</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $('#editProductForm').on('submit', function (e) {
+                e.preventDefault();
+                toggleLoader(true);
+
+                var formData = new FormData(this);
+                $.ajax({
+                    url: '{% url "edit_frame_view" frame_id %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false, // Important for file uploads
+                    contentType: false, // Important for file uploads
+                    success: function (response) {
+                        if (response.status) {
+                            showToaster(response.message, "alert-success")
+                            setTimeout(function () {
+                                window.location.href = "{% url 'frame_listing_view' %}"
+                            }, 3000)
+                        } else {
+                            showToaster(response.message, "alert-error")
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        alert('Something went wrong. Please try again.');
+                    },
+                    complete: function () {
+                        toggleLoader(false);
+                    }
+                });
+            });
+        });
+    </script>
+
+{% endblock table %}

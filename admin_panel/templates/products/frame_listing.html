@@ -109,7 +109,7 @@
 
         <td>
             <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-store-id="{{ store.id }}"></i></a>
-            <a href=""><i class="fa-solid fa-pen me-2"></i></a>
+            <a href="{% url "edit_frame_view" frame.id %}"><i class="fa-solid fa-pen me-2"></i></a>
             <a href="{{ store.id }}" class="view-store-details" data-store-id="{{ store.id }}"><i class="fa-regular fa-eye"></i></a>
         </td>
     </tr>

@@ -21,17 +21,6 @@ class FramesView(AdminLoginView):
         return render(request, "products/frame_listing.html", context)
 
 
-class UpdateFramesRecommendation(AdminLoginView):
-    def post(self, request):
-        frame_id = request.POST.get("id")
-        frame_obj = get_object_or_404(Frame, id=frame_id)
-        frame_obj.is_recommended = not frame_obj.is_recommended
-        frame_obj.save()
-        return JsonResponse(
-            {"success": True, "is_recommended": frame_obj.is_recommended}
-        )
-
-
 class AddFrameView(AdminLoginView):
     def get(self, request):
         form = FrameForm()
@@ -48,3 +37,45 @@ class AddFrameView(AdminLoginView):
         errors = form.errors.as_json()
         message = get_form_error_msg(errors)
         return JsonResponse({"status": False, "message": message})
+
+
+class EditFrameView(AdminLoginView):
+    def get(self, request, id):
+        host_url = f"{request.scheme}://{request.get_host()}"
+        print("full_url: ", host_url)
+
+        try:
+            frame_obj = Frame.objects.get(id=id)
+        except:
+            return JsonResponse({"status": False, "message": "Frame not found"})
+        form = FrameForm(instance=frame_obj)
+        context = dict(
+            form=form,
+            frame_id=id,
+            frame=frame_obj,
+            host_url=host_url,
+        )
+        return render(request, "products/edit_frame.html", context=context)
+
+    def post(self, request, id):
+        frame_obj = get_object_or_404(Frame, id=id)
+        form = FrameForm(request.POST, request.FILES, instance=frame_obj)
+        if form.is_valid():
+            form.save()
+            return JsonResponse(
+                {"status": True, "message": "Frame updated successfully"}
+            )
+        errors = form.errors.as_json()
+        message = get_form_error_msg(errors)
+        return JsonResponse({"status": False, "message": message})
+
+
+class UpdateFramesRecommendation(AdminLoginView):
+    def post(self, request):
+        frame_id = request.POST.get("id")
+        frame_obj = get_object_or_404(Frame, id=frame_id)
+        frame_obj.is_recommended = not frame_obj.is_recommended
+        frame_obj.save()
+        return JsonResponse(
+            {"success": True, "is_recommended": frame_obj.is_recommended}
+        )

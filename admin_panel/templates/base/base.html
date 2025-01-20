@@ -71,15 +71,19 @@
     {% endblock body %}
 </body>
 <script>
-   // Show loader when the page starts loading
-    $(window).on("beforeunload", function() {
-        $(".overlay, .loader").show();
-    });
+//    // Show loader when the page starts loading
+//     $(window).on("beforeunload", function() {
+//         $(".overlay, .loader").show();
+//     });
 
-    // Hide loader when window finishes loading
-    $(window).on("load", function() {
-        $(".overlay, .loader").hide();
-    });
+//     // Hide loader when window finishes loading
+//     $(window).on("load", function() {
+//         $(".overlay, .loader").hide();
+//     });
+
+    window.onload = function() {
+        toggleLoader(false);
+    };
 </script>
 
 </html>
