@@ -1,3 +1,4 @@
+from django.core.validators import FileExtensionValidator
 from store.models.base import BaseModel, models
 from store.models.models import Stores
 from django.conf import settings
@@ -67,7 +68,21 @@ class Frame(BaseModel):
         blank=True,
         related_name="frame_brand",
     )
-    image = models.FileField(upload_to=f"frames")
+    image = models.FileField(
+        upload_to=f"frames",
+        validators=[
+            FileExtensionValidator(
+                allowed_extensions=[
+                    "jpg",
+                    "png",
+                    "gif",
+                    "avif",
+                    "webp",
+                    "jpeg",
+                ]
+            )
+        ],
+    )
     is_recommended = models.BooleanField(default=False)
 
     class Meta:
