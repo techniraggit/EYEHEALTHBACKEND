@@ -47,44 +47,50 @@
 
             $("#editBusinessForm").submit(function (event) {
                 event.preventDefault();
+                toggleLoader(true);
                 let name = $("#name").val();
                 let email = $("#email").val();
                 let phone = $("#phone").val();
                 let status = $("#status").val();
+                let isValid = true;
                 
                 // Perform client-side validation
                 if (!name) {
                     showError("#name", "Name is required.")
-                    return
+                    isValid = false;
                 }else{
                     showError("#name", "");
                 }
 
                 if (!email) {
                     showError("#email", "Email is required..")
-                    return;
+                    isValid = false;
                 }else if (!validateEmail(email)){
                     showError("#email", "Invalid email address.");
-                    return;
+                    isValid = false;
                 }else{
                     showError("#email", "");
                 }
 
                 if (!phone) {
                     showError("#phone", "Phone is required.");
-                    return;
+                    isValid = false;
                 } else if (!validatePhoneNumber(phone)) {
                     showError("#phone", "Invalid phone number.");
-                    return;
+                    isValid = false;
                 } else {
                     showError("#phone", "");
                 }
 
                 if (!status) {
                     $("#status").after('<span class="error-message text-danger">Status is required.</span>');
+                    isValid = false;
+                }
+
+                if(!isValid) {
+                    toggleLoader(false);
                     return;
                 }
-                $(".overlay, .loader").show();
 
                 // If valid, proceed with AJAX submission
                 let formData = new FormData(this);
@@ -107,15 +113,15 @@
                         } else {
                             showToaster(response.message, "alert-error");
                         }
-                        $(".overlay, .loader").hide();
                     },
                     error: function (xhr, textStatus, errorThrown) {
                         const response = xhr.responseJSON
                         showToaster(response.message, "alert-error");
-                        $(".overlay, .loader").hide();
+                    },
+                    complete: function() {
+                        toggleLoader(false);
                     }
                 });
-                $(".overlay, .loader").hide();
             });
 
         }); //document.ready
