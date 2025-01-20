@@ -88,6 +88,25 @@ class EditFrameView(AdminLoginView):
         message = get_form_error_msg(errors)
         return JsonResponse({"status": False, "message": message})
 
+class DeleteFrameView(AdminLoginView):
+    def get(self, request, id):
+        try:
+            frame_obj = Frame.objects.get(id=id)
+        except:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Frame does not exist",
+                }
+            )
+        frame_obj.delete()
+        return JsonResponse(
+            {
+                "status": True,
+                "message": "Frame has been deleted",
+            }
+        )
+
 
 class UpdateFramesRecommendation(AdminLoginView):
     def post(self, request):

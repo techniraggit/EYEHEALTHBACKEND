@@ -67,17 +67,17 @@
         background-color: #fff;
         transition: all 0.3s ease;
     }
-    
+
     .status-button.active {
-        border-color: green;
         color: green;
+        background-color: transparent;
+        border: 1px solid green !important;
     }
-    
-    .status-button.inactive {
-        border-color: red;
+    .status-button.inactive {  
         color: red;
+        background-color: transparent;
+        border: 1px solid red !important;
     }
-    
 </style>
 <table>
     <tr>
@@ -108,7 +108,7 @@
         </td>
 
         <td>
-            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-store-id="{{ store.id }}"></i></a>
+            <a><i class="fa-solid fa-trash-can me-2" id="deleteButton" data-frame-id="{{ frame.id }}"></i></a>
             <a href="{% url "edit_frame_view" frame.id %}"><i class="fa-solid fa-pen me-2"></i></a>
             <a href="{{ frame.id }}" class="viewFrameDetails" data-frame-id="{{ frame.id }}"><i class="fa-regular fa-eye"></i></a>
         </td>
@@ -144,7 +144,7 @@
 <!-- offer delete popup -->
 <div id="dlt-btn-overlay" class="dlt-btn-overlay" style="display: none;">
     <div class="dlt-popup">
-        <h4>Are you sure you want to delete this Store?</h4>
+        <h4>Are you sure you want to delete this Frame?</h4>
         <div class="dlt-buttons">
             <button class="pop-confirm-btn" id="confirmDelete">Yes, delete it</button>
             <button class="pop-confirm-btn" id="cancelDelete">No, keep it</button>
@@ -191,7 +191,7 @@
         $(document).on('click', '#deleteButton', function (event) {
             event.preventDefault();
             $('#dlt-btn-overlay').css('display', 'flex');
-            let deleteId = $(this).data("store-id");
+            let deleteId = $(this).data("frame-id");
             let $row = $(this).closest('tr');
 
             // Delete the user when the confirm delete button is clicked
@@ -199,14 +199,14 @@
                 event.preventDefault();
                 $('#dlt-btn-overlay').css('display', 'none');
                 $.ajax({
-                    url: "/business/delete-store/" + deleteId,
+                    url: "/products/delete-frame/" + deleteId,
                     type: 'GET',
-                    success: function (data) {
-                        if (data.status) {
+                    success: function (response) {
+                        if (response.status) {
                             $row.remove();
-                            showToaster(data.message, "alert-success");
+                            showToaster(response.message, "alert-success");
                         } else {
-                            showToaster(data.message, "alert-error");
+                            showToaster(response.message, "alert-error");
                         }
                     },
                     error: function (xhr, status, error) {
