@@ -1,3 +1,5 @@
+from utilities.utils import get_object_or_none
+from django.shortcuts import get_object_or_404
 import datetime
 from django.template.loader import render_to_string
 from utilities.services.email import send_email
@@ -383,6 +385,18 @@ class DeleteStoreView(AdminLoginView):
         return JsonResponse({"status": True, "message": "Store deleted successfully."})
 
 
+class UpdateStoreStatus(AdminLoginView):
+    def post(self, request):
+        store_id = request.POST.get("id")
+        store_obj = get_object_or_none(Stores, id=store_id)
+        if not store_obj:
+            return JsonResponse({"status": False, "message": "Store not found."})
+        store_obj.is_active = not store_obj.is_active
+        store_obj.save()
+        return JsonResponse({"status": True, "is_active": store_obj.is_active})
+
+
+
 class AppointmentView(AdminLoginView):
     def get(self, request):
         appointments = StoreAppointment.objects.all().order_by("date")
@@ -489,13 +503,12 @@ class BusinessEditView(AdminLoginView):
         )
 
 
-from django.shortcuts import get_object_or_404
-
-
 class UpdateBusinessStatus(AdminLoginView):
     def post(self, request):
         company_id = request.POST.get("id")
-        company = get_object_or_404(BusinessModel, id=company_id)
-        company.is_active = not company.is_active  # Toggle status
+        company = get_object_or_none(BusinessModel, id=company_id)
+        if not company:
+            return JsonResponse({"status": False, "message": "Company not found."})
+        company.is_active = not company.is_active
         company.save()
-        return JsonResponse({"success": True, "is_active": company.is_active})
+        return JsonResponse({"status": True, "is_active": company.is_active})

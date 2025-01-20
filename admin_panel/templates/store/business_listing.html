@@ -160,32 +160,31 @@
         $(document).on('click', '.status-button', function () {
             const button = $(this);
             const companyId = button.data('id');
-            
-            // Disable the button while processing
+
             button.prop('disabled', true);
-        
-            // AJAX request to toggle `is_active`
+
             $.ajax({
-                url: '{% url "update_business_status_view" %}', // Replace with your API endpoint
+                url: '{% url "update_business_status_view" %}',
                 method: 'POST',
                 data: {
                     id: companyId,
-                    csrfmiddlewaretoken: '{{ csrf_token }}' // Add CSRF token for security
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function (response) {
-                    if (response.is_active !== undefined) {
+                    if(response.status){
                         if (response.is_active) {
                             button.removeClass('inactive').addClass('active').text('Active');
                         } else {
                             button.removeClass('active').addClass('inactive').text('Inactive');
                         }
+                    }else{
+                        showToaster(response.message, "alert-error")
                     }
                 },
                 error: function (xhr) {
                     alert('Error updating status. Please try again.');
                 },
                 complete: function () {
-                    // Re-enable the button after the request
                     button.prop('disabled', false);
                 }
             });

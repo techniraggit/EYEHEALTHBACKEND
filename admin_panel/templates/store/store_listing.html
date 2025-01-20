@@ -57,6 +57,28 @@
 </div>
 {% endblock nav_bar %}
 {% block table %}
+<style>
+    .status-button {
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        border: 2px solid;
+        border-radius: 5px;
+        background-color: #fff;
+        transition: all 0.3s ease;
+    }
+
+    .status-button.active {
+        color: green;
+        background-color: transparent;
+        border: 1px solid green !important;
+    }
+    .status-button.inactive {
+        color: red;
+        background-color: transparent;
+        border: 1px solid red !important;
+    }
+</style>
 <table>
     <tr>
         <th>Sr.No</th>
@@ -76,7 +98,14 @@
         <td>{{ store.name }}</td>
         <td>{{ store.gst_number }}</td>
         <td>{{ store.pan_number }}</td>
-        <td>{% if store.is_active %}Active{% else %}Inactive{% endif %}</td>
+        <td>
+            <button
+                class="status-button {% if store.is_active %}active{% else %}inactive{% endif %}"
+                data-id="{{ store.id }}"
+            >
+                {% if store.is_active %}Active{% else %}Inactive{% endif %}
+            </button>
+        </td>
         <td>{{ store.get_average_rating }}</td>
         <td title="{{ store.services.all|join:', ' }}">{{ store.services.all|join:", " }}</td>
         <td>
@@ -137,32 +166,37 @@
 
 <script>
     $(document).ready(function () {
-        function updateExportLinks() {
-            var params = $('#searchForm').serialize();
-            console.log(params);
-            $('#exportExcel').attr('href', `{% url 'offer_export_view' 'excel' %}?` + params);
-            $('#exportCSV').attr('href', `{% url 'offer_export_view' 'csv' %}?` + params);
-        }
+        $(document).on('click', '.status-button', function () {
+            const button = $(this);
+            const storeId = button.data('id');
 
-        $('#searchForm input, #searchForm select').on('input change', updateExportLinks);
-        updateExportLinks();
+            button.prop('disabled', true);
 
-        $("#start_date_filter, #end_date_filter").datepicker({
-            dateFormat: "yy-mm-dd",
-            onSelect: updateExportLinks
-        }).attr("readonly", "readonly");
-
-        $('#offer_status_filter').select2({
-            placeholder: "Payment Status",
-            minimumResultsForSearch: Infinity
-        });
-
-        // Clear the search input value when the clear button is clicked
-        $('#clearButton').click(function () {
-            $('#searchInput').val('');
-            $('input[type="text"]').val('');
-            $('select[name="offer_status_filter"]').val('');
-            $('#searchForm').submit();
+            $.ajax({
+                url: '{% url "update_store_status_view" %}',
+                method: 'POST',
+                data: {
+                    id: storeId,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (response) {
+                    if (response.status){
+                        if (response.is_active) {
+                            button.removeClass('inactive').addClass('active').text('Active');
+                        } else {
+                            button.removeClass('active').addClass('inactive').text('Inactive');
+                        }
+                    }else{
+                        showToaster(response.message, "alert-error");
+                    }
+                },
+                error: function (xhr) {
+                    alert('Error updating status. Please try again.');
+                },
+                complete: function () {
+                    button.prop('disabled', false);
+                }
+            });
         });
 
         // Delete the offer when the delete button is clicked

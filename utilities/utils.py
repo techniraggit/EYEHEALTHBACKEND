@@ -126,3 +126,10 @@ def generate_password(length=5):
     characters = string.ascii_letters + string.digits
     password = "".join(random.choice(characters) for _ in range(length))
     return password
+
+
+def get_object_or_none(model_class, **kwargs):
+    try:
+        return model_class.objects.get(**kwargs)
+    except:
+        return None
