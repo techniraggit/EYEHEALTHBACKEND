@@ -1,3 +1,4 @@
+from django.contrib.auth.hashers import check_password, make_password
 from django.db.models import Avg
 from django.conf import settings
 from django.contrib.gis.measure import D  # For distances
@@ -78,6 +79,16 @@ class BusinessModel(BaseModel):
             ),
             status="Active" if self.is_active else "Inactive",
         )
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def authenticate(self, password):
+        return check_password(password, self.password)
+
+    def set_password(self, raw_password):
+        self.password = make_password(raw_password)
+        self.save()
 
 
 class Stores(BaseModel):

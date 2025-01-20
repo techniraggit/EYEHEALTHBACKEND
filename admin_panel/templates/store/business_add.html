@@ -47,53 +47,68 @@
             });
 
             $("#addBusinessForm").submit(function (event) {
-                event.preventDefault(); // Prevent the form from submitting via the browser
-                let name = $("#name").val();
-                let email = $("#email").val();
-                let phone = $("#phone").val();
-                let status = $("#status").val();
-                
-                // Perform client-side validation
+                event.preventDefault();
+                toggleLoader(true);
+
+                let isValid = true;
+
+                // Get form values
+                const name = $("#name").val();
+                const email = $("#email").val();
+                const phone = $("#phone").val();
+                const status = $("#status").val();
+
+                // Clear previous error messages
+                $(".error-message").remove();
+
+                // Client-side validation
                 if (!name) {
-                    showError("#name", "Name is required.")
-                    return
-                }else{
+                    showError("#name", "Name is required.");
+                    isValid = false;
+                } else {
                     showError("#name", "");
                 }
 
                 if (!email) {
-                    showError("#email", "Email is required..")
-                    return;
-                }else if (!validateEmail(email)){
+                    showError("#email", "Email is required.");
+                    isValid = false;
+                } else if (!validateEmail(email)) {
                     showError("#email", "Invalid email address.");
-                    return;
-                }else{
+                    isValid = false;
+                } else {
                     showError("#email", "");
                 }
 
                 if (!phone) {
                     showError("#phone", "Phone is required.");
-                    return;
+                    isValid = false;
                 } else if (!validatePhoneNumber(phone)) {
                     showError("#phone", "Invalid phone number.");
-                    return;
+                    isValid = false;
                 } else {
                     showError("#phone", "");
                 }
 
                 if (!status) {
                     $("#status").after('<span class="error-message text-danger">Status is required.</span>');
+                    isValid = false;
+                }
+
+                // Stop loader and return if validation fails
+                if (!isValid) {
+                    toggleLoader(false);
                     return;
                 }
-                // If valid, proceed with AJAX submission
-                let formData = new FormData(this);
+
+                // Proceed with AJAX submission if valid
+                const formData = new FormData(this);
 
                 $.ajax({
                     url: "{% url 'business_add_view' %}",
                     type: "POST",
                     data: formData,
-                    processData: false,  // Important!
-                    contentType: false,  // Important!
+                    processData: false, // Important for FormData
+                    contentType: false, // Important for FormData
                     headers: {
                         "X-CSRFToken": "{{ csrf_token }}"
                     },
@@ -106,15 +121,15 @@
                         } else {
                             showToaster(response.message, "alert-error");
                         }
-                        $(".overlay, .loader").hide();
                     },
                     error: function (xhr, textStatus, errorThrown) {
-                        const response = xhr.responseJSON
-                        showToaster(response.message, "alert-error");
-                        $(".overlay, .loader").hide();
+                        const response = xhr.responseJSON;
+                        showToaster(response?.message || "An error occurred.", "alert-error");
+                    },
+                    complete: function () {
+                        toggleLoader(false);
                     }
                 });
-                $(".overlay, .loader").hide();
             });
 
         }); //document.ready

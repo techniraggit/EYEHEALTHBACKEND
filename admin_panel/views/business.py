@@ -8,7 +8,6 @@ from django.http import JsonResponse
 import logging
 from admin_panel.forms.stores import BusinessModelForm, StoreForm
 from utilities.utils import generate_password
-from django.contrib.auth.hashers import make_password
 from django.contrib import messages
 from django.shortcuts import redirect
 from store.models.models import Stores, BusinessModel, Services, StoreImages
@@ -86,8 +85,8 @@ class BusinessAddView(AdminLoginView):
         if form.is_valid():
             instance = form.save(commit=False)
             password = generate_password()
-            instance.password = make_password(password)
             instance.is_active = status
+            instance.set_password(password)
             instance.save()
             # send welcome email to new business
             email_body = render_to_string(
