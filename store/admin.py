@@ -15,8 +15,11 @@ from .models.appointments import (
     TimeSlot,
     AppointmentSlot,
 )
-from .models.products import Frame
-from api.models.accounts import UserModel
+from .models.products import (
+    Frame,
+    FrameTypes,
+    Brands,
+)
 
 
 # Register your models here.
@@ -76,13 +79,11 @@ class AppointmentSlotAdmin(admin.ModelAdmin):
     date_hierarchy = "date"
 
 
-# admin.site.register(Services)
 admin.site.register(StoreRating)
 admin.site.register(StoreImages)
 admin.site.register(Holiday)
 admin.site.register(StoreHoliday)
 admin.site.register(Days)
 admin.site.register(TimeSlot)
-# admin.site.register(AppointmentSlot)
-# admin.site.register(StoreAvailability)
-# admin.site.register(StoreAppointment)
+admin.site.register(FrameTypes)
+admin.site.register(Brands)

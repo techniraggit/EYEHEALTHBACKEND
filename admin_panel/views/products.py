@@ -1,15 +1,17 @@
+from utilities.utils import get_form_error_msg
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
 from admin_panel.views.base import AdminLoginView
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from store.models.products import Frame
+from admin_panel.forms.products import FrameForm
 
 
 class FramesView(AdminLoginView):
     def get(self, request):
-        companies = Frame.objects.all()
-        paginator = Paginator(companies, 10)
+        frames = Frame.objects.all().order_by("-created_on")
+        paginator = Paginator(frames, 10)
         page_number = request.GET.get("page")
         paginated_frames = paginator.get_page(page_number)
         context = dict(
@@ -28,3 +30,21 @@ class UpdateFramesRecommendation(AdminLoginView):
         return JsonResponse(
             {"success": True, "is_recommended": frame_obj.is_recommended}
         )
+
+
+class AddFrameView(AdminLoginView):
+    def get(self, request):
+        form = FrameForm()
+        context = dict(
+            form=form,
+        )
+        return render(request, "products/add_frame.html", context=context)
+
+    def post(self, request):
+        form = FrameForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return JsonResponse({"status": True, "message": "Frame added successfully"})
+        errors = form.errors.as_json()
+        message = get_form_error_msg(errors)
+        return JsonResponse({"status": False, "message": message})

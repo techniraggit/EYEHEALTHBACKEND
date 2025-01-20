@@ -42,7 +42,7 @@
         <div class="export col-3">
             <ul>
                 <li class="add-btn me-3">
-                    <a href="{% url 'add_store_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
+                    <a href="{% url 'add_frame_view' %}">Add<i class="fa-solid fa-plus ms-2"></i></a>
                 </li>
                 {% comment %} <li class="ex-li">
                     <a class="export-btn" href="#">Export<i class="fa-solid fa-file-export ms-2"></i></a>
@@ -80,19 +80,11 @@
     
 </style>
 <table>
-    {% comment %}
-    name
-    frame_type
-    gender
-    brand
-    image
-    is_recommended
-{% endcomment %}
     <tr>
         <th>Sr.No</th>
         <th>Name</th>
         <th>Type</th>
-        <th>GEnder</th>
+        <th>Gender</th>
         <th>Brand</th>
         <th>Image</th>
         <th>Is Recommended</th>
@@ -106,8 +98,6 @@
         <td>{{ frame.gender }}</td>
         <td>{{ frame.brand }}</td>
         <td><img class="thumbnail-img" src="{{ frame.image.url }}" alt="" height="100" width="80"></td>
-        {% comment %} <td>{{ frame.is_recommended }}</td> {% endcomment %}
-
         <td>
             <button
                 class="status-button {% if frame.is_recommended %}active{% else %}inactive{% endif %}"

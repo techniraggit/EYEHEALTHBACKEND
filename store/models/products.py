@@ -3,28 +3,38 @@ from store.models.models import Stores
 from django.conf import settings
 
 
-class FrameType:
-    AVIATOR = "AVIATOR"
-    CLUBMASTER = "CLUBMASTER"
-    HEXAGON = "HEXAGON"
-    OVAL = "OVAL"
-    ROUND = "ROUND"
-    SQUARE = "SQUARE"
-    CATEYE = "CATEYE"
-    RECTANGLE = "RECTANGLE"
-    WAYFARER = "WAYFARER"
+class FrameTypes(models.Model):
+    name = models.CharField(max_length=100, unique=True)
 
-    CHOICES = (
-        (AVIATOR, AVIATOR),
-        (CLUBMASTER, CLUBMASTER),
-        (HEXAGON, HEXAGON),
-        (OVAL, OVAL),
-        (ROUND, ROUND),
-        (SQUARE, SQUARE),
-        (CATEYE, CATEYE),
-        (RECTANGLE, RECTANGLE),
-        (WAYFARER, WAYFARER),
-    )
+    class Meta:
+        verbose_name_plural = "Frame Types"
+        verbose_name = "Frame Type"
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.name = self.name.lower()
+        super().save(*args, **kwargs)
+
+
+class Brands(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name_plural = "Brands"
+        verbose_name = "Brand"
+        ordering = ["name"]
+
+    def __str__(self):
+        return f"{self.name}"
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.name = self.name.upper()
+        super().save(*args, **kwargs)
 
 
 class Gender:
@@ -40,23 +50,23 @@ class Gender:
     )
 
 
-class Brand:
-    RayBan = "RayBan"
-    Gucci = "Gucci"
-    Prada = "Prada"
-
-    choices = (
-        (RayBan, RayBan),
-        (Gucci, Gucci),
-        (Prada, Prada),
-    )
-
-
 class Frame(BaseModel):
     name = models.CharField(max_length=100)
-    frame_type = models.CharField(max_length=50, choices=FrameType.CHOICES)
+    frame_type = models.ForeignKey(
+        FrameTypes,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="frame_type",
+    )
     gender = models.CharField(max_length=10, choices=Gender.choices)
-    brand = models.CharField(max_length=10, choices=Brand.choices)
+    brand = models.ForeignKey(
+        Brands,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="frame_brand",
+    )
     image = models.FileField(upload_to=f"frames")
     is_recommended = models.BooleanField(default=False)
 
