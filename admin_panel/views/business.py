@@ -16,6 +16,9 @@ from store.models.models import Stores, BusinessModel, Services, StoreImages
 from store.models.appointments import StoreAvailability, Days, StoreAppointment
 from django.core.exceptions import ValidationError
 from utilities.utils import get_form_error_msg
+from api.models.accounts import UserModel
+from django.db.models import Q
+from django.db import transaction
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +45,7 @@ def validate_opening_and_closing_time(opening_time, closing_time):
 
 class BusinessView(AdminLoginView):
     def get(self, request):
-        companies = BusinessModel.objects.all()
+        companies = BusinessModel.objects.all().order_by("-created_on")
         paginator = Paginator(companies, 10)
         page_number = request.GET.get("page")
         paginated_companies = paginator.get_page(page_number)
@@ -82,34 +85,78 @@ class BusinessAddView(AdminLoginView):
         )
 
     def post(self, request):
+        name = request.POST.get("name")
+        phone = request.POST.get("phone")
+        email = request.POST.get("email")
+        logo = request.FILES.get("logo")
         status = request.POST.get("status", "") == "active"
-        form = BusinessModelForm(request.POST)
-        if form.is_valid():
-            instance = form.save(commit=False)
-            password = generate_password()
-            instance.is_active = status
-            instance.set_password(password)
-            instance.save()
-            # send welcome email to new business
-            email_body = render_to_string(
-                "email/send_password.html",
-                {"name": instance.name, "password": password},
-            )
-            send_email(
-                subject="Welcome to EyeCare",
-                message=email_body,
-                recipients=[instance.email],
-            )
-
+        if not all([name, phone, email]):
             return JsonResponse(
                 {
-                    "status": True,
-                    "message": "Business added successfully",
+                    "status": False,
+                    "message": "Name, phone and email are required",
                 }
             )
-        else:
+
+        existing_user = UserModel.objects.filter(
+            Q(email=email) | Q(phone_number=phone)
+        ).first()
+        if existing_user and existing_user.email == email:
             return JsonResponse(
-                {"status": False, "message": get_form_error_msg(form.errors.as_json())}
+                {
+                    "status": False,
+                    "message": "Email already exists",
+                }
+            )
+
+        if existing_user and existing_user.phone_number == phone:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Phone Number already exists",
+                }
+            )
+        try:
+            with transaction.atomic():
+                raw_password = generate_password()
+                user_obj = UserModel.objects.create(
+                    email=email,
+                    phone_number=phone,
+                    is_active=status,
+                )
+                user_obj.set_password(raw_password)
+                user_obj.save()
+                business_obj = BusinessModel.objects.create(
+                    name=name,
+                    logo=logo,
+                    user=user_obj,
+                )
+
+                # send password email to new business
+                email_body = render_to_string(
+                    "email/send_password.html",
+                    {"name": name, "password": raw_password},
+                )
+                send_email(
+                    subject="Welcome to EyeCare",
+                    message=email_body,
+                    recipients=[email],
+                )
+
+                return JsonResponse(
+                    {
+                        "status": True,
+                        "message": "Business added successfully",
+                    }
+                )
+        except Exception as e:
+            # user_obj.delete()
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Failed to add business",
+                    "error": str(e),
+                }
             )
 
 
@@ -396,7 +443,6 @@ class UpdateStoreStatus(AdminLoginView):
         return JsonResponse({"status": True, "is_active": store_obj.is_active})
 
 
-
 class AppointmentView(AdminLoginView):
     def get(self, request):
         appointments = StoreAppointment.objects.all().order_by("date")
@@ -474,33 +520,85 @@ class BusinessEditView(AdminLoginView):
         return render(request, "store/business_edit.html", context)
 
     def post(self, request, business_id):
+        name = request.POST.get("name")
+        phone = request.POST.get("phone")
+        email = request.POST.get("email")
+        logo = request.FILES.get("logo")
+        status = request.POST.get("status", "") == "active"
+        if not all([name, phone, email]):
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Name, phone and email are required",
+                }
+            )
+
         try:
             # Retrieve the business instance to update
             business_instance = BusinessModel.objects.get(id=business_id)
         except BusinessModel.DoesNotExist:
             return JsonResponse({"status": False, "message": "Business not found."})
 
-        # Get updated data from the form
-        form = BusinessModelForm(request.POST, instance=business_instance)
+        existing_user = (
+            UserModel.objects.filter(Q(email=email) | Q(phone_number=phone))
+            .exclude(id=business_instance.user.id)
+            .first()
+        )
+        if existing_user and existing_user.email == email:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Email already exists",
+                }
+            )
 
-        if form.is_valid():
-            # Update the business instance
-            instance = form.save()
+        if existing_user and existing_user.phone_number == phone:
+            return JsonResponse(
+                {
+                    "status": False,
+                    "message": "Phone Number already exists",
+                }
+            )
 
+        try:
+            business_instance.name = name
+            business_instance.user.phone_number = phone
+            business_instance.user.email = email
+            business_instance.user.is_active = status
+            business_instance.user.save()
+            business_instance.save()
             return JsonResponse(
                 {
                     "status": True,
                     "message": "Business updated successfully",
                 }
             )
+        except Exception as e:
+            return JsonResponse(
+                {"status": False, "message": f"An error occurred: {str(e)}"}
+            )
 
-        # If the form is invalid, return the error messages
-        return JsonResponse(
-            {
-                "status": False,
-                "message": get_form_error_msg(form.errors.as_json()),
-            }
-        )
+        # # Get updated data from the form
+        # form = BusinessModelForm(request.POST, instance=business_instance)
+
+        # if form.is_valid():
+        #     # Update the business instance
+        #     instance = form.save()
+
+        #     return JsonResponse(
+        #         {
+        #             "status": True,
+        #             "message": "Business updated successfully",
+        #         }
+        #     )
+
+        # # If the form is invalid, return the error messages
+        # return JsonResponse(
+        #     {
+        #         "status": False,
+        #         "message": get_form_error_msg(form.errors.as_json()),
+        #     }
+        # )
 
 
 class UpdateBusinessStatus(AdminLoginView):
@@ -509,6 +607,6 @@ class UpdateBusinessStatus(AdminLoginView):
         company = get_object_or_none(BusinessModel, id=company_id)
         if not company:
             return JsonResponse({"status": False, "message": "Company not found."})
-        company.is_active = not company.is_active
-        company.save()
-        return JsonResponse({"status": True, "is_active": company.is_active})
+        company.user.is_active = not company.user.is_active
+        company.user.save()
+        return JsonResponse({"status": True, "is_active": company.user.is_active})

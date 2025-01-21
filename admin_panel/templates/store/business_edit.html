@@ -16,19 +16,19 @@
 
                 <div class="col-md-4 f-name mt-4">
                     <label for="email">Email<span id="required_star">*</span></label>
-                    <input type="text" name="email" id="email" class="form-control" value="{{business.email}}" />
+                    <input type="text" name="email" id="email" class="form-control" value="{{business.user.email}}" />
                 </div>
 
                 <div class="col-md-4 f-name mt-4">
                     <label for="phone">Phone Number<span id="required_star">*</span></label>
-                    <input type="tel" name="phone" id="phone" class="form-control" value="{{business.phone}}"/>
+                    <input type="tel" name="phone" id="phone" class="form-control" value="{{business.user.phone_number}}"/>
                 </div>
 
                 <div class="col-md-4 f-name mt-4 select-wrapp">
                     <label for="status">Status <span id="required_star">*</span></label>
                     <select name="status" id="status" class="form-control">
-                        <option {% if business.is_active %}selected{% endif %} value="active">Active</option>
-                        <option {% if not business.is_active %}selected{% endif %} value="inactive">Inactive</option>
+                        <option {% if business.user.is_active %}selected{% endif %} value="active">Active</option>
+                        <option {% if not business.user.is_active %}selected{% endif %} value="inactive">Inactive</option>
                     </select>
                 </div>
 

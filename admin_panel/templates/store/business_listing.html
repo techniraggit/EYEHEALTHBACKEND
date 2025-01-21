@@ -98,15 +98,15 @@
     <tr>
         <td>{{ forloop.counter0|add:paginated_companies.start_index|default:forloop.counter }}</td>
         <td>{{ company.name }}</td>
-        <td>{{ company.email }}</td>
-        <td>{{ company.phone }}</td>
-        <td>{{ company.last_login|format_datetime }}</td>
+        <td>{{ company.user.email }}</td>
+        <td>{{ company.user.phone_number }}</td>
+        <td>{{ company.user.last_login|format_datetime }}</td>
         <td>
             <button
-                class="status-button {% if company.is_active %}active{% else %}inactive{% endif %}"
+                class="status-button {% if company.user.is_active %}active{% else %}inactive{% endif %}"
                 data-id="{{ company.id }}"
             >
-                {% if company.is_active %}Active{% else %}Inactive{% endif %}
+                {% if company.user.is_active %}Active{% else %}Inactive{% endif %}
             </button>
         </td>
         <td>

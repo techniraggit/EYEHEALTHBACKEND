@@ -58,27 +58,27 @@ class Services(BaseModel):
 
 class BusinessModel(BaseModel):
     id = models.UUIDField(default=uuid4, primary_key=True, editable=False)
-    user = models.OneToOneField(UserModel, on_delete=models.SET_NULL, null=True, related_name="business_user")
+    user = models.OneToOneField(UserModel, on_delete=models.CASCADE, related_name="business_user")
     name = models.CharField(max_length=255)
-    phone = models.CharField(max_length=20, validators=[validator_contact], unique=True)
-    email = models.EmailField(unique=True)
     logo = models.FileField(upload_to="business_logo", null=True, blank=True)
-    password = models.CharField(max_length=255, null=True, blank=True)
-    last_login = models.DateTimeField(null=True, blank=True)
-    is_active = models.BooleanField(default=True)
+    # phone = models.CharField(max_length=20, validators=[validator_contact], unique=True)
+    # email = models.EmailField(unique=True)
+    # password = models.CharField(max_length=255, null=True, blank=True)
+    # last_login = models.DateTimeField(null=True, blank=True)
+    # is_active = models.BooleanField(default=True)
 
     def to_json(self):
         return dict(
             id=self.id,
             name=self.name,
-            phone=self.phone,
-            email=self.email,
+            phone=self.user.phone_number,
+            email=self.user.email,
             last_login=(
-                self.last_login.strftime("%Y-%m-%d %H:%M %p")
-                if self.last_login
+                self.user.last_login.strftime("%Y-%m-%d %H:%M %p")
+                if self.user.last_login
                 else None
             ),
-            status="Active" if self.is_active else "Inactive",
+            status="Active" if self.user.is_active else "Inactive",
         )
 
     def __str__(self):
