@@ -33,8 +33,8 @@ class ServicesAdmin(admin.ModelAdmin):
 
 @admin.register(BusinessModel)
 class BusinessModelAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "email"]
-    search_fields = ["name", "email"]
+    list_display = ["user", "name"]
+    search_fields = ["name", "user__email", "user__phone_number"]
 
 
 @admin.register(Stores)

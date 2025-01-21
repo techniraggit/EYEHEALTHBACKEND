@@ -8,7 +8,7 @@ from enum import Enum
 from django.contrib.gis.geos import Point
 from django.contrib.gis.db.models import PointField
 from django.core.validators import RegexValidator
-from api.models.accounts import BaseModel, models
+from api.models.accounts import BaseModel, models, UserModel
 
 
 validator_contact = RegexValidator(
@@ -58,6 +58,7 @@ class Services(BaseModel):
 
 class BusinessModel(BaseModel):
     id = models.UUIDField(default=uuid4, primary_key=True, editable=False)
+    user = models.OneToOneField(UserModel, on_delete=models.SET_NULL, null=True, related_name="business_user")
     name = models.CharField(max_length=255)
     phone = models.CharField(max_length=20, validators=[validator_contact], unique=True)
     email = models.EmailField(unique=True)
