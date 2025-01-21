@@ -14,8 +14,19 @@ class ChatHistory(BaseModel):
         verbose_name_plural = "Chat History"
         verbose_name = "Chat History"
 
+class Category(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    class Meta:
+        verbose_name_plural = "Categories"
+        verbose_name = "Category"
+        ordering = ["name"]
+    
+    def __str__(self):
+        return f"{self.name}"
 
 class PredefinedPrompts(BaseModel):
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="prompts")
     prompt = models.TextField()
 
     class Meta:
