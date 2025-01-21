@@ -1,5 +1,5 @@
 from django.contrib import admin
-from ai_doctor.models.models import ChatHistory
+from ai_doctor.models.models import ChatHistory, PredefinedPrompts
 
 
 # Register your models here.
@@ -9,3 +9,10 @@ class ChatHistoryAdmin(admin.ModelAdmin):
     search_fields = ["user", "query"]
     list_filter = ["user"]
     ordering = ["created_at"]
+
+
+@admin.register(PredefinedPrompts)
+class PredefinedPromptsAdmin(admin.ModelAdmin):
+    list_display = ["id", "prompt"]
+    search_fields = ["prompt"]
+    ordering = ["-created_at"]

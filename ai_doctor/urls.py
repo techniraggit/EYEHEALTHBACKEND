@@ -3,6 +3,7 @@ from .views import apis
 
 api_urls = [
     path("ask", apis.AskDoctorView.as_view()),
+    path("prompts", apis.PredefinedPromptsView.as_view()),
 ]
 
 urlpatterns = [

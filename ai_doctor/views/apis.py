@@ -2,7 +2,7 @@ from ai_doctor.views.base import UserMixin
 from core.utils import api_response
 from ai_doctor.gemini import make_request
 from django_q.tasks import async_task
-from ai_doctor.models.models import ChatHistory
+from ai_doctor.models.models import ChatHistory, PredefinedPrompts
 
 
 def save_chat_history(user, query, response):
@@ -26,3 +26,12 @@ class AskDoctorView(UserMixin):
             return api_response(
                 False, 500, message=f"Error processing AI Doctor request: {e}"
             )
+
+
+class PredefinedPromptsView(UserMixin):
+    def get(self, request):
+        try:
+            prompts = PredefinedPrompts.get_all_prompts_as_list()
+            return api_response(True, 200, prompts=prompts)
+        except Exception as e:
+            return api_response(False, 500, message=str(e))
