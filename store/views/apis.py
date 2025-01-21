@@ -73,6 +73,31 @@ class NearbyStoreView(UserMixin):
         ]
         return api_response(True, 200, stores=stores_data)
 
+class NearbyStoresMapView(UserMixin):
+    def get(self, request):
+        user_latitude = float(request.GET.get("latitude"))
+        user_longitude = float(request.GET.get("longitude"))
+        if not user_latitude or not user_longitude:
+            return api_response(False, 400, message="Invalid latitude or longitude")
+
+        # Create a Point object for the user's location
+        user_location = Point(user_longitude, user_latitude, srid=4326)
+
+        # Fetch nearby stores within 6km radius
+        stores = Stores.store_manage.nearby_stores(user_location)
+
+        # Serialize and return the response
+        stores_data = [
+            {
+                "id": store.id,
+                "name": store.name,
+                "latitude": store.latitude,
+                "longitude": store.longitude,
+            }
+            for store in stores
+        ]
+        return api_response(True, 200, stores=stores_data)
+
 
 class StoreRatingView(UserMixin):
     def post(self, request, store_id):

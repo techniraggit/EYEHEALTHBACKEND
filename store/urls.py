@@ -14,6 +14,7 @@ product_urls = [
 urlpatterns = [
     path("get-stores", apis.StoreView.as_view()),
     path("nearby-stores", apis.NearbyStoreView.as_view()),
+    path("nearby-stores-map", apis.NearbyStoresMapView.as_view()),
     path("stores-rating/<uuid:store_id>", apis.StoreRatingView.as_view()),
     path("wishlist", apis.WishListView.as_view()),
     path("frame-wishlist/<int:frame_id>", apis.FrameWishListView.as_view()),
