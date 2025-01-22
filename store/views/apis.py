@@ -63,6 +63,8 @@ class NearbyStoreView(UserMixin):
                 "closing_time": store.store_availability.first().end_working_hr.strftime(
                     "%I:%M %p"
                 ),
+                "latitude": store.latitude,
+                "longitude": store.longitude,
                 "rating": store.get_average_rating(),
                 "images": [
                     f"{request.build_absolute_uri(i.image.url)}"
@@ -93,6 +95,7 @@ class NearbyStoresMapView(UserMixin):
                 "name": store.name,
                 "latitude": store.latitude,
                 "longitude": store.longitude,
+                "address": store.full_address(),
             }
             for store in stores
         ]
