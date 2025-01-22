@@ -7,6 +7,7 @@ from api.views import eye_fatigue_apis
 from api.views.strip_apis import *
 from api.views import static_pages
 from api.views import razor_pay_apis
+from api.views import blog
 
 accounts = [
     path("verification_otp", VerificationOTPView.as_view()),
@@ -79,9 +80,14 @@ fatigue_apis = [
     path("take-user-selfie", eye_fatigue_apis.TakeUserSelfie.as_view()),
 ]
 
-static_pages = [
+static_page_urls = [
     path("page/<slug:slug>", static_pages.StaticPagesView.as_view()),
     path("page", static_pages.StaticPagesSlugView.as_view()),
+]
+
+blog_urls = [
+    path("", blog.BlogListingView.as_view(), name="blog_view"),
+    path("blog-detail/<uuid:blog_id>", blog.BlogDetailView.as_view(), name="blog_detail_view"),
 ]
 
 urlpatterns = (
@@ -92,7 +98,8 @@ urlpatterns = (
         path("eye/", include(eye_health_apis)),
         path("payment/", include(strip_urls)),
         path("fatigue/", include(fatigue_apis)),
-        path("static/", include(static_pages)),
+        path("static/", include(static_page_urls)),
+        path("blog/", include(blog_urls)),
         
     ]
 )

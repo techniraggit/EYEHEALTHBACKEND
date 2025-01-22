@@ -7,6 +7,7 @@ from api.models.eye_health import *
 from api.models.prescription import *
 from api.models.static_pages import *
 from api.models.dashboard import *
+from api.models.blog import *
 
 
 # Register your models here.
@@ -185,3 +186,9 @@ class UserContactsAdmin(admin.ModelAdmin):
 class CarouselModelAdmin(admin.ModelAdmin):
     list_display = ["id", "name", "image", "created_on"]
     search_fields = ["name"]
+
+@admin.register(BlogModel)
+class BlogModelAdmin(admin.ModelAdmin):
+    list_display = ["id", "title"]
+    search_fields = ["title"]
+    date_hierarchy = "created_on"
