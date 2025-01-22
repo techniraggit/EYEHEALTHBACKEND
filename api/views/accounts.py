@@ -115,6 +115,7 @@ class SendLoginOTP(APIView):
                 send_email("Verification OTP", body, [username])
             else:
                 message = SMS_TEMPLATE["login_otp"].format(otp=otp)
+                send_sms(username, message)
             return api_response(True, 200, f"OTP sent successfully to {username}.")
 
         except UserModel.DoesNotExist:
