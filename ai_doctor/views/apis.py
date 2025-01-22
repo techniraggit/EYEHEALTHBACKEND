@@ -1,8 +1,9 @@
+from django.utils import timezone
 from ai_doctor.views.base import UserMixin
 from core.utils import api_response
 from ai_doctor.gemini import make_request
 from django_q.tasks import async_task
-from ai_doctor.models.models import ChatHistory, PredefinedPrompts
+from ai_doctor.models.models import ChatHistory, PredefinedPrompts, UserModel
 
 
 def save_chat_history(user, query, response):
@@ -33,5 +34,18 @@ class PredefinedPromptsView(UserMixin):
         try:
             prompts = PredefinedPrompts.get_all_prompts_as_list()
             return api_response(True, 200, prompts=prompts)
+        except Exception as e:
+            return api_response(False, 500, message=str(e))
+
+
+class UserConsentAcceptView(UserMixin):
+    def get(self, request):
+        try:
+            user = UserModel.objects.get(id=request.user.id)
+            if user.hipaa_consent_timestamp:
+                return api_response(False, 400, "Consent already accepted")
+            user.hipaa_consent_timestamp = timezone.now()
+            user.save()
+            return api_response(True, 200, message="Consent accepted successfully")
         except Exception as e:
             return api_response(False, 500, message=str(e))
