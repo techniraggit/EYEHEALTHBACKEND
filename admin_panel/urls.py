@@ -1,90 +1,94 @@
 from django.urls import path, include
-from .views.auth import *
-from .views.home import *
-from .views.users import *
-from .views.offers import *
-from .views.prescription import *
-from .views.notifications import *
-from .views.subscription import *
-from .views import settings
-from .views import eye_exam
-from .views import trash
-from .views import static_pages
-from .views import credentials
-from .views import my_profile
-from .views import carousels
-from .views import business, products
+from .views import (
+    auth,
+    home,
+    users,
+    offers,
+    prescription,
+    notifications,
+    subscription,
+    business,
+    products,
+    eye_test_webhook,
+    settings,
+    eye_exam,
+    trash,
+    static_pages,
+    credentials,
+    my_profile,
+    carousels,
+)
 
 auth_urls = [
-    path("", LoginView.as_view(), name="login_view"),
-    path("logout", LogoutView.as_view(), name="logout_view"),
+    path("", auth.LoginView.as_view(), name="login_view"),
+    path("logout", auth.LogoutView.as_view(), name="logout_view"),
 ]
 
 home_urls = [
-    path("", HomeView.as_view(), name="home_view"),
+    path("", home.HomeView.as_view(), name="home_view"),
 ]
 
 users_urls = [
-    path("", UserView.as_view(), name="users_view"),
-    path("user-view/<uuid:id>", UserDetailedView.as_view(), name="user_detailed_view"),
-    path("user-edit/<uuid:id>", UserEditView.as_view(), name="user_edit_view"),
-    path("add-user", AddUserView.as_view(), name="add_user_view"),
-    path("add-admin", AddAdminView.as_view(), name="add_admin_view"),
-    path("user-delete/<uuid:id>", UserDeleteView.as_view(), name="user_delete_view"),
-    path("change-user-status/<uuid:id>", ChangeUserStatusView.as_view(), name="change_user_status_view"),
-    path("user-bulk-delete-view", UserBulkDeleteView.as_view(), name="user_bulk_delete_view"),
-    path("user-export/<str:file_type>", UserExportView.as_view(), name="user_export_view"),
+    path("", users.UserView.as_view(), name="users_view"),
+    path("user-view/<uuid:id>", users.UserDetailedView.as_view(), name="user_detailed_view"),
+    path("user-edit/<uuid:id>", users.UserEditView.as_view(), name="user_edit_view"),
+    path("add-user", users.AddUserView.as_view(), name="add_user_view"),
+    path("add-admin", users.AddAdminView.as_view(), name="add_admin_view"),
+    path("user-delete/<uuid:id>", users.UserDeleteView.as_view(), name="user_delete_view"),
+    path("change-user-status/<uuid:id>", users.ChangeUserStatusView.as_view(), name="change_user_status_view"),
+    path("user-bulk-delete-view", users.UserBulkDeleteView.as_view(), name="user_bulk_delete_view"),
+    path("user-export/<str:file_type>", users.UserExportView.as_view(), name="user_export_view"),
 ]
 
 offers_urls = [
-    path("", OffersView.as_view(), name="offers_view"),
-    path("add-offer", AddOffersView.as_view(), name="add_offer_view"),
-    path("edit-offer/<uuid:id>", EditOfferView.as_view(), name="edit_offer_view"),
-    path("offer-detailed-view/<uuid:id>", OfferDetailedView.as_view(), name="offer_detailed_view"),
-    path("delete-offer-view/<uuid:id>", DeleteOfferView.as_view(), name="delete_offer_view"),
-    path("offer-dispatch", OfferDispatchView.as_view(), name="offer_dispatch_view"),
-    path("offer-email", OfferEmailView.as_view(), name="offer_email_view"),
-    path("offer-export/<str:file_type>", OfferExportView.as_view(), name="offer_export_view"),
+    path("", offers.OffersView.as_view(), name="offers_view"),
+    path("add-offer", offers.AddOffersView.as_view(), name="add_offer_view"),
+    path("edit-offer/<uuid:id>", offers.EditOfferView.as_view(), name="edit_offer_view"),
+    path("offer-detailed-view/<uuid:id>", offers.OfferDetailedView.as_view(), name="offer_detailed_view"),
+    path("delete-offer-view/<uuid:id>", offers.DeleteOfferView.as_view(), name="delete_offer_view"),
+    path("offer-dispatch", offers.OfferDispatchView.as_view(), name="offer_dispatch_view"),
+    path("offer-email", offers.OfferEmailView.as_view(), name="offer_email_view"),
+    path("offer-export/<str:file_type>", offers.OfferExportView.as_view(), name="offer_export_view"),
 ]
 
 redeemed_offer_urls = [
-    path("", RedeemedOffersView.as_view(), name="redeemed_offers_view"),
-    path("redeemed-offer-export/<str:file_type>", RedeemedOffersExportView.as_view(), name="redeemed_offer_export_view"),
-    path("edit-redeemed-offer-view/<uuid:id>", EditRedeemedOffer.as_view(), name="edit_redeemed_offer_view"),
+    path("", offers.RedeemedOffersView.as_view(), name="redeemed_offers_view"),
+    path("redeemed-offer-export/<str:file_type>", offers.RedeemedOffersExportView.as_view(), name="redeemed_offer_export_view"),
+    path("edit-redeemed-offer-view/<uuid:id>", offers.EditRedeemedOffer.as_view(), name="edit_redeemed_offer_view"),
 
 ]
 
 prescription_urls = [
-    path("", PrescriptionView.as_view(), name="prescription_view"),
-    path("detailed-view/<uuid:id>", PrescriptionDetailView.as_view(), name="prescription_detailed_view"),
-    path("change-status/<uuid:id>", ChangePrescriptionStatusView.as_view(), name="change_status_view"),
-    path("prescription-export/<str:file_type>", PrescriptionExportView.as_view(), name="prescription_export_view"),
+    path("", prescription.PrescriptionView.as_view(), name="prescription_view"),
+    path("detailed-view/<uuid:id>", prescription.PrescriptionDetailView.as_view(), name="prescription_detailed_view"),
+    path("change-status/<uuid:id>", prescription.ChangePrescriptionStatusView.as_view(), name="change_status_view"),
+    path("prescription-export/<str:file_type>", prescription.PrescriptionExportView.as_view(), name="prescription_export_view"),
 ]
 
 notification_urls = [
-    path("my-notification", MyNotificationView.as_view(), name="my_notification_view"),
-    path("mark-this-read", MarkThisRead.as_view(), name="mark_this_read_view"),
-    path("", NotificationView.as_view(), name="notification_view"),
-    path("notification-detailed/<uuid:id>", NotificationDetailedView.as_view(), name="notification_detailed_view"),
-    path("add-notification", NewNotificationView.as_view(), name="add_notification_view"),
-    path("search-users-listing", UsersSearchListing.as_view(), name="search_users_listing"),
-    path("notification-export/<str:file_type>", NotificationExportView.as_view(), name="notification_export_view"),
+    path("my-notification", notifications.MyNotificationView.as_view(), name="my_notification_view"),
+    path("mark-this-read", notifications.MarkThisRead.as_view(), name="mark_this_read_view"),
+    path("", notifications.NotificationView.as_view(), name="notification_view"),
+    path("notification-detailed/<uuid:id>", notifications.NotificationDetailedView.as_view(), name="notification_detailed_view"),
+    path("add-notification", notifications.NewNotificationView.as_view(), name="add_notification_view"),
+    path("search-users-listing", notifications.UsersSearchListing.as_view(), name="search_users_listing"),
+    path("notification-export/<str:file_type>", notifications.NotificationExportView.as_view(), name="notification_export_view"),
 ]
 
 
 subscription_urls = [
-    path("", SubscriptionView.as_view(), name="subscription_view"),
-    path("detailed-subscription/<uuid:id>", SubscriptionPlanDetailedView.as_view(), name="detailed_view"),
-    path("edit-subscription/<uuid:id>", SubscriptionEditView.as_view(), name="edit_subscription_view"),
-    path("delete-subscription/<uuid:id>", SubscriptionDeleteView.as_view(), name="delete_subscription_view"),
-    path("add-subscription", SubscriptionAddView.as_view(), name="add_subscription_view"),
-    path("subscription-export/<str:file_type>", SubscriptionExportView.as_view(), name="subscription_export_view"),
+    path("", subscription.SubscriptionView.as_view(), name="subscription_view"),
+    path("detailed-subscription/<uuid:id>", subscription.SubscriptionPlanDetailedView.as_view(), name="detailed_view"),
+    path("edit-subscription/<uuid:id>", subscription.SubscriptionEditView.as_view(), name="edit_subscription_view"),
+    path("delete-subscription/<uuid:id>", subscription.SubscriptionDeleteView.as_view(), name="delete_subscription_view"),
+    path("add-subscription", subscription.SubscriptionAddView.as_view(), name="add_subscription_view"),
+    path("subscription-export/<str:file_type>", subscription.SubscriptionExportView.as_view(), name="subscription_export_view"),
 ]
 
 user_subscriptions_urls = [
-        path("user-subscription-plans", UserSubscriptionView.as_view(), name="user_subscription_plans_view"),
-    path("user-subscription-detail/<uuid:id>", UserSubscriptionDetailView.as_view(), name="user_subscription_detail_view"),
-    path("user-subscription-export/<str:file_type>", UserSubscriptionExportView.as_view(), name="user_subscription_export_view"),
+        path("user-subscription-plans", subscription.UserSubscriptionView.as_view(), name="user_subscription_plans_view"),
+    path("user-subscription-detail/<uuid:id>", subscription.UserSubscriptionDetailView.as_view(), name="user_subscription_detail_view"),
+    path("user-subscription-export/<str:file_type>", subscription.UserSubscriptionExportView.as_view(), name="user_subscription_export_view"),
 ]
 
 settings_urls = [
@@ -198,4 +202,5 @@ urlpatterns = [
     path("store/", include(store_urls)),
     path("appointment/", include(appointment_urls)),
     path("products/", include(product_urls)),
+    path("eye-test-webhook", eye_test_webhook.InsertEyeTestRecord.as_view()),
 ]
