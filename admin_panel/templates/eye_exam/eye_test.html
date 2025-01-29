@@ -159,7 +159,7 @@
             var download_url_base = $("#dy-download-url").data('download-url');
 
             $.ajax({
-                url: '/eye/eye-test-detailed/' + report_id,
+                url: '/eye-test/eye-test-detailed/' + report_id,
                 method: 'GET',
                 success: function (data) {
                     var report_data = data.eye_test_report
