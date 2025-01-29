@@ -121,3 +121,23 @@ class BookedAppointmentsView(UserMixin):
                 }
             )
         return api_response(True, 200, data=data)
+
+
+class UserBookedAppointmentsView(UserMixin):
+    def get(self, request):
+        appointments_qs = StoreAppointment.objects.filter(user=request.user).order_by(
+            "-date"
+        )
+        data = []
+        for appointment in appointments_qs:
+            data.append(
+                {
+                    "id": str(appointment.id),
+                    "StoreName": appointment.store.name,
+                    "address": appointment.store.full_address(),
+                    "date": appointment.date.strftime("%d-%m-%Y"),
+                    "time": appointment.time.strftime("%I:%M %p"),
+                    "status": appointment.get_status_display(),
+                }
+            )
+        return api_response(True, 200, data=data)

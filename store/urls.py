@@ -5,6 +5,7 @@ booking_urls = [
     path("time-slots", booking.TimeSlotsView.as_view()),
     path("book-appointment/<int:slot_id>", booking.BookAppointmentView.as_view()),
     path("booked-appointment", booking.BookedAppointmentsView.as_view()),
+    path("user-booked-appointments", booking.UserBookedAppointmentsView.as_view()),
 ]
 
 product_urls = [
