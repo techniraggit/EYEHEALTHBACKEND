@@ -5,12 +5,14 @@ from api.models.accounts import UserModel
 
 class UserTestProfile(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    customer_id = models.CharField(max_length=250, null=True, blank=True)
     user = models.ForeignKey(
         UserModel, on_delete=models.CASCADE, related_name="profiles"
     )
     full_name = models.CharField(max_length=250, null=True)
-    customer_id = models.CharField(max_length=250)
     age = models.CharField(max_length=250)
+    email = models.EmailField(null=True, blank=True)
+    phone_number = models.CharField(max_length=20, null=True, blank=True)
 
     def to_json(self):
         return dict(
