@@ -12,6 +12,7 @@ product_urls = [
 ]
 
 urlpatterns = [
+    path("search-store", apis.StoreAddressSearchView.as_view()),
     path("get-stores", apis.StoreView.as_view()),
     path("nearby-stores", apis.NearbyStoreView.as_view()),
     path("nearby-stores-map", apis.NearbyStoresMapView.as_view()),

@@ -4,6 +4,34 @@ from store.models.models import Stores, StoreRating
 from store.serializers import StoreSerializer
 from core.utils import api_response
 from store.views.base import UserMixin
+from django.db.models import Q
+
+
+class StoreAddressSearchView(UserMixin):
+    def get(self, request):
+        search_query = request.GET.get("query")
+        if not search_query:
+            return api_response(False, 400, message="Search query is required.")
+
+        stores = Stores.objects.filter(
+            Q(is_active=True) & Q(name__icontains=search_query)
+            | Q(address__icontains=search_query)
+            | Q(locality__icontains=search_query)
+            | Q(landmark__icontains=search_query)
+            | Q(city__icontains=search_query)
+            | Q(state__icontains=search_query)
+            | Q(country__icontains=search_query)
+        )
+        store_data = []
+        for store in stores:
+            store_data.append(
+                {
+                    "address": store.full_address(),
+                    "latitude": store.latitude,
+                    "longitude": store.longitude,
+                }
+            )
+        return api_response(True, 200, stores=store_data)
 
 
 class StoreView(UserMixin):
@@ -74,6 +102,7 @@ class NearbyStoreView(UserMixin):
             for store in stores
         ]
         return api_response(True, 200, stores=stores_data)
+
 
 class NearbyStoresMapView(UserMixin):
     def get(self, request):
