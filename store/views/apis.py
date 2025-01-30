@@ -125,6 +125,10 @@ class NearbyStoresMapView(UserMixin):
                 "latitude": store.latitude,
                 "longitude": store.longitude,
                 "address": store.full_address(),
+                "image": store.images.all().first().image.url if store.images.all() else "",
+                "timing": (store.store_availability.all().first().start_working_hr, store.store_availability.all().first().end_working_hr),
+                "rating": store.get_average_rating(),
+                "distance_km": round(store.distance.km, 2),
             }
             for store in stores
         ]

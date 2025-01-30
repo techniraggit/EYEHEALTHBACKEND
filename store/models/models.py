@@ -111,7 +111,7 @@ class Stores(BaseModel):
     phone = models.CharField(max_length=20, validators=[validator_contact])
     email = models.EmailField()
     location = PointField(geography=True, default=Point(0.0, 0.0))
-    images_as_json = models.JSONField(default=dict, null=True)
+    images_as_json = models.JSONField(default=dict, null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     pin_code = models.CharField(max_length=10)
