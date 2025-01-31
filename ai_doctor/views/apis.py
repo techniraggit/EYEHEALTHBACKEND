@@ -15,7 +15,7 @@ def save_chat_history(user, query, response):
 
 class AskDoctorView(UserMixin):
     def post(self, request):
-        query = request.data.get("query")
+        query = request.data.get("prompt")
         if not query:
             return api_response(False, 400, "Query required")
 
