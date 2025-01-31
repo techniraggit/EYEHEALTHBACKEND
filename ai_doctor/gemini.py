@@ -9,23 +9,16 @@ PROMPT_FILE = f"{settings.BASE_DIR}/ai_doctor/prompts.txt"
 prompt_content = None
 
 
-def load_prompt():
-    global prompt_content
-    if prompt_content is None:
-        try:
-            with open(PROMPT_FILE, "r") as file:
-                prompt_content = file.read()
-        except FileNotFoundError:
+def get_prompt(user_prompt: str):
+    try:
+        with open(PROMPT_FILE, "r") as file:
+            prompt_content = file.read()
+    except FileNotFoundError:
             print(f"Prompt file not found: {PROMPT_FILE}")
             raise
-        except Exception as e:
-            print(f"Error loading prompt file: {e}")
-            raise
-
-
-def get_prompt(user_prompt: str):
-    if prompt_content is None:
-        load_prompt()
+    except Exception as e:
+        print(f"Error loading prompt file: {e}")
+        raise
 
     return prompt_content.format(user_query=user_prompt)
 
