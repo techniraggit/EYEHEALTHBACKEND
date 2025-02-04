@@ -10,6 +10,7 @@ untracted_files
 staticfiles/
 .lock
 uv.lock
+firebase_admin_sdk.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

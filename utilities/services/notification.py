@@ -1,25 +1,71 @@
-from api.models.notifications import PushNotification, UserPushNotification, UserModel
-import requests
+from api.models.notifications import (
+    PushNotification,
+    UserPushNotification,
+    UserModel,
+)
 import os
+import pathlib
 from core.logs import Logger
+import firebase_admin
+from firebase_admin import (
+    credentials,
+    messaging,
+)
 
 logger = Logger("notification.log")
 
-FCM_SERVER_KEY = os.getenv("FCM_SERVER_KEY")
+
+def get_certificate_file_path(file_name="firebase_admin_sdk.json"):
+    return os.path.join(pathlib.Path(__file__).parent.parent.parent, file_name)
+
+def send_(title:str, body:str, token:str):
+    if not firebase_admin._apps:
+        cred = credentials.Certificate(get_certificate_file_path())
+        firebase_admin.initialize_app(cred)
+
+    # Android notification configuration
+    android_config = messaging.AndroidConfig(
+        notification=messaging.AndroidNotification(
+            title=title,
+            body=body,
+            sound="default",
+            click_action="FLUTTER_NOTIFICATION_CLICK",
+        )
+    )
+
+    # iOS notification configuration
+    ios_config = messaging.APNSConfig(
+        payload=messaging.APNSPayload(
+            aps=messaging.Aps(
+                alert=messaging.ApsAlert(title=title, body=body),
+                sound="default",
+            )
+        )
+    )
+
+    message = messaging.Message(
+        notification=messaging.Notification(
+            title=title,
+            body=body,
+        ),
+        token=token,
+        android=android_config,
+        apns=ios_config,
+    )
+
+    try:
+        messaging.send(message)
+    except Exception as e:
+        print("Error sending message:", e)
 
 
 def send_firebase_notification(device_tokens: list, title: str, message: str):
-    url = "https://fcm.googleapis.com/fcm/send"
-    headers = {"Authorization": f"Key={FCM_SERVER_KEY}"}
-    data = {
-        "registration_ids": device_tokens,
-        "notification": {
-            "title": title,
-            "body": message,
-        },
-    }
-    response = requests.post(url, json=data, headers=headers)
-    return response
+    for token in device_tokens:
+        send_(
+            title=title,
+            body=message,
+            token=token
+        )
 
 
 def create_notification(user_ids: list, title: str, message: str):
