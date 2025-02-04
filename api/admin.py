@@ -50,7 +50,7 @@ class OTPLog(admin.ModelAdmin):
 
 @admin.register(DeviceInfo)
 class DeviceInfoAdmin(admin.ModelAdmin):
-    list_display = ["user", "token", "device_type", "created_on", "updated_on"]
+    list_display = ["user", "system_id", "device_type", "created_on", "updated_on"]
     search_fields = ["user__email", "user__phone_number"]
 
 

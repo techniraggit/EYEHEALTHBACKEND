@@ -147,6 +147,7 @@ class DeviceInfo(BaseModel):
     )
     token = models.TextField()
     device_type = models.CharField(max_length=50)
+    system_id = models.TextField(null=True, blank=True)
 
 
 class OTPLog(BaseModel):

@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 class DeviceInfoSerializer(BaseSerializer):
     class Meta:
         model = DeviceInfo
-        fields = ["token", "device_type"]
+        fields = ["token", "device_type", "system_id"]
 
 
 class UserAddressSerializer(BaseSerializer):
@@ -223,8 +223,22 @@ class UserSerializer(serializers.ModelSerializer):
             except Exception as e:
                 logger.error(str(e))
 
-        if device_token_data:
-            DeviceInfo.objects.create(user=user, **device_token_data)
+        if device_token_data and device_token_data.get("system_id", None):
+            DeviceInfo.objects.update_or_create(
+                system_id=device_token_data.get("system_id"),
+                defaults={
+                    "user": user,
+                    "device_type": device_token_data.get("device_type"),
+                    "token": device_token_data.get("token")
+                }
+            )
+            # device_object = DeviceInfo.objects.filter(system_id=device_token_data.get("system_id")).first()
+            # if device_object:
+            #     device_object.user = user
+            #     device_object.token = device_token_data.get("token")
+            #     device_object.save()
+            # else:
+            #     DeviceInfo.objects.create(user=user, **device_token_data)
 
         # plan_obj = SubscriptionPlan.objects.filter(plan_type="basic").order_by("-created_on").first()
         plan_obj = SubscriptionPlan.objects.filter(plan_type="basic").latest("created_on")
@@ -306,12 +320,14 @@ class LoginSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=10, required=True)
     device_type = serializers.CharField(max_length=50, required=True)
     device_token = serializers.CharField(max_length=500, required=True)
+    system_id = serializers.CharField(max_length=500, required=True)
 
     def validate(self, data):
         username = data.get("username")
         otp = data.get("otp")
         device_type = data.get("device_type")
         device_token = data.get("device_token")
+        system_id = data.get("system_id")
 
         is_verified = verify_otp(username, otp)
         if not is_verified:
@@ -324,11 +340,19 @@ class LoginSerializer(serializers.Serializer):
             user_obj.save()
         access_token, refresh_token = get_tokens_for_user(user_obj)
         tokens = dict(access_token=access_token, refresh_token=refresh_token)
-        DeviceInfo.objects.get_or_create(
-            user=user_obj,
-            token=device_token,
-            device_type=device_type,
-        )
+        DeviceInfo.objects.update_or_create(
+                system_id=system_id,
+                defaults={
+                    "user": user_obj,
+                    "device_type": device_type,
+                    "token": device_token
+                }
+            )
+        # DeviceInfo.objects.get_or_create(
+        #     user=user_obj,
+        #     token=device_token,
+        #     device_type=device_type,
+        # )
 
         data["user"] = UserSerializer(user_obj).data
         data["tokens"] = tokens
