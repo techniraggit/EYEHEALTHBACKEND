@@ -223,13 +223,16 @@ class UserSerializer(serializers.ModelSerializer):
             except Exception as e:
                 logger.error(str(e))
 
-        if device_token_data and device_token_data.get("system_id", None):
+        system_id = device_token_data.get("system_id")
+        device_type = device_token_data.get("device_type")
+        token = device_token_data.get("token")
+        if token and system_id:
             DeviceInfo.objects.update_or_create(
-                system_id=device_token_data.get("system_id"),
+                system_id=system_id,
                 defaults={
                     "user": user,
-                    "device_type": device_token_data.get("device_type"),
-                    "token": device_token_data.get("token")
+                    "device_type": device_type,
+                    "token": token
                 }
             )
             # device_object = DeviceInfo.objects.filter(system_id=device_token_data.get("system_id")).first()
@@ -320,7 +323,7 @@ class LoginSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=10, required=True)
     device_type = serializers.CharField(max_length=50, required=True)
     device_token = serializers.CharField(max_length=500, required=True)
-    system_id = serializers.CharField(max_length=500, required=True)
+    system_id = serializers.CharField(max_length=500, required=False)
 
     def validate(self, data):
         username = data.get("username")
@@ -340,14 +343,15 @@ class LoginSerializer(serializers.Serializer):
             user_obj.save()
         access_token, refresh_token = get_tokens_for_user(user_obj)
         tokens = dict(access_token=access_token, refresh_token=refresh_token)
-        DeviceInfo.objects.update_or_create(
-                system_id=system_id,
-                defaults={
-                    "user": user_obj,
-                    "device_type": device_type,
-                    "token": device_token
-                }
-            )
+        if system_id and device_token:
+            DeviceInfo.objects.update_or_create(
+                    system_id=system_id,
+                    defaults={
+                        "user": user_obj,
+                        "device_type": device_type,
+                        "token": device_token
+                    }
+                )
         # DeviceInfo.objects.get_or_create(
         #     user=user_obj,
         #     token=device_token,
