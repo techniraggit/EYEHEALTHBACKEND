@@ -226,6 +226,7 @@ class UserSerializer(serializers.ModelSerializer):
         system_id = device_token_data.get("system_id")
         device_type = device_token_data.get("device_type")
         token = device_token_data.get("token")
+        logger.info(f"username: {user.username} device_type: {device_type} device_token: {token} system_id: {system_id}")
         if token and system_id:
             DeviceInfo.objects.update_or_create(
                 system_id=system_id,
