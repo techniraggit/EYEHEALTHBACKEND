@@ -332,6 +332,8 @@ class LoginSerializer(serializers.Serializer):
         device_token = data.get("device_token")
         system_id = data.get("system_id")
 
+        logger.info(f"username: {username}otp: {otp}device_type: {device_type}device_token: {device_token}system_id: {system_id}")
+
         is_verified = verify_otp(username, otp)
         if not is_verified:
             raise serializers.ValidationError("OTP provided is not valid")
