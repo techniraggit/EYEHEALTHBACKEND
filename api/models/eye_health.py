@@ -24,6 +24,10 @@ class UserTestProfile(BaseModel):
         )
 
 
+    def __str__(self):
+        return f"{self.full_name}/{self.phone_number}/{self.email}"
+
+
 class EyeTestReport(BaseModel):
     id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
     report_id = models.IntegerField(unique=True)
