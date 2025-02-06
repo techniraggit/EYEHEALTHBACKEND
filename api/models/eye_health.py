@@ -35,6 +35,8 @@ class EyeTestReport(BaseModel):
     right_eye = JSONField()
     left_eye = JSONField()
     health_score = models.FloatField()
+    colour_contrast = models.CharField(max_length=30, null=True, blank=True)
+    color_blindness = models.CharField(max_length=30, null=True, blank=True)
 
     def to_json(self):
         return dict(
@@ -44,9 +46,22 @@ class EyeTestReport(BaseModel):
             right_eye=self.right_eye,
             left_eye=self.left_eye,
             health_score=self.health_score,
+            colour_contrast=self.colour_contrast,
+            color_blindness=self.color_blindness,
         )
 
     def eye_obj(self, eye):
+        sph = eye.get("sph_power", None)
+        cyl = eye.get("cyl_power", None)
+        axis = eye.get("axis", None)
+        add = eye.get("add_power", None)
+        if all([sph, cyl, axis, add]):
+            return {
+                "sph": sph,
+                "cyl": cyl,
+                "axis": axis,
+                "add": add,
+            }
         return {
             "sph": eye.get("hyperopia_sph_power", eye.get("myopia_sph_power")),
             "cyl": eye.get("cyl_power"),
@@ -67,6 +82,8 @@ class EyeTestReport(BaseModel):
             age=self.user_profile.age,
             right=self.right_eye_obj(),
             left=self.left_eye_obj(),
+            colour_contrast=self.colour_contrast,
+            color_blindness=self.color_blindness,
         )
 
 

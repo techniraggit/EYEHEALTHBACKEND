@@ -4,13 +4,6 @@ from rest_framework import serializers
 from api.models.eye_health import UserModel, UserTestProfile, EyeTestReport
 import os
 
-class EyeSerializer(serializers.Serializer):
-    sph = serializers.FloatField(required=True)
-    cyl = serializers.FloatField(required=True)
-    axis = serializers.FloatField(required=True)
-    add = serializers.FloatField(required=True)
-
-
 
 class EyeTestRecordSerializer(serializers.Serializer):
     user_id = serializers.UUIDField(required=True)
@@ -22,6 +15,8 @@ class EyeTestRecordSerializer(serializers.Serializer):
     right_eye = serializers.JSONField()
     left_eye = serializers.JSONField()
     health_score = serializers.FloatField(required=True)
+    colour_contrast = serializers.CharField(required=False)
+    color_blindness = serializers.CharField(required=False)
 
     def create(self, validated_data):
         user_id = validated_data.get('user_id', None)
@@ -40,6 +35,8 @@ class EyeTestRecordSerializer(serializers.Serializer):
             right_eye=validated_data.get('right_eye', {}),
             left_eye=validated_data.get('left_eye', {}),
             health_score=validated_data.get('health_score', 0),
+            colour_contrast=validated_data.get("colour_contrast"),
+            color_blindness=validated_data.get("color_blindness"),
         )
         return EyeTestReport.objects.create(**data)
 
