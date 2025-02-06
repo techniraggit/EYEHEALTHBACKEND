@@ -131,19 +131,18 @@
                     </div>
                 </div>
 
-                <div class="col-md-12 f-name mt-4">
-                    <label for="description">Store Images<span id="required_star">*</span></label>
-                    <div class="store-images mt-2">
-                        <label for="image-upload" class="custom-file-upload">
-                            Add Images
-                        </label>
-                        <input type="file" id="image-upload" multiple accept="image/*">
-                        <div id="preview-container" class="image-preview-container"></div>
-                    </div>
+                <div class="col-md-4 f-name mt-2">
+                    <label for="store_image">Store Image<span id="required_star">*</span></label>
+                    <input type="file" id="store_image" name="store_image" accept="image/*">
                 </div>
+                <div class="col-md-4 f-name mt-2">
+                    <img id="image_preview"
+                        src="" 
+                        alt="Image Preview" 
+                        style="max-width: 100px; display: none; border: 1px solid #ddd; padding: 5px;">
+                </div>
+                <div class="col-md-4 f-name mt-2"></div>
 
-                <!-- services -->
-                <!-- Store Images -->
                 <div class="col-md-3 cancel-btn mb-4 mt-5">
                     <button type="submit" class="btn btn-primary save-btn">Save</button>
                 </div>
@@ -152,6 +151,20 @@
     </div>
     <script>
         $(document).ready(function () {
+            $('#store_image').on('change', function() {
+                const file = this.files[0];
+                const preview = $('#image_preview');
+
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                    preview.attr('src', e.target.result).show();
+                };
+                reader.readAsDataURL(file);
+                } else {
+                    preview.hide().attr('src', '');
+                }
+            });
             $('#business').select2({
                 placeholder: "Select Business",
                 //minimumResultsForSearch: Infinity
@@ -174,13 +187,6 @@
                     }
                 });
 
-                // Image validation (at least one image must be uploaded)
-                if ($('#image-upload')[0].files.length === 0) {
-                    $('#image-upload').css('border', '1px solid red');
-                    isValid = false;
-                } else {
-                    $('#image-upload').css('border', '');
-                }
 
                 return isValid;
             }
@@ -195,13 +201,7 @@
                     return;
                 }
 
-                var formData = new FormData(this); // Create FormData object
-
-                // Add files to FormData if not added already
-                var files = $('#image-upload')[0].files;
-                $.each(files, function (i, file) {
-                    formData.append('images[]', file); // Add each image file
-                });
+                var formData = new FormData(this);
 
                 // Submit the form via AJAX
                 $.ajax({

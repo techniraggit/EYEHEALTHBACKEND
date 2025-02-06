@@ -233,6 +233,7 @@ class AddStoreView(AdminLoginView):
         opening_time = request.POST.get("opening_time")
         closing_time = request.POST.get("closing_time")
         images = request.FILES.getlist("images[]")
+        store_image = request.FILES.get("store_image")
         form = StoreForm(request.POST, request.FILES)
 
         error = validate_opening_and_closing_time(opening_time, closing_time)
@@ -261,11 +262,16 @@ class AddStoreView(AdminLoginView):
 
             try:
                 with transaction.atomic():
-                    store_images = [
-                        StoreImages(store=instance, image=i) for i in images
-                    ]
-                    if store_images:
-                        StoreImages.objects.bulk_create(store_images)
+                    if store_image:
+                        StoreImages.objects.create(
+                            store=instance,
+                            image=store_image,
+                        )
+                    # store_images = [
+                    #     StoreImages(store=instance, image=i) for i in images
+                    # ]
+                    # if store_images:
+                    #     StoreImages.objects.bulk_create(store_images)
 
                     days_qs = Days.objects.all()
                     store_availability_obj = StoreAvailability.objects.create(
@@ -333,6 +339,7 @@ class EditStoreView(AdminLoginView):
             service_ids=store_instance.services.all().values_list("id", flat=True),
             store_images=store_images,
             is_store=True,
+            existing_image_url=store_images[0]
         )
         return render(request, "store/store_edit.html", context=context)
 
@@ -348,6 +355,7 @@ class EditStoreView(AdminLoginView):
         opening_time = request.POST.get("opening_time")
         closing_time = request.POST.get("closing_time")
         images = request.FILES.getlist("images[]")
+        store_image = request.FILES.get("store_image")
         form = StoreForm(request.POST, request.FILES, instance=store_instance)
 
         error = validate_opening_and_closing_time(opening_time, closing_time)
@@ -377,13 +385,17 @@ class EditStoreView(AdminLoginView):
                 )
 
             try:
-                # Update images by clearing old ones and adding new ones
-                if images:
-                    StoreImages.objects.filter(store=instance).delete()
-                    store_images = [
-                        StoreImages(store=instance, image=i) for i in images
-                    ]
-                    StoreImages.objects.bulk_create(store_images)
+                if store_image:
+                    img_instance = StoreImages.objects.filter(store=store_instance).first()
+                    img_instance.image = store_image
+                    img_instance.save()
+                # # Update images by clearing old ones and adding new ones
+                # if images:
+                #     StoreImages.objects.filter(store=instance).delete()
+                #     store_images = [
+                #         StoreImages(store=instance, image=i) for i in images
+                #     ]
+                #     StoreImages.objects.bulk_create(store_images)
 
                 # days_qs = Days.objects.all()
                 store_availability_obj = StoreAvailability.objects.filter(
