@@ -219,7 +219,7 @@
             var modal = $('#appointmentDetailModel');
 
             $.ajax({
-                url: '/business/appointment-detail/' + appointmentId,
+                url: '/appointment/appointment-detail/' + appointmentId,
                 method: 'GET',
                 success: function (response) {
                     if (response.status){
