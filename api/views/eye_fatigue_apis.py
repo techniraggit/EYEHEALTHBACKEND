@@ -217,15 +217,16 @@ def get_average_values(reports, start_time, end_time, user_tz):
 
 def get_day_data(user, user_tz, day_date):
     day_data = {"date": day_date, "value": []}
-    reports = EyeFatigueReport.objects.filter(user=user, created_on__date=day_date)
-    values_list = list(reports.values_list("health_score", flat=True))
-    logger.info(str(values_list))
+    health_score_list = list(EyeFatigueReport.objects
+                    .filter(user=user, health_score__gt=0)
+                    .values_list("health_score", flat=True)
+                )
+    logger.info(str(health_score_list))
     avg_value = 0.0
     try:
-        avg_value = round(sum(values_list) / len(values_list), 2)
+        avg_value = round(sum(health_score_list) / len(health_score_list), 2)
     except Exception as e:
         logger.error(str(e))
-        # raise e
         avg_value = 0.0
     return avg_value
 
