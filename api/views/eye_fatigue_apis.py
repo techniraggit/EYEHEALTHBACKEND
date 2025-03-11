@@ -223,7 +223,8 @@ def get_day_data(user, user_tz, day_date):
     try:
         avg_value = round(sum(values_list) / len(values_list), 2)
     except Exception as e:
-        raise e
+        logger.error(str(e))
+        # raise e
         avg_value = 0.0
     return avg_value
 
