@@ -219,6 +219,7 @@ def get_day_data(user, user_tz, day_date):
     day_data = {"date": day_date, "value": []}
     reports = EyeFatigueReport.objects.filter(user=user, created_on__date=day_date)
     values_list = list(reports.values_list("health_score", flat=True))
+    logger.info(str(values_list))
     avg_value = 0.0
     try:
         avg_value = round(sum(values_list) / len(values_list), 2)
