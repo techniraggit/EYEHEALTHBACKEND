@@ -11,6 +11,7 @@ import os
 import base64
 import pyotp
 
+STATIC_LOGINS = json.loads(os.environ.get("STATIC_LOGINS", "[]"))
 
 def get_interval():
     return int(os.getenv("OTP_INTERVAL"))
@@ -27,19 +28,18 @@ def otp_object(secret_key):
     )
 
 
-FIX_NUMBER = "9758168722"
-FIX_OTP = "1234"
-
 
 def generate_otp(username):
-    if username == FIX_NUMBER or username == "+91" + FIX_NUMBER:
-        return FIX_OTP
+    username.lstrip("+91")
+    if username in STATIC_LOGINS:
+        return "1234"
     totp = otp_object(username)
     return totp.now()
 
 
 def verify_otp(username, otp):
-    if username == FIX_NUMBER or username == "+91" + FIX_NUMBER:
+    username.lstrip("+91")
+    if username in STATIC_LOGINS:
         return True
     totp = otp_object(username)
     return totp.verify(otp)

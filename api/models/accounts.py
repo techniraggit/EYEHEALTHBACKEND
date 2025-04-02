@@ -52,7 +52,7 @@ class UserModel(AbstractUser, BaseModel, SoftDeleteMixin):
     objects = CustomUserManager()
     all_objects = models.Manager()
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["first_name"]
+    REQUIRED_FIELDS = ["first_name", "last_name", "phone_number"]
 
     def decrease_points(self, points: int):
         self.points = self.points - points
