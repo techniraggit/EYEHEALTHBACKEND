@@ -20,17 +20,23 @@ class IsValidHeaders(BasePermission):
             return True
         return False
 
+class IsActiveUser(BasePermission):
+    def has_permission(self, request, view):
+        if request.user.is_active:
+            return True
+        return False
+
 
 class UserMixin(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsActiveUser]
 
 
 class AdminMixin(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsAdminOnly]
+    permission_classes = [IsAuthenticated, IsAdminOnly, IsActiveUser]
 
 
 class SecureHeadersMixin(APIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated, IsValidHeaders]
+    permission_classes = [IsAuthenticated, IsValidHeaders, IsActiveUser]
