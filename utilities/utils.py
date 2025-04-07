@@ -30,7 +30,7 @@ def otp_object(secret_key):
 
 
 def generate_otp(username):
-    username.lstrip("+91")
+    username = str(username).replace("+91", "")
     if username in STATIC_LOGINS:
         return "1234"
     totp = otp_object(username)
@@ -38,7 +38,7 @@ def generate_otp(username):
 
 
 def verify_otp(username, otp):
-    username.lstrip("+91")
+    username = str(username).replace("+91", "")
     if username in STATIC_LOGINS:
         return True
     totp = otp_object(username)
