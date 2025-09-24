@@ -5,9 +5,9 @@ import os
 import django
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent
 
-PROJECT_DIR = os.path.join(BASE_DIR, "EYEHEALTHBACKEND")
+PROJECT_DIR = os.path.join(BASE_DIR)
 
 load_dotenv(f"{PROJECT_DIR}/secrets.env")
 
