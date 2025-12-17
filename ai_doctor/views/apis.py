@@ -1,9 +1,10 @@
 from django.utils import timezone
-from ai_doctor.views.base import UserMixin
+from ai_doctor.views.base import UserMixin, APIView
 from core.utils import api_response
 from ai_doctor.gemini import make_request
 from django_q.tasks import async_task
 from ai_doctor.models.models import ChatHistory, PredefinedPrompts, UserModel
+from rest_framework.permissions import AllowAny
 
 
 def save_chat_history(user, query, response):
@@ -13,7 +14,9 @@ def save_chat_history(user, query, response):
         print(f"Error storing chat history: {e}")
 
 
-class AskDoctorView(UserMixin):
+class AskDoctorView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
         query = request.data.get("prompt")
         if not query:
